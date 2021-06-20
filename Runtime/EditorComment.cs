@@ -20,9 +20,11 @@ namespace OcUtility
             gameObject.hideFlags = HideFlags.DontSaveInBuild;
         }
 
-        void OnDrawGizmos()
+        void OnDrawGizmosSelected()
         {
-            Gizmos.DrawIcon(transform.position, "Comment");
+            Gizmos.color = ColorExtension.Rainbow();
+            Gizmos.DrawWireCube(transform.position, Vector3.one * 0.3f);
+            Gizmos.DrawWireSphere(transform.position, 0.1f);
         }
 
 

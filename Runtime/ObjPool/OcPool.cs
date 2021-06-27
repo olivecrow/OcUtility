@@ -12,6 +12,9 @@ namespace OcUtility
         
         static OcPool()
         {
+#if UNITY_EDITOR
+            Application.quitting += () => GlobalPool = new Dictionary<PoolMember, OcPool>();      
+#endif
             GlobalPool = new Dictionary<PoolMember, OcPool>();
         }
 
@@ -60,11 +63,11 @@ namespace OcUtility
         
         
         // Non-Static.
-        Transform _folder;
+        readonly Transform _folder;
         PoolMember _source;
         Queue<PoolMember> _sleepingMembers;
         List<PoolMember> _allMembers;
-        int _initialCount;
+        readonly int _initialCount;
         bool HasEnoughMember(int count)
         {
             return _allMembers.Count * 0.1f > count && _sleepingMembers.Count * 0.5f  > count;

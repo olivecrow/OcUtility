@@ -67,6 +67,12 @@ namespace OcUtility.Editor
 
         static HierarchyIconDrawer()
         {
+            Application.quitting += Init;
+            Init();
+        }
+
+        static void Init()
+        {
             _iconInstanceRegistries = new List<IconInstanceRegistry>();
             _registeredInstanceIDs = new List<int>();
             EditorApplication.hierarchyWindowItemOnGUI += DrawAllIcon;
@@ -92,14 +98,16 @@ namespace OcUtility.Editor
             _iconInstanceRegistries.Add(new IconInstanceRegistry(drawable, id));
         }
 
-        static Texture2D GetIcon(int id, out int xRect)
+        static Texture2D GetIcon(int id, out int xRect, out Color tint)
         {
             Texture2D icon;
+            tint = Color.white;
             for (int i = 0; i < _iconInstanceRegistries.Count; i++)
             {
                 if (_iconInstanceRegistries[i].TryGetIcon(id, out icon, out var dist))
                 {
                     xRect = dist;
+                    tint = _iconInstanceRegistries[i].drawable.IconTint;
                     return icon;
                 }
             }
@@ -116,16 +124,17 @@ namespace OcUtility.Editor
                 if (gao == null) return;
                 Register(gao);
             }
-
-            var iconGUIContent = new GUIContent(GetIcon(instanceID, out var xRect));
-
+            if(!_registeredInstanceIDs.Contains(instanceID)) return;
+            var iconGUIContent = new GUIContent(GetIcon(instanceID, out var xRect, out var tint));
             var iconDrawRect = new Rect(
                 rect.width * 0.75f + xRect,
                 rect.yMin,
                 rect.width,
                 rect.height);
             EditorGUIUtility.SetIconSize(new Vector2(15, 15));
+            GUI.contentColor = tint;
             EditorGUI.LabelField(iconDrawRect, iconGUIContent);
+            GUI.contentColor = Color.white;
         }
     }
 }

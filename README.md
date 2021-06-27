@@ -17,8 +17,12 @@
 
 
 "com.olivecrow.ocutility": "https://<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>@github.com/olivecrow/OcUtility.git#upm"
+혹은
+"com.olivecrow.ocutility": "https://<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>@github.com/olivecrow/OcUtility.git#v0.0.0"
 
 을 Packages/manifest.json에 붙여넣은 후, 계정에 액세스 하기.
+
+후자의 버전 넘버의 경우, 릴리즈에 맞는 넘버링을 넣으면 됨.
 
 
 ## OcPool 사용 방법

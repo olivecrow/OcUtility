@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.1.1] - 2021-06-27
+
+### Fixed
+- HierarchyIconDrawer 내부 리스트에 아이콘이 없는 오브젝트에서 null로 렌더링 되던것을 리스트에 미포함하는 것으로 변경.
+- OcPool이 Enter PlayMode에서 오류가 나던 것을 수정.
+
+### Added
+- HierarchyIconDrawer에 아이콘 색조 기능 추가.
+- 단일 컴포넌트로 사용 가능한 MonoHierarchyIconDrawer 추가.
+  
 ## [1.1.0] - 2021-06-27
 
 ### Added

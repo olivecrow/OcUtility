@@ -12,4 +12,8 @@ public interface IHierarchyIconDrawable
     /// Default = 15;
     /// </summary>
     int DistanceToText { get; }
+    /// <summary>
+    /// 아이콘의 컬러값.
+    /// </summary>
+    Color IconTint { get; }
 }

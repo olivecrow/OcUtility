@@ -12,3 +12,16 @@
 
 [Custom Package]
 - 오딘 인스펙터 / Odin Inspector
+
+## 설치방법
+
+
+"com.olivecrow.ocutility": "https://<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>@github.com/olivecrow/OcUtility.git#upm"
+
+을 Packages/manifest.json에 붙여넣은 후, 계정에 액세스 하기.
+
+
+## OcPool 사용 방법
+- 프리팹 혹은 소스가 될 오브젝트를 OcPool.MakePool(source, 00) 메서드를 통해 풀 생성.
+- 이후 OcPool.Call(source, in position, in rotation)으로 호출.
+- 혹은 MakePool에서 반환되는 풀을 캐싱한 후, 풀에서 직접 pool.Call(in position, in rotation)을 호출.

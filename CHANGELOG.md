@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [1.1.0] - 2021-06-27
+
+### Added
+- 간단한 오브젝트 풀 기능 추가 
+  - pool = OcPool.
+  - member = PoolMember
+
+
+## [1.0.2] - 2021-06-21
+
+### Added
+- ColorExtension에서 무지개 효과를 내는 Rainbow() 매서드 추가.
+
+### Fixed
+- asmdef 이름 변경
+- EditorComment 선택시, WireCube와 WireSphere가 합쳐진 모습의 기즈모가 그리는 것으로 변경.
+
+## [1.0.1] - 2021-06-14
+### Fixed
+- README 설치방법 수정
+- EditorComment 아이콘이 나오지 않던 문제 해결
+
 ## [1.0.0] - 2021-06-13
 ### Added
 - 에셋 임포트 포스트프로세스

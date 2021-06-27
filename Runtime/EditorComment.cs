@@ -11,6 +11,7 @@ namespace OcUtility
 #if UNITY_EDITOR || DEBUG_BUILD
         public string IconPath => "EditorComment Icon";
         public int DistanceToText => -55;
+        public Color IconTint => Color.white;
         [HideInInspector] GameObject gizmoTarget;
         public Context[] Contexts;
 

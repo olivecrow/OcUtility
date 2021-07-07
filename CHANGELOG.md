@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2021-07-08
+
+### Added
+- ColorExtension에 스트링에서 곧바로 리치 텍스트 컬러를 적용하는 ToRichText 메서드 추가
+- MathExtention에 2차원 평면을 3차원의 수평 평면으로 전환하는 (XY -> XZ) ToXZ 메서드 추가
+
 ## [1.1.2] - 2021-06-29
 
 ### Fixed

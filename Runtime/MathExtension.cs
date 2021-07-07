@@ -21,13 +21,6 @@ public static class MathExtension
         source.z = value;
         return source;
     }
-
-    /// <summary> Vector2의 XY를 Vector3의 XZ로 바꿈. </summary>
-    public static Vector3 ToXZ(this Vector2 source)
-    {
-        var v3 = new Vector3(source.x, 0f, source.y);
-        return v3;
-    }
     
     /// <summary> float 확장. 이 float이 range에 포함되어있으면 true. (include) </summary>
     public static bool IsInRange(this float source, in Vector2 range)

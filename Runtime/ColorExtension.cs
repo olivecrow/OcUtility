@@ -38,11 +38,6 @@ namespace OcUtility
 
             return new Color(r, g, b, a);
         }
-
-        public static string ToRichText(this string source, Color target)
-        {
-            return $"<color=#{ColorUtility.ToHtmlStringRGBA(target)}>{source}</color>";
-        }
     }
 
 }

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4] - 2021-07-010
+
+### Added
+- MathExtention에 각종 수식 확장 및 열거형 확장 추가.
+  - Approximately, IsApproximately
+  - GetMinElementIndex, GetMinElement
+  - GetMaxElementIndex, GetMaxElement
+
 ## [1.1.3] - 2021-07-08
 
 ### Added

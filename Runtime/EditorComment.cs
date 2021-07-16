@@ -6,7 +6,10 @@ using UnityEngine;
 
 namespace OcUtility
 {
-    public class EditorComment : MonoBehaviour, IHierarchyIconDrawable
+    public class EditorComment : MonoBehaviour
+#if UNITY_EDITOR
+        , IHierarchyIconDrawable
+#endif
     {
 #if UNITY_EDITOR || DEBUG_BUILD
         public string IconPath => "EditorComment Icon";
@@ -28,14 +31,33 @@ namespace OcUtility
             Gizmos.DrawWireSphere(transform.position, 0.1f);
         }
 
-
         [Serializable]
         public class Context
         {
             [HideLabel] public string header;
 
-            [TextArea(minLines: 5, maxLines: 20), HideLabel]
+            public enum ContextType
+            {
+                TextArea,
+                CheckRow
+            }
+
+            [EnumToggleButtons, HideLabel] public ContextType Type;
+
+            [TextArea(minLines: 5, maxLines: 20), HideLabel, ShowIf("Type", ContextType.TextArea)]
             public string content;
+
+            [HideLabel, ShowIf("Type", ContextType.CheckRow), TableList]
+            public CheckRow[] checkRow;
+
+            [Serializable]
+            public class CheckRow
+            {
+                [GUIColor("color")] public string text;
+                [TableColumnWidth(25, false)]public bool V;
+
+                Color color => V ? new Color(.5f, 1f, .5f) : Color.white;
+            }
         }
 #endif
     }

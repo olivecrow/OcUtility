@@ -5,7 +5,10 @@ using UnityEngine;
 
 namespace OcUtility
 {
-    public class MonoHierarchyIconDrawer : MonoBehaviour, IHierarchyIconDrawable
+    public class MonoHierarchyIconDrawer : MonoBehaviour
+#if UNITY_EDITOR
+        , IHierarchyIconDrawable
+#endif
     {
 #if UNITY_EDITOR
         public string IconPath => iconPath;

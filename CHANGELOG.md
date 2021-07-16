@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.4] - 2021-07-010
+## [1.1.5] - 2021-07-16
+### Added
+- 간단한 SerializableDictionary 만듬 (OcDictionary)
+  - 활용성이 얼마나 있을지는 모르겠다.
+  
+- 빌드 오류 없도록 Editor asmdef 및 일부 전처리기 수정함.
+
+## [1.1.4] - 2021-07-01
 
 ### Added
 - MathExtention에 각종 수식 확장 및 열거형 확장 추가.

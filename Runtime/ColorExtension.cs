@@ -44,6 +44,19 @@ namespace OcUtility
             return $"<color=#{ColorUtility.ToHtmlStringRGBA(target)}>{source}</color>";
         }
 
+        public static Color Darken(this Color source, float value)
+        {
+            source.r *= value;
+            source.g *= value;
+            source.b *= value;
+
+            return source;
+        }
+
+        public static Color Gray(float rgb, float a = 1f)
+        {
+            return new Color(rgb, rgb, rgb, a);
+        }
     }
 
 }

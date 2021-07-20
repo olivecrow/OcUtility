@@ -11,7 +11,7 @@ namespace OcUtility
         , IHierarchyIconDrawable
 #endif
     {
-#if UNITY_EDITOR || DEBUG_BUILD
+#if DEBUG
         public string IconPath => "EditorComment Icon";
         public int DistanceToText => -55;
         public Color IconTint => Color.white;

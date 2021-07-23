@@ -2,6 +2,7 @@
 
 public interface IHierarchyIconDrawable
 {
+    Texture2D IconTexture { get; }
     /// <summary>
     /// Editor Default Resources 폴더에 접근함. 확장자를 꼭 적어줄것.
     /// </summary>

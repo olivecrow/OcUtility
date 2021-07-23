@@ -42,17 +42,20 @@ namespace OcUtility.Editor
         static Texture2D GetIcon(IHierarchyIconDrawable drawable, out int xRect, out Color tint)
         {
             Texture2D icon;
-            tint = Color.white;
-            xRect = 0;
+            xRect = drawable.DistanceToText;
+            tint = drawable.IconTint;
+
+            if (drawable.IconTexture != null)
+            {
+                icon = drawable.IconTexture;
+                return icon;
+            }
             
             icon = (Texture2D) EditorGUIUtility.Load(drawable.IconPath);
             if (icon == null) icon = Resources.Load<Texture2D>(drawable.IconPath);
             if (icon == null) icon = AssetDatabase.LoadAssetAtPath<Texture2D>(drawable.IconPath);
-
+            
             if (icon == null) return null;
-
-            xRect = drawable.DistanceToText;
-            tint = drawable.IconTint;
             return icon;
         }
         

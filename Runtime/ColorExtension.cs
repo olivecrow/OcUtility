@@ -29,14 +29,14 @@ namespace OcUtility
             source.a = value;
             return source;
         }
-        /// <summary> RBG값을 시간에 따라 변경하게 해서 지속적으로 호출 시 무지개 색깔의 효과가 나오도록 함. 한 번만 호출할 경우엔 임의의 색상이 나오는 효과가 있음. </summary>
-        public static Color Rainbow(float a = 1)
+        /// <summary> RBG값을 시간에 따라 변경하게 해서 지속적으로 호출 시 무지개 색깔의 효과가 나오도록 함.</summary>
+        public static Color Rainbow(float speed = 1)
         {
-            var r = (Mathf.Sin(Time.realtimeSinceStartup) + 1) * 0.5f;
-            var g = (Mathf.Sin(Time.realtimeSinceStartup - 0.666f * Mathf.PI) + 1) * 0.5f;
-            var b = (Mathf.Sin(Time.realtimeSinceStartup - 1.333f * Mathf.PI) + 1) * 0.5f;
+            var r = (Mathf.Sin(Time.realtimeSinceStartup * speed) + 1) * 0.5f;
+            var g = (Mathf.Sin((Time.realtimeSinceStartup - 0.666f * Mathf.PI) * speed) + 1) * 0.5f;
+            var b = (Mathf.Sin((Time.realtimeSinceStartup - 1.333f * Mathf.PI) * speed) + 1) * 0.5f;
 
-            return new Color(r, g, b, a);
+            return new Color(r, g, b);
         }
         
         public static string ToRichText(this string source, Color target)
@@ -57,6 +57,8 @@ namespace OcUtility
         {
             return new Color(rgb, rgb, rgb, a);
         }
+
+        public static Color Random => new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
     }
 
 }

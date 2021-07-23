@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.7] - 2021-07-24
+
+### Fixed
+- ColorExtension의 Ranbow()메서드의 파라미터를 색상 변화 속도로 바꿈. 알파값은 1로 고정.
+- EditorComment에서 OnGizmosSelected에서 무지개색 구체를 그리도록 변경.
+
+### Added
+- MathExtension에 IsInRange 메서드를 float으로만 이루어진 시그니처 추가.
+- HierarchyIconDrawer에 Texture를 직접 할당해서 아이콘을 지정할 수 있는 기능 추가.
+- ColorExtension에 Random 프로퍼티 추가. 임의의 한 색상이 풀력됨.
+
 ## [1.1.6] - 2021-07-20
 ### Added
 - 디버그 로그용 클래스 및 매서드 Printer.Print() 추가.

@@ -1,17 +1,17 @@
+#if UNITY_EDITOR
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEditor;
 
 namespace OcUtility
 {
     public class EditorComment : MonoBehaviour
-#if UNITY_EDITOR
         , IHierarchyIconDrawable
-#endif
     {
-#if DEBUG
+        public Texture2D IconTexture => null;
         public string IconPath => "EditorComment Icon";
         public int DistanceToText => -55;
         public Color IconTint => Color.white;
@@ -26,9 +26,8 @@ namespace OcUtility
 
         void OnDrawGizmosSelected()
         {
-            Gizmos.color = ColorExtension.Rainbow();
-            Gizmos.DrawWireCube(transform.position, Vector3.one * 0.3f);
-            Gizmos.DrawWireSphere(transform.position, 0.1f);
+            Gizmos.color = ColorExtension.Rainbow(5f).SetA(0.54f);
+            Gizmos.DrawSphere(transform.position, 0.1f * transform.localScale.magnitude);
         }
 
         [Serializable]
@@ -59,6 +58,7 @@ namespace OcUtility
                 Color color => V ? new Color(.5f, 1f, .5f) : Color.white;
             }
         }
-#endif
+
     }
 }
+#endif

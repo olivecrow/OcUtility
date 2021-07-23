@@ -36,6 +36,11 @@ public static class MathExtension
     {
         return range.x <= source && source <= range.y;
     }
+    /// <summary> float 확장. 이 float이 range에 포함되어있으면 true. (include) </summary>
+    public static bool IsInRange(this float source, float min, float max)
+    {
+        return min <= source && source <= max;
+    }
 
     /// <summary> value가 beforeRange에서 갖던 비율 만큼 targetRange 범위에서 정의되는 값을 반환함.</summary>
     public static float Remap(this float value, in Vector2 beforeRange, in Vector2 targetRange, bool useClamp = true)

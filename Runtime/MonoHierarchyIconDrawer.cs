@@ -17,7 +17,7 @@ namespace OcUtility
         public Color IconTint => iconTint;
 
         public Texture2D iconTexture;
-        [ShowIf("iconTexture", null)][FilePath]public string iconPath = "EditorComment Icon";
+        [HideIf("iconTexture", null)][FilePath]public string iconPath = "EditorComment Icon";
 
         public int distanceToText = 15;
         public Color iconTint = Color.white;

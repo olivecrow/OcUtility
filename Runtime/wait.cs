@@ -10,6 +10,7 @@ public class wait : MonoBehaviour
 {
     public static wait Instance => _instance;
     static wait _instance;
+    static readonly WaitForFixedUpdate WAIT_FOR_FIXEDUPDATE = new WaitForFixedUpdate();
     [RuntimeInitializeOnLoadMethod]
     static void Init()
     {
@@ -21,6 +22,11 @@ public class wait : MonoBehaviour
     public static Coroutine frame(int frame, Action e)
     {
         return _instance.StartCoroutine(WaitFrame(frame, e));
+    }
+    
+    public static Coroutine fixedFrame(int frame, Action e)
+    {
+        return _instance.StartCoroutine(WaitFixedFrame(frame, e));
     }
     
 #if UNITY_EDITOR
@@ -52,6 +58,13 @@ public class wait : MonoBehaviour
         return _instance.StartCoroutine(WaitUntil(predicate, e));
     }
 
+    static IEnumerator WaitFixedFrame(int frame, Action e)
+    {
+        for (int i = 0; i < frame; i++)
+            yield return WAIT_FOR_FIXEDUPDATE;
+        e.Invoke();
+    }
+    
     static IEnumerator WaitFrame(int frame, Action e)
     {
         for (int i = 0; i < frame; i++)

@@ -28,7 +28,7 @@ namespace OcUtility.Editor
             {
                 var iconGUIContent = new GUIContent(GetIcon(drawables[i], out var xRect, out var tint));
                 var iconDrawRect = new Rect(
-                    rect.width * 0.75f + xRect,
+                    xRect,
                     rect.yMin,
                     rect.width,
                     rect.height);

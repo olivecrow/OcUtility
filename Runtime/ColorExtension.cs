@@ -59,6 +59,11 @@ namespace OcUtility
         }
 
         public static Color Random => new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
+
+        public static Color Invert(this Color source, bool invertAlpha = false)
+        {
+            return new Color(1 - source.r, 1 - source.g, 1 - source.b, invertAlpha ? 1 - source.a : source.a);
+        }
     }
 
 }

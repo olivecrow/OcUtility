@@ -1,8 +1,16 @@
 ﻿# Changelog
-All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.1.9] - TODO...
+### Fixed
+- HierarcyIconDrawer를 Hierarchy창의 왼쪽을 기준으로 하도록 변경.
+  - IHierarchyIconDrawable의 주석 변경
+  - EditorComment의 아이콘 거리 변경
+  
+### Added
+- MathExtension에 float의 자리수 반올림 기능인 Round(int decimal) 추가.
+- MathExtension에 10의 거듭제곱을 곧바로 반환하는 Pow10(int pow) 추가
+- ColorExtension에 색상 반전 기능인 Invert() 추가.
+- NamingUtility 추가.
 
 ## [1.1.8] - 2021-07-28
 ### Added

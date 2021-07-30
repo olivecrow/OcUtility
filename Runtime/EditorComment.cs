@@ -13,7 +13,7 @@ namespace OcUtility
     {
         public Texture2D IconTexture => null;
         public string IconPath => "EditorComment Icon";
-        public int DistanceToText => -55;
+        public int DistanceToText => 250;
         public Color IconTint => Color.white;
         [HideInInspector] GameObject gizmoTarget;
         public Context[] Contexts;

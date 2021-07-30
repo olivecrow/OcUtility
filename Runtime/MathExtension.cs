@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using OcUtility;
 using UnityEngine;
 
 public static class MathExtension
@@ -183,5 +184,55 @@ public static class MathExtension
         var value2 = compare.Invoke(t2);
 
         return value1 > value2 ? t1 : t2;
+    }
+
+    /// <summary> 해당 숫자를 decimalCount번째 자리 소수로 반올림함. decimalCount = 2면 x.xx가 되는 식. </summary>
+    public static float Round(this float source, int decimalCount)
+    {
+        return Mathf.Round(source * Pow10(decimalCount)) / Pow10(decimalCount);
+    }
+
+    /// <summary> 매개 변수값에 따른 10의 거듭제곱을 반환함. Mathf.Pow(10, pow)를 더욱 빨리 쓰도록 한 것.
+    /// 정확도 및 int의 최댓값 제한으로, -5 ~ 19 까지의 값만 매개변수로 사용할 수 있다.</summary>
+    public static float Pow10(int pow)
+    {
+        if (pow < -5)
+        {
+            Printer.Print($"유효하지 않은 매개변수 : {pow}");
+            pow = -5;
+        }
+        else if (pow > 19)
+        {
+            Printer.Print($"유효하지 않은 매개변수 : {pow}");
+            pow = 19;
+        }
+        return pow switch
+        {
+            -5 => 0.00001f,
+            -4 => 0.0001f,
+            -3 => 0.001f,
+            -2 => 0.01f,
+            -1 => 0.1f,
+            1  => 10,
+            2  => 100,
+            3  => 1000,
+            4  => 10000,
+            5  => 100000,
+            6  => 1000000,
+            7  => 10000000,
+            8  => 100000000,
+            9  => 1000000000,
+            10 => 10000000000,
+            11 => 100000000000,
+            12 => 1000000000000,
+            13 => 10000000000000,
+            14 => 100000000000000,
+            15 => 1000000000000000,
+            16 => 10000000000000000,
+            17 => 100000000000000000,
+            18 => 1000000000000000000,
+            19 => 10000000000000000000,
+        _ => 1
+        };
     }
 }

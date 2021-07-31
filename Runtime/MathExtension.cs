@@ -50,6 +50,18 @@ public static class MathExtension
         var result = (targetRange.y - targetRange.x) * ratio + targetRange.x;
         return useClamp ? Mathf.Clamp(result, targetRange.x, targetRange.y) : result;
     }
+    public static float Remap(this float value, float beforeRangeMin, float beforeRangeMax, in Vector2 targetRange, bool useClamp = true)
+    {
+        var ratio = (value - beforeRangeMin) / (beforeRangeMax - beforeRangeMin);
+        var result = (targetRange.y - targetRange.x) * ratio + targetRange.x;
+        return useClamp ? Mathf.Clamp(result, targetRange.x, targetRange.y) : result;
+    }
+    public static float Remap(this float value, in Vector2 beforeRange, float targetRangeMin, float targetRangeMax, bool useClamp = true)
+    {
+        var ratio = (value - beforeRange.x) / (beforeRange.y - beforeRange.x);
+        var result = (targetRangeMax - targetRangeMin) * ratio + targetRangeMin;
+        return useClamp ? Mathf.Clamp(result, targetRangeMin, targetRangeMax) : result;
+    }
     
     /// <summary> value가 beforeRange에서 갖던 비율 만큼 targetRange 범위에서 정의되는 값을 반환함.</summary>
     public static float Remap(this float value, float beforeRangeMin, float beforeRangeMax, float targetRangeMin, float targetRangeMax, bool useClamp = true)
@@ -64,11 +76,20 @@ public static class MathExtension
     {
         return Remap(value, beforeRange, Vector2.up, useClamp);
     }
+    public static float RemapTo01(this float value, float beforeRangeMin, float beforeRangeMax, bool useClamp = true)
+    {
+        return Remap(value, beforeRangeMin, beforeRangeMax, Vector2.up, useClamp);
+    }
         
     /// <summary> 0..1에서 정의된 value를 targetRange의 범위로 정의함</summary>
     public static float RemapFrom01(this float value, in Vector2 targetRange, bool useClamp = true)
     {
         return Remap(value, Vector2.up, targetRange, useClamp);
+    }
+    /// <summary> 0..1에서 정의된 value를 targetRange의 범위로 정의함</summary>
+    public static float RemapFrom01(this float value, float min, float max, bool useClamp = true)
+    {
+        return Remap(value, Vector2.up, min, max, useClamp);
     }
     /// <summary> f1과 f2가 근사치 이내의 차이를 갖는지 판단함. </summary>
     public static bool Approximately(float f1, float f2, float precision = 0.002f)

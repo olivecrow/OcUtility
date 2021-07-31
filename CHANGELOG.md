@@ -1,6 +1,11 @@
 ﻿# Changelog
 
-## [1.1.9] - TODO...
+## [1.1.10] - 2021-07-30
+### Added
+- ColorExtension에 시드값으로 무작위 색상을 출력하는 Color(int) 메서드 추가
+- MathExtension에 Remap 각 종류별로 float만 사용하는 범위 지정 추가.
+
+## [1.1.9] - 2021-07-30
 ### Fixed
 - HierarcyIconDrawer를 Hierarchy창의 왼쪽을 기준으로 하도록 변경.
   - IHierarchyIconDrawable의 주석 변경

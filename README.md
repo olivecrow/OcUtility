@@ -29,3 +29,4 @@
 - 프리팹 혹은 소스가 될 오브젝트를 OcPool.MakePool(source, 00) 메서드를 통해 풀 생성.
 - 이후 OcPool.Call(source, in position, in rotation)으로 호출.
 - 혹은 MakePool에서 반환되는 풀을 캐싱한 후, 풀에서 직접 pool.Call(in position, in rotation)을 호출.
+- 풀 오브젝트는 PoolMember를 상속받아서 WakeUp과 Sleep으로 기능해야함.

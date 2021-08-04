@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.Utilities;
 using UnityEngine;
 
 namespace OcUtility
@@ -77,13 +78,17 @@ namespace OcUtility
         /// 색상의 밝기 범위를 지정하려면 remap에 범위를 추가하면 됨.</summary>
         public static Color Random(int seed, float remapMin = 0, float remapMax = 1)
         {
-            var cSeed = (Mathf.Sin(seed * Mathf.Rad2Deg) + 1) * 0.5f;
-            var r = Mathf.Repeat(cSeed * Mathf.PI, 1);
-            var g = Mathf.Repeat(cSeed +  Mathf.PI, 1);
-            var b = Mathf.Repeat(cSeed * Mathf.Rad2Deg, 1);
+            var rr = Mathf.Sin(seed * Mathf.Rad2Deg - Mathf.Rad2Deg * 1.14f);
+            var gg = Mathf.Sin(seed * Mathf.Rad2Deg * Mathf.Rad2Deg - Mathf.Rad2Deg + 0.666f * Mathf.PI);
+            var bb = Mathf.Cos(seed * Mathf.Rad2Deg * Mathf.Rad2Deg - 1.333f * Mathf.PI);
+            
+            var r = Mathf.Repeat(rr, 1);
+            var g = Mathf.Repeat(gg, 1);
+            var b = Mathf.Repeat(bb, 1);
 
             return new Color(r.RemapFrom01(remapMin, remapMax), g.RemapFrom01(remapMin, remapMax), b.RemapFrom01(remapMin, remapMax));
         }
+
         public static Color Random(int seed, in Vector2 remapRange)
         {
             return Random(seed, remapRange.x, remapRange.y);

@@ -1,6 +1,11 @@
 ﻿# Changelog
 
-## [1.1.10] - 2021-07-30
+## [1.1.11] - 2021-08-04
+### Fixed
+- PoolMember의 WakeUp과 Sleep을 virtual로 변경
+- ReadMe에 OcPool에 대한 설명 추가.
+
+## [1.1.10] - 2021-07-31
 ### Added
 - ColorExtension에 시드값으로 무작위 색상을 출력하는 Color(int) 메서드 추가
 - MathExtension에 Remap 각 종류별로 float만 사용하는 범위 지정 추가.

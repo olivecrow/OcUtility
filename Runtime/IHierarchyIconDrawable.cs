@@ -2,6 +2,7 @@
 
 public interface IHierarchyIconDrawable
 {
+#if UNITY_EDITOR
     Texture2D IconTexture { get; }
     /// <summary>
     /// 아이콘의 위치. Editor Default Resources에 있는 경우, 해당 폴더 하위부터의 경로와 확장자를 적어주고,
@@ -19,4 +20,5 @@ public interface IHierarchyIconDrawable
     /// 아이콘의 컬러값.
     /// </summary>
     Color IconTint { get; }
+#endif
 }

@@ -2,7 +2,7 @@
 
 이건 유니티로 게임 제작을 할때 매번 작성하게 되는 유틸리티 및 C#확장을 미리 정의해놓은 커스텀 패키지임.
 
-### 작성된 유니티 버전 - 2021.1.15f1
+### 작성된 유니티 버전 - 2021.1.16f1
 ### 파이프라인 버전 - URP 11.0.0
 
 ### Dependencies
@@ -15,10 +15,7 @@
 
 ## 설치방법
 
-
-"com.olivecrow.ocutility": "https://<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>@github.com/olivecrow/OcUtility.git#upm"
-혹은
-"com.olivecrow.ocutility": "https://<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>@github.com/olivecrow/OcUtility.git#v0.0.0"
+"com.olivecrow.ocutility": "https://<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>@github.com/olivecrow/OcUtility.git"
 
 을 Packages/manifest.json에 붙여넣은 후, 계정에 액세스 하기.
 

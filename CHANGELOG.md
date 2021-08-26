@@ -1,5 +1,14 @@
 ﻿# Changelog
 
+## [1.1.12] - 2021-08-27
+### Added
+- 네이밍 유틸리티에 Insert기능 추가
+
+### Fixed
+- IHierarchyIconDrawer 빌드 안되는 오류 해결
+- 네이밍 유틸리티에서 에셋 이름까지 변경되도록 변경
+
+
 ## [1.1.11] - 2021-08-04
 ### Fixed
 - PoolMember의 WakeUp과 Sleep을 virtual로 변경

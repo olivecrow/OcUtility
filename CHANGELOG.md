@@ -1,5 +1,10 @@
 ﻿# Changelog
 
+## [1.1.13] - 2021-08-27
+### Added
+- SceneViewController에 마우스 포인터 위치에 레이캐스트를 하는 RaycastSceneView 메서드 추가
+- 여러 오브젝트의 월드 위치 정렬을 해주는 ObjectPlaceUtility 추가
+
 ## [1.1.12] - 2021-08-27
 ### Added
 - 네이밍 유틸리티에 Insert기능 추가

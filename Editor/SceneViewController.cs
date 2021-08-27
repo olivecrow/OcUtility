@@ -163,6 +163,25 @@ public static class SceneViewController
         Debug.LogWarning($"[Alt + +]Time.timeScale => {Time.timeScale}");
     }
     
+    /// <summary>
+    /// 마우스 포인터의 위치에서 씬뷰에 레이캐스트함. 레이캐스트에 뭔가 충돌하면 true를 반환함.
+    /// </summary>
+    /// <param name="hit"></param>
+    /// <returns></returns>
+    public static bool RaycastSceneView(out RaycastHit hit)
+    {
+        return RaycastSceneView(out hit, 1);
+    }
+
+    public static bool RaycastSceneView(out RaycastHit hit, LayerMask mask)
+    {
+        var cam = SceneView.lastActiveSceneView.camera;
+        var startPos = new Vector2(Event.current.mousePosition.x, SceneView.lastActiveSceneView.position.height - Event.current.mousePosition.y);
+        var ray = cam.ScreenPointToRay(startPos);
+        var rayResult = Physics.Raycast(ray, out hit, float.MaxValue, mask);
+        return rayResult;
+    }
+    
     #endregion
 
 

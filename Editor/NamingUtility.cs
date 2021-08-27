@@ -10,8 +10,7 @@ namespace OcUtility.Editor
         [MenuItem("Utility/네이밍 유틸리티")]
         static void Open()
         {
-            var wnd = GetWindow<NamingUtility>();
-            wnd.ShowUtility();
+            var wnd = GetWindow<NamingUtility>(true);
         }
 
         [Button]

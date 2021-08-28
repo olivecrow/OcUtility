@@ -1,5 +1,12 @@
 ﻿# Changelog
 
+## [1.1.14] - 2021-08-27
+### Added
+- 거리 계산을 해주는 DistanceCalculator 추가.
+  - Hierarchy창에서 오른쪽 클릭 후, 거리 계산을 눌러서 실행함.
+- SceneView카메라와 월드의 특정 위치까지의 거리를 반환하는 DistanceFromSceneViewCam 메서드를  
+SceneViewController에 추가.
+
 ## [1.1.13] - 2021-08-27
 ### Added
 - SceneViewController에 마우스 포인터 위치에 레이캐스트를 하는 RaycastSceneView 메서드 추가

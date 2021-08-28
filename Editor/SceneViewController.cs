@@ -6,6 +6,8 @@ namespace OcUtility.Editor
 {
 public static class SceneViewController
 {
+    public static Transform CamTransform => SceneView.lastActiveSceneView.camera.transform; 
+    
     #region Add Rotation
     
     [Shortcut("Tools/SceneViewControl/SceneViewRotateLeft", KeyCode.Keypad4)]
@@ -164,7 +166,7 @@ public static class SceneViewController
     }
     
     /// <summary>
-    /// 마우스 포인터의 위치에서 씬뷰에 레이캐스트함. 레이캐스트에 뭔가 충돌하면 true를 반환함.
+    /// 마우스 포인터의 위치에서 씬뷰에 레이캐스트함. 레이캐스트에 뭔가 충돌하면 true를 반환함. OnSceneGUI에서 사용해야됨.
     /// </summary>
     /// <param name="hit"></param>
     /// <returns></returns>
@@ -175,11 +177,21 @@ public static class SceneViewController
 
     public static bool RaycastSceneView(out RaycastHit hit, LayerMask mask)
     {
-        var cam = SceneView.lastActiveSceneView.camera;
-        var startPos = new Vector2(Event.current.mousePosition.x, SceneView.lastActiveSceneView.position.height - Event.current.mousePosition.y);
-        var ray = cam.ScreenPointToRay(startPos);
+        var ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
         var rayResult = Physics.Raycast(ray, out hit, float.MaxValue, mask);
         return rayResult;
+    }
+    // public static bool RaycastSceneView(out RaycastHit hit, LayerMask mask)
+    // {
+    //     var cam = SceneView.lastActiveSceneView.camera;
+    //     var startPos = new Vector2(Event.current.mousePosition.x, SceneView.lastActiveSceneView.position.height - Event.current.mousePosition.y);
+    //     var ray = cam.ScreenPointToRay(startPos);
+    //     var rayResult = Physics.Raycast(ray, out hit, float.MaxValue, mask);
+    //     return rayResult;
+    // }
+    public static float DistanceFromSceneViewCam(Vector3 worldPos)
+    {
+        return Vector3.Distance(worldPos, CamTransform.position);
     }
     
     #endregion

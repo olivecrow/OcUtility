@@ -23,6 +23,8 @@ namespace OcUtility.Editor
             Same,
             LookAt
         }
+
+        public bool isActive;
         [ShowInInspector][HideLabel]string _count;
         [EnumToggleButtons, LabelWidth(100)]public Shape shape;
 
@@ -78,6 +80,7 @@ namespace OcUtility.Editor
         }
         void Update()
         {
+            if(!isActive) return;
             if(targets == null || targets.Count < 2) return;
             switch (shape)
             {

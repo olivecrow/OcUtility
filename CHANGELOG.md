@@ -1,6 +1,13 @@
 ﻿# Changelog
 
-## [1.1.14] - 2021-08-27
+## [1.1.15] - 2021-09-08
+### Added
+- 값이 변경될 때마다 이벤트를 호출하는 AlarmVar<T> 추가.
+
+### Fixed
+- ObjectPlaceUtility에 작업할 때만 위치를 업데이트 할 수 있다록 isActive 변수 추가
+
+## [1.1.14] - 2021-08-29
 ### Added
 - 거리 계산을 해주는 DistanceCalculator 추가.
   - Hierarchy창에서 오른쪽 클릭 후, 거리 계산을 눌러서 실행함.

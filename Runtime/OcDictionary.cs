@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace OcUtility
 {
@@ -67,13 +68,35 @@ namespace OcUtility
         {
             return GetEnumerator();
         }
+
+        public Dictionary<TKey, TValue> ToDictionary()
+        {
+            var dict = new Dictionary<TKey, TValue>();
+            foreach (var kvPair in this)
+            {
+                dict[kvPair.Key] = kvPair.Value;
+            }
+            return dict;
+        }
     }
     
     [Serializable]
     public class OcKVPair<TKey, TValue>
     {
         public TKey Key;
-        public TValue Value;
+        [HideLabel][VerticalGroup("Value")][HideIf("@Value is UnityEngine.Object")]public TValue Value;
+
+        [VerticalGroup("Value")][ShowInInspector][ShowIf("@Value is UnityEngine.Object")][PreviewField(ObjectFieldAlignment.Left)]
+        [HideLabel][SuffixLabel("@Preview == null ? \"null\" : Preview.name")]
+        Object Preview
+        {
+            get => Value as Object;
+            set
+            {
+                if(value is TValue value1) Value = value1;
+            }
+        }
+        public OcKVPair(){}
 
         public OcKVPair(TKey key, TValue value)
         {

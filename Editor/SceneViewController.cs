@@ -6,8 +6,8 @@ namespace OcUtility.Editor
 {
 public static class SceneViewController
 {
-    public static Transform CamTransform => SceneView.lastActiveSceneView.camera.transform; 
-    
+    public static Transform CamTransform => SceneView.lastActiveSceneView.camera.transform;
+    static RaycastHit[] _tmpRayHits;
     #region Add Rotation
     
     [Shortcut("Tools/SceneViewControl/SceneViewRotateLeft", KeyCode.Keypad4)]
@@ -181,14 +181,16 @@ public static class SceneViewController
         var rayResult = Physics.Raycast(ray, out hit, float.MaxValue, mask);
         return rayResult;
     }
-    // public static bool RaycastSceneView(out RaycastHit hit, LayerMask mask)
-    // {
-    //     var cam = SceneView.lastActiveSceneView.camera;
-    //     var startPos = new Vector2(Event.current.mousePosition.x, SceneView.lastActiveSceneView.position.height - Event.current.mousePosition.y);
-    //     var ray = cam.ScreenPointToRay(startPos);
-    //     var rayResult = Physics.Raycast(ray, out hit, float.MaxValue, mask);
-    //     return rayResult;
-    // }
+
+    public static int RaycastSceneViewAll(out RaycastHit[] hits)
+    {
+        if (_tmpRayHits == null) _tmpRayHits = new RaycastHit[50];
+        var ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+        var result = Physics.RaycastNonAlloc(ray, _tmpRayHits);
+        hits = _tmpRayHits;
+        return result;
+    }
+    
     public static float DistanceFromSceneViewCam(Vector3 worldPos)
     {
         return Vector3.Distance(worldPos, CamTransform.position);

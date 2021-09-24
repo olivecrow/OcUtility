@@ -70,32 +70,30 @@ namespace OcUtility.Editor
             EditorGUILayout.LabelField($"총 거리 : {totalDistance : 0.00}m");
         }
 
-        void UpdateTotalDistance()
-        {
-            
-        }
-
         void OnSceneGUI()
         {
             bool isControlDown = Application.platform == RuntimePlatform.OSXEditor ? Event.current.command : Event.current.control;
             
             if (Event.current.alt && Event.current.OnLeftClick(SceneView.lastActiveSceneView.position))
             {
-                var sceneViewRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-                var result = Physics.Raycast(sceneViewRay, out var hit, float.MaxValue);
+                var result = SceneViewController.RaycastSceneViewAll(out var hits);
+                if(result == 0) return;
+                var highest = hits.GetMaxElement(x => x.point.y);
 
                 var newPoint = new GameObject($"p_{_target.points.Count}");
                 newPoint.hideFlags = HideFlags.HideAndDontSave;
-                newPoint.transform.position = hit.point;
+                newPoint.transform.position = highest.point;
                 _target.points.Add(newPoint.transform);
                 if (distances == null) distances = new List<float>();
                 distances.Add(Vector3.Distance(_target.points[_target.points.Count - 2].position, _target.points[_target.points.Count - 1].position));
             }
             else if (isControlDown && Event.current.button == 1)
             {
-                var sceneViewRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-                var result = Physics.Raycast(sceneViewRay, out var hit, float.MaxValue);
-                _target.points[_target.points.Count - 1].position = hit.point;
+                var result = SceneViewController.RaycastSceneViewAll(out var hits);
+                if(result == 0) return;
+                var highest = hits.GetMaxElement(x => x.point.y);
+                
+                _target.points[_target.points.Count - 1].position = highest.point;
                 
                 if(distances != null && distances.Count > 0)
                 {

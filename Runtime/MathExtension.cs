@@ -7,6 +7,8 @@ using UnityEngine;
 
 public static class MathExtension
 {
+    #region Vector
+
     public static Vector3 NewX(this Vector3 source, float value)
     {
         source.x = value;
@@ -31,17 +33,84 @@ public static class MathExtension
         var v3 = new Vector3(source.x,0f,source.y);
         return v3;
     }
+
+    /// <summary> 벡터의 각 요소를 더함.</summary>
+    public static float Sum(this Vector2 source)
+        => source.x + source.y;
+    /// <summary> 벡터의 각 요소를 더함.</summary>
+    public static float Sum(this Vector3 source)
+        => source.x + source.y + source.z;
+    /// <summary> 벡터의 각 요소를 더함.</summary>
+    public static float Sum(this Vector4 source)
+        => source.x + source.y + source.z + source.w;
     
+    /// <summary> 벡터의 각 요소를 곱함.</summary>
+    public static float SelfMultiply(this Vector2 source)
+        => source.x * source.y;
+    /// <summary> 벡터의 각 요소를 곱함.</summary>
+    public static float SelfMultiply(this Vector3 source)
+        => source.x * source.y * source.z;
+    /// <summary> 벡터의 각 요소를 곱함.</summary>
+    public static float SelfMultiply(this Vector4 source)
+        => source.x * source.y * source.z * source.w;
+
+    #endregion
+
+    #region VectorInt
+
+    public static Vector3Int NewX(this Vector3Int source, int value)
+    {
+        source.x = value;
+        return source;
+    }
+
+    public static Vector3Int NewY(this Vector3Int source, int value)
+    {
+        source.y = value;
+        return source;
+    }
+
+    public static Vector3Int NewZ(this Vector3Int source, int value)
+    {
+        source.z = value;
+        return source;
+    }
+    
+    ///<summary> Vector2의 XY를 Vector3의 XZ로 바꿈.</summary>
+    public static Vector3Int ToXZ (this Vector2Int source)
+    {
+        var v3 = new Vector3Int(source.x,0,source.y);
+        return v3;
+    }
+
+    /// <summary> 벡터의 각 요소를 더함.</summary>
+    public static int Sum(this Vector2Int source)
+        => source.x + source.y;
+    /// <summary> 벡터의 각 요소를 더함.</summary>
+    public static int Sum(this Vector3Int source)
+        => source.x + source.y + source.z;
+    
+    /// <summary> 벡터의 각 요소를 곱함.</summary>
+    public static int SelfMultiply(this Vector2Int source)
+        => source.x * source.y;
+    /// <summary> 벡터의 각 요소를 곱함.</summary>
+    public static int SelfMultiply(this Vector3Int source)
+        => source.x * source.y * source.z;
+    
+    #endregion
+
+
+
+    #region (Float) IsInRange, Remap
+
     /// <summary> float 확장. 이 float이 range에 포함되어있으면 true. (include) </summary>
     public static bool IsInRange(this float source, in Vector2 range)
-    {
-        return range.x <= source && source <= range.y;
-    }
+        => range.x <= source && source <= range.y;
+    
     /// <summary> float 확장. 이 float이 range에 포함되어있으면 true. (include) </summary>
     public static bool IsInRange(this float source, float min, float max)
-    {
-        return min <= source && source <= max;
-    }
+        => min <= source && source <= max;
+    
 
     /// <summary> value가 beforeRange에서 갖던 비율 만큼 targetRange 범위에서 정의되는 값을 반환함.</summary>
     public static float Remap(this float value, in Vector2 beforeRange, in Vector2 targetRange, bool useClamp = true)
@@ -70,27 +139,115 @@ public static class MathExtension
         var result = (targetRangeMax - targetRangeMin) * ratio + targetRangeMin;
         return useClamp ? Mathf.Clamp(result, targetRangeMin, targetRangeMax) : result;
     }
-        
     /// <summary> value가 beforeRange에서 갖던 비율 만큼 0..1 범위에서 정의되는 값을 반환함.</summary>
     public static float RemapTo01(this float value, in Vector2 beforeRange, bool useClamp = true)
-    {
-        return Remap(value, beforeRange, Vector2.up, useClamp);
-    }
+        => Remap(value, beforeRange, Vector2.up, useClamp);
+    
     public static float RemapTo01(this float value, float beforeRangeMin, float beforeRangeMax, bool useClamp = true)
-    {
-        return Remap(value, beforeRangeMin, beforeRangeMax, Vector2.up, useClamp);
-    }
+        => Remap(value, beforeRangeMin, beforeRangeMax, Vector2.up, useClamp);
+    
         
     /// <summary> 0..1에서 정의된 value를 targetRange의 범위로 정의함</summary>
     public static float RemapFrom01(this float value, in Vector2 targetRange, bool useClamp = true)
-    {
-        return Remap(value, Vector2.up, targetRange, useClamp);
-    }
+        => Remap(value, Vector2.up, targetRange, useClamp);
+    
     /// <summary> 0..1에서 정의된 value를 targetRange의 범위로 정의함</summary>
     public static float RemapFrom01(this float value, float min, float max, bool useClamp = true)
-    {
-        return Remap(value, Vector2.up, min, max, useClamp);
-    }
+        => Remap(value, Vector2.up, min, max, useClamp);
+
+    #endregion
+
+
+
+    #region (Int) IsInRange, Remap
+
+    /// <summary> int 확장. range에 포함되어있으면 true. (include) </summary>
+    public static bool IsInRange(this int source, in Vector2 range)
+        => range.x <= source && source <= range.y;
+    
+    /// <summary> int 확장. 이 float이 range에 포함되어있으면 true. (include) </summary>
+    public static bool IsInRange(this int source, float min, float max)
+        => min <= source && source <= max;
+    
+
+    /// <summary> value가 beforeRange에서 갖던 비율 만큼 targetRange 범위에서 정의되는 값을 반환함.</summary>
+    public static float Remap(this int value, in Vector2 beforeRange, in Vector2 targetRange, bool useClamp = true) 
+        => Remap((float)value, beforeRange, targetRange, useClamp);
+
+    public static float Remap(this int value, float beforeRangeMin, float beforeRangeMax, in Vector2 targetRange, bool useClamp = true)
+        => Remap((float)value, beforeRangeMin, beforeRangeMax, targetRange, useClamp);
+
+    public static float Remap(this int value, in Vector2 beforeRange, float targetRangeMin, float targetRangeMax, bool useClamp = true)
+        => Remap((float)value, beforeRange, targetRangeMin, targetRangeMax, useClamp);
+
+    /// <summary> value가 beforeRange에서 갖던 비율 만큼 targetRange 범위에서 정의되는 값을 반환함.</summary>
+    public static float Remap(this int value, float beforeRangeMin, float beforeRangeMax, float targetRangeMin, float targetRangeMax, bool useClamp = true)
+        => Remap((float)value, beforeRangeMin, beforeRangeMax, targetRangeMin, targetRangeMax, useClamp);
+    /// <summary> value가 beforeRange에서 갖던 비율 만큼 0..1 범위에서 정의되는 값을 반환함.</summary>
+    public static float RemapTo01(this int value, in Vector2 beforeRange, bool useClamp = true)
+        => Remap(value, beforeRange, Vector2.up, useClamp);
+    
+    public static float RemapTo01(this int value, float beforeRangeMin, float beforeRangeMax, bool useClamp = true)
+        => Remap(value, beforeRangeMin, beforeRangeMax, Vector2.up, useClamp);
+    
+        
+    /// <summary> 0..1에서 정의된 value를 targetRange의 범위로 정의함</summary>
+    public static float RemapFrom01(this int value, in Vector2 targetRange, bool useClamp = true)
+        => Remap(value, Vector2.up, targetRange, useClamp);
+    
+    /// <summary> 0..1에서 정의된 value를 targetRange의 범위로 정의함</summary>
+    public static float RemapFrom01(this int value, float min, float max, bool useClamp = true)
+        => Remap(value, Vector2.up, min, max, useClamp);
+
+    #endregion
+
+
+
+    #region (Double) IsInRange, Remap
+
+    /// <summary> double 확장. range에 포함되어있으면 true. (include) </summary>
+    public static bool IsInRange(this double source, in Vector2 range)
+        => range.x <= source && source <= range.y;
+    
+    /// <summary> double 확장. 이 float이 range에 포함되어있으면 true. (include) </summary>
+    public static bool IsInRange(this double source, float min, float max)
+        => min <= source && source <= max;
+    
+
+    /// <summary> value가 beforeRange에서 갖던 비율 만큼 targetRange 범위에서 정의되는 값을 반환함.</summary>
+    public static float Remap(this double value, in Vector2 beforeRange, in Vector2 targetRange, bool useClamp = true) 
+        => Remap((float)value, beforeRange, targetRange, useClamp);
+
+    public static float Remap(this double value, float beforeRangeMin, float beforeRangeMax, in Vector2 targetRange, bool useClamp = true)
+        => Remap((float)value, beforeRangeMin, beforeRangeMax, targetRange, useClamp);
+
+    public static float Remap(this double value, in Vector2 beforeRange, float targetRangeMin, float targetRangeMax, bool useClamp = true)
+        => Remap((float)value, beforeRange, targetRangeMin, targetRangeMax, useClamp);
+
+    /// <summary> value가 beforeRange에서 갖던 비율 만큼 targetRange 범위에서 정의되는 값을 반환함.</summary>
+    public static float Remap(this double value, float beforeRangeMin, float beforeRangeMax, float targetRangeMin, float targetRangeMax, bool useClamp = true)
+        => Remap((float)value, beforeRangeMin, beforeRangeMax, targetRangeMin, targetRangeMax, useClamp);
+    /// <summary> value가 beforeRange에서 갖던 비율 만큼 0..1 범위에서 정의되는 값을 반환함.</summary>
+    public static float RemapTo01(this double value, in Vector2 beforeRange, bool useClamp = true)
+        => Remap(value, beforeRange, Vector2.up, useClamp);
+    
+    public static float RemapTo01(this double value, float beforeRangeMin, float beforeRangeMax, bool useClamp = true)
+        => Remap(value, beforeRangeMin, beforeRangeMax, Vector2.up, useClamp);
+    
+        
+    /// <summary> 0..1에서 정의된 value를 targetRange의 범위로 정의함</summary>
+    public static float RemapFrom01(this double value, in Vector2 targetRange, bool useClamp = true)
+        => Remap(value, Vector2.up, targetRange, useClamp);
+    
+    /// <summary> 0..1에서 정의된 value를 targetRange의 범위로 정의함</summary>
+    public static float RemapFrom01(this double value, float min, float max, bool useClamp = true)
+        => Remap(value, Vector2.up, min, max, useClamp);
+
+    #endregion
+    
+    
+    
+    
     /// <summary> f1과 f2가 근사치 이내의 차이를 갖는지 판단함. </summary>
     public static bool Approximately(float f1, float f2, float precision = 0.002f)
     {

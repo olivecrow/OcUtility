@@ -14,7 +14,6 @@ namespace OcUtility
 
         void Awake()
         {
-            print("ADD");
             points = new List<Transform>();
             points.Add(transform);
         }

@@ -1,5 +1,18 @@
 ﻿# Changelog
 
+## [1.1.16] - 2021-09-24
+### Added
+- SceneViewController에 RaycastHit을 최대 50개까지 반환할 수 있는 RaycastSceneViewAll 메서드 추가.
+- MathExtension에서 여러 타입의 확장 지원 및 기능 추가
+  - VectorInt확장 추가
+  - Reman, IsInRange의 int, double 확장 추가
+  - Vector 확장 (Sum, SelfMultiply) 추가
+- OcDictionary를 일반 Dictionary로 변환해주는 ToDictionary메서드 추가.
+
+### Fixed
+- DistanceCalulator에서 포인트 설정시, 제일 높은 표면을 가리키도록 변경
+- OcDictionary에서 Value가 UnityEngine.Object인 경우, 해당 객체의 프리뷰로 렌더링함.
+
 ## [1.1.15] - 2021-09-08
 ### Added
 - 값이 변경될 때마다 이벤트를 호출하는 AlarmVar<T> 추가.

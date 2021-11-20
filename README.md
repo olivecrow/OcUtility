@@ -15,7 +15,7 @@
 
 ## 설치방법
 
-"com.olivecrow.ocutility": "https://<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>@github.com/olivecrow/OcUtility.git"
+"com.olivecrow.ocutility": "https://<개인 엑세스 토큰(꺽쇠 포함)>@github.com/olivecrow/OcUtility.git"
 
 을 Packages/manifest.json에 붙여넣은 후, 계정에 액세스 하기.
 

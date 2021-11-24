@@ -11,7 +11,6 @@ namespace OcUtility
     public class OcDictionary<TKey, TValue> : IEnumerable<OcKVPair<TKey, TValue>>
     {
         [TableList(AlwaysExpanded = true)]public List<OcKVPair<TKey, TValue>> pairs;
-
         public OcDictionary()
         {
             pairs = new List<OcKVPair<TKey, TValue>>();
@@ -32,7 +31,6 @@ namespace OcUtility
 
             }
         }
-
         public bool ContainsKey(TKey key)
         {
             var exist = FindPair(key);
@@ -47,6 +45,50 @@ namespace OcUtility
             }
 
             return false;
+        }
+
+        public bool Remove(TKey key)
+        {
+            for (int i = 0; i < pairs.Count; i++)
+            {
+                if (pairs[i].Key.Equals(key))
+                {
+                    pairs.RemoveAt(i);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public int RemoveAll(TKey key)
+        {
+            var count = 0;
+            for (int i = pairs.Count - 1; i > 0 ; i--)
+            {
+                if (pairs[i].Key.Equals(key))
+                {
+                    pairs.RemoveAt(i);
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        public int RemoveAll(TValue value)
+        {
+            var count = 0;
+            for (int i = pairs.Count - 1; i > 0 ; i--)
+            {
+                if (pairs[i].Value.Equals(value))
+                {
+                    pairs.RemoveAt(i);
+                    count++;
+                }
+            }
+
+            return count;
         }
 
         OcKVPair<TKey, TValue> FindPair(TKey key)

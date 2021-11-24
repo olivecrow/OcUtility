@@ -1,5 +1,15 @@
 ﻿# Changelog
 
+## [1.1.17] - 2021-11-25
+
+### Added
+- 네이밍 유틸리티에 클론 넘버 없애는 기능 추가.
+- OcDictionary에 Remove 및 RemoveAll 추가.
+
+### Fixed
+- 네이밍 유틸리티 Undo 가능하도록 수정.
+
+
 ## [1.1.16] - 2021-09-24
 ### Added
 - SceneViewController에 RaycastHit을 최대 50개까지 반환할 수 있는 RaycastSceneViewAll 메서드 추가.

@@ -70,8 +70,8 @@ namespace OcUtility.Editor
                 
                 if(split.Length == 1) continue;
                 var lastBlock = split[split.Length - 1];
-                if(!lastBlock.StartsWith('(')) continue;
-                if(!lastBlock.EndsWith(')')) continue;
+                if(!lastBlock.StartsWith("(")) continue;
+                if(!lastBlock.EndsWith(")")) continue;
                 var number = lastBlock.Substring(1, lastBlock.Length - 2);
                 if(!int.TryParse(number, out var num)) continue;
                 

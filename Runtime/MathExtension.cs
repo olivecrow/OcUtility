@@ -244,10 +244,9 @@ public static class MathExtension
         => Remap(value, Vector2.up, min, max, useClamp);
 
     #endregion
-    
-    
-    
-    
+
+
+
     /// <summary> f1과 f2가 근사치 이내의 차이를 갖는지 판단함. </summary>
     public static bool Approximately(float f1, float f2, float precision = 0.002f)
     {

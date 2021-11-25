@@ -1,5 +1,10 @@
 ﻿# Changelog
 
+## [1.1.19] - 2021-11-25
+### Added
+- OcDictionary에 Count 프로퍼티 추가
+- Printer에 Ray 및 Line 메서드 추가
+
 ## [1.1.18] - 2021-11-25
 ### Fixed
 - 네이밍 유틸리티의 C# 호환성 문제 수정.

@@ -11,6 +11,7 @@ namespace OcUtility
     public class OcDictionary<TKey, TValue> : IEnumerable<OcKVPair<TKey, TValue>>
     {
         [TableList(AlwaysExpanded = true)]public List<OcKVPair<TKey, TValue>> pairs;
+        public int Count => pairs.Count;
         public OcDictionary()
         {
             pairs = new List<OcKVPair<TKey, TValue>>();

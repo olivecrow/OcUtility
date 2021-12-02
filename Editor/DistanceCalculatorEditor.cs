@@ -19,8 +19,13 @@ namespace OcUtility.Editor
         {
             var point = new GameObject("DistanceCalculator_point 0", typeof(DistanceCalculator));
             point.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSave;
-            Selection.activeGameObject = point;
             
+            if(Selection.activeGameObject != null)
+            {
+                point.transform.position = Selection.activeGameObject.transform.position;
+            }
+            
+            Selection.activeGameObject = point;
         }
         protected void Awake()
         {
@@ -30,7 +35,6 @@ namespace OcUtility.Editor
 
         void OnSelectionChanged()
         {
-            Printer.Print("OnSelection Changed");
             if (_target == null)
             {
                 var t = FindObjectsOfType<DistanceCalculator>();
@@ -66,12 +70,30 @@ namespace OcUtility.Editor
                 "* MacOS 에선 Ctrl대신 Command를 사용함.",
                 MessageType.Info);
             
-            var totalDistance = distances == null || distances.Count == 0 ? 0 : distances.Sum(x => x); 
+            var totalDistance = distances == null || distances.Count == 0 ? 0 : distances.Sum(x => x);
+            var camDistance = SceneViewController.DistanceFromSceneViewCam(_target.points[0].position);
             EditorGUILayout.LabelField($"총 거리 : {totalDistance : 0.00}m");
+            EditorGUILayout.LabelField($"마지막 지점과 카메라 까지의 거리 : {camDistance: 0.00}m");
         }
 
         void OnSceneGUI()
         {
+            Handles.BeginGUI();
+            var camDistance = SceneViewController.DistanceFromSceneViewCam(_target.points[0].position);
+            var sceneViewSize = SceneView.lastActiveSceneView.position.size;
+            var alignCenter = new GUIStyle
+            {
+                alignment = TextAnchor.MiddleCenter,
+                normal =
+                {
+                    textColor = Color.white
+                },
+                fontSize = 20
+            };
+            var rect = new Rect(sceneViewSize / 2 + new Vector2(0, sceneViewSize.y * 0.4f), Vector2.one);
+            GUI.Label(rect, $"마지막 지점과 카메라 까지의 거리 : {camDistance : 0.00}m", alignCenter);
+            Handles.EndGUI();
+            
             bool isControlDown = Application.platform == RuntimePlatform.OSXEditor ? Event.current.command : Event.current.control;
             
             if (Event.current.alt && Event.current.OnLeftClick(SceneView.lastActiveSceneView.position))

@@ -37,6 +37,13 @@ namespace OcUtility
             if (GlobalPool.ContainsKey(source))
             {
                 var targetPool = GlobalPool[source];
+                
+                // 씬이 변경되는 등의 이유로 참조가 Missing 상태일 경우 다시 풀을 재생성함.
+                if (targetPool._folder == null)
+                {
+                    GlobalPool[source] = MakePool(source, targetPool._initialCount);
+                    targetPool = GlobalPool[source];
+                }
                 return targetPool.Call(in position, in rotation);
             }
 

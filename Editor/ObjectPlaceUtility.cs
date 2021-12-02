@@ -135,5 +135,30 @@ namespace OcUtility.Editor
                     throw new ArgumentOutOfRangeException();
             }
         }
+
+        [MenuItem("GameObject/루트 오브젝트를 가운데로")]
+        static void RootToCenter()
+        {
+            if(Selection.activeGameObject == null) return;
+            var root = Selection.activeGameObject.transform;
+            var undoIndex = Undo.GetCurrentGroup();
+            Undo.RecordObject(root, "루트 오브젝트를 가운데로");
+            var posSum = Vector3.zero;
+            var cachedPos = new List<Vector3>();
+            for (int i = 0; i < root.childCount; i++)
+            {
+                posSum += root.GetChild(i).position;
+                cachedPos.Add(root.GetChild(i).position);
+            }
+
+            var center = posSum / root.childCount;
+            root.transform.position = center;
+            for (int i = 0; i < root.childCount; i++)
+            {
+                Undo.RecordObject(root.GetChild(i), "루트 오브젝트를 가운데로");
+                root.GetChild(i).position = cachedPos[i];
+                Undo.CollapseUndoOperations(undoIndex);
+            }
+        }
     }
 }

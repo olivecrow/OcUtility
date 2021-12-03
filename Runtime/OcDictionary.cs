@@ -92,6 +92,21 @@ namespace OcUtility
             return count;
         }
 
+        public void Clear()
+        {
+            pairs.Clear();
+        }
+
+        public void Sort(Comparison<OcKVPair<TKey, TValue>> comparison)
+        {
+            pairs.Sort(comparison);
+        }
+
+        public void Sort(IComparer<OcKVPair<TKey, TValue>> comparer)
+        {
+            pairs.Sort(comparer);
+        }
+
         OcKVPair<TKey, TValue> FindPair(TKey key)
         {
             for (int i = 0; i < pairs.Count; i++)

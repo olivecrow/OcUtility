@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -7,6 +8,12 @@ namespace OcUtility
 {
     public class Printer
     {
+        [RuntimeInitializeOnLoadMethod]
+        static void Init()
+        {
+            var guiDrawer = new GameObject("GUI Drawer // instantiated by OcUtility.Printer").AddComponent<GUIDrawer>();
+        }
+        
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         public static void Print(object value, LogType type = LogType.Log)
         {
@@ -93,5 +100,50 @@ namespace OcUtility
             Debug.DrawLine(start, end, color, duration, depthTest);
         }
 
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        public static void WorldGUI(
+            string text, 
+            in Vector3 worldPos, 
+            in int size = 12, 
+            TextAnchor align = TextAnchor.MiddleCenter,
+            bool drawOnGizmos = false,
+            bool dynamicSizing = true)
+        {
+            if(GUIDrawer.Instance == null) return;
+            var gui = new WorldGUI(text, worldPos, size)
+            {
+                Alignment = align,
+                drawOnGizmos = drawOnGizmos,
+                dynamicSizing = dynamicSizing
+            };
+            GUIDrawer.Instance.guis.Enqueue(gui);
+        }
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        public static void WorldGUI(string text, in Vector3 worldPos, in int size, TextAnchor align, Color color)
+        {
+            if(GUIDrawer.Instance == null) return;
+            var gui = new WorldGUI(text, worldPos, size)
+            {
+                Alignment = align,
+                color = color
+            };
+            GUIDrawer.Instance.guis.Enqueue(gui);
+        }
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        public static void WorldGUI(string text, in Vector3 worldPos, Color color, in int size = 12,
+            TextAnchor align = TextAnchor.MiddleCenter,
+            bool drawOnGizmos = false,
+            bool dynamicSizing = true)
+        {
+            if(GUIDrawer.Instance == null) return;
+            var gui = new WorldGUI(text, worldPos, size)
+            {
+                color = color,
+                Alignment = align,
+                drawOnGizmos = drawOnGizmos,
+                dynamicSizing = dynamicSizing
+            };
+            GUIDrawer.Instance.guis.Enqueue(gui);
+        }
     }
 }

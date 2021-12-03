@@ -32,7 +32,12 @@ namespace OcUtility.Editor
         public Vector3 start;
         [HorizontalGroup("line"), LabelText("~"), LabelWidth(50)] [HideIf(nameof(shape), Shape.Circle)]
         public Vector3 end;
+        
+        
 
+        [HorizontalGroup("circle"), LabelWidth(100)][ShowIf(nameof(shape), Shape.Circle)]
+        public Vector3 center = new Vector3(0,0,0);
+        
         [HorizontalGroup("circle"), LabelWidth(100)][ShowIf(nameof(shape), Shape.Circle)]
         public Vector3 axis = new Vector3(0,1,0);
 
@@ -70,8 +75,6 @@ namespace OcUtility.Editor
             base.OnEnable();
             OnSelectionChange();
         }
-
-
 
         void OnSelectionChange()
         {
@@ -116,6 +119,7 @@ namespace OcUtility.Editor
                     throw new ArgumentOutOfRangeException();
             }
         }
+        
         void SetRotation(Transform target)
         {
             switch (rotationType)
@@ -160,5 +164,6 @@ namespace OcUtility.Editor
                 Undo.CollapseUndoOperations(undoIndex);
             }
         }
+        
     }
 }

@@ -1,5 +1,17 @@
 ﻿# Changelog
 
+## [1.1.21] - 2021-12-04
+### Added
+- Printer에 월드 위치 GUI를 표시할 수 있는 WorldGUI 메서드 추가
+  - GUIDrawer라는 오브젝트를 플레이 모드 진입시 생성함
+  - 빌드, 에디터 모두에서 사용 가능
+  - Development 빌드가 아닌 Release 빌드에선 자동으로 해제됨
+  - SceneView에서도 같은 gui를 볼 수 있으나, 기본적으로 비활성화 되어있고, 위치가 조금 달라짐
+- OcDictionary에 Sort, Clear 기능 추가
+
+### Fixed
+- ObjectPlaceUtility에서 Circle 정렬 시, Center 위치를 지정할 수 있도록 수정함
+
 ## [1.1.20] - 2021-12-03
 ### Added
 - 거리 계산에 마지막 포인트와 씬 뷰 카메라까지의 거리를 표시함

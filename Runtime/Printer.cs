@@ -104,7 +104,7 @@ namespace OcUtility
         public static void WorldGUI(
             string text, 
             in Vector3 worldPos, 
-            in int size = 12, 
+            in int size = 15, 
             TextAnchor align = TextAnchor.MiddleCenter,
             bool drawOnGizmos = false,
             bool dynamicSizing = true)
@@ -112,33 +112,6 @@ namespace OcUtility
             if(GUIDrawer.Instance == null) return;
             var gui = new WorldGUI(text, worldPos, size)
             {
-                Alignment = align,
-                drawOnGizmos = drawOnGizmos,
-                dynamicSizing = dynamicSizing
-            };
-            GUIDrawer.Instance.guis.Enqueue(gui);
-        }
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void WorldGUI(string text, in Vector3 worldPos, in int size, TextAnchor align, Color color)
-        {
-            if(GUIDrawer.Instance == null) return;
-            var gui = new WorldGUI(text, worldPos, size)
-            {
-                Alignment = align,
-                color = color
-            };
-            GUIDrawer.Instance.guis.Enqueue(gui);
-        }
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
-        public static void WorldGUI(string text, in Vector3 worldPos, Color color, in int size = 12,
-            TextAnchor align = TextAnchor.MiddleCenter,
-            bool drawOnGizmos = false,
-            bool dynamicSizing = true)
-        {
-            if(GUIDrawer.Instance == null) return;
-            var gui = new WorldGUI(text, worldPos, size)
-            {
-                color = color,
                 Alignment = align,
                 drawOnGizmos = drawOnGizmos,
                 dynamicSizing = dynamicSizing

@@ -13,11 +13,10 @@ namespace OcUtility
         public string text;
         public int size;
         public Vector3 worldPos;
-        public Color color = Color.white;
         public TextAnchor Alignment = TextAnchor.MiddleCenter;
         public bool drawOnGizmos;
         public bool dynamicSizing = true;
-        public WorldGUI(string text, Vector3 worldPos, int size = 12)
+        public WorldGUI(string text, Vector3 worldPos, int size)
         {
             this.text = text;
             this.size = size;
@@ -30,7 +29,7 @@ namespace OcUtility
         static GUIDrawer _instance;
         public Queue<WorldGUI> guis = new Queue<WorldGUI>();
         List<WorldGUI> internalGuis = new List<WorldGUI>();
-
+        object _gameView;
         void Awake()
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -61,12 +60,20 @@ namespace OcUtility
         {
             Assembly asm = Assembly.GetAssembly(typeof(UnityEditor.Editor));
             Type type = asm.GetType("UnityEditor.GameView");
+            if (_gameView == null)
+            {
+                _gameView = EditorWindow.GetWindow(type);
+            }
+
+            if (_gameView == null) return false;
+            
             if (type != null)
             {
-                EditorWindow window = EditorWindow.GetWindow(type);
+                if (EditorWindow.focusedWindow != SceneView.lastActiveSceneView) return false;
+                // EditorWindow.
                 FieldInfo gizmosField = type.GetField("m_Gizmos", BindingFlags.NonPublic | BindingFlags.Instance);
                 if(gizmosField != null)
-                    return (bool)gizmosField.GetValue(window);
+                    return (bool)gizmosField.GetValue(_gameView);
             }
             return false;
         }
@@ -88,15 +95,11 @@ namespace OcUtility
                 
                 var fontSize = gui.dynamicSizing ? (int)Mathf.Lerp(gui.size, 5, wtsPos.z / 50) : gui.size;
                 if(fontSize < 8) return;
-
+        
                 var style = new GUIStyle()
                 {
                     fontSize = fontSize,
                     richText = true,
-                    normal =
-                    {
-                        textColor = gui.color
-                    },
                     alignment = gui.Alignment
                 };
                 Handles.Label(gui.worldPos + new Vector3(0, 0.2f), gui.text, style);
@@ -114,7 +117,7 @@ namespace OcUtility
                    wtsPos.y < 0 || wtsPos.y > Screen.height ||
                    wtsPos.z < 0) continue;
                 var rect = new Rect(new Vector2(wtsPos.x, Screen.height-wtsPos.y), new Vector2(100, 20));
-
+        
                 var fontSize = gui.dynamicSizing ? (int)Mathf.Lerp(gui.size, 5, wtsPos.z / 50) : gui.size;
                 if(fontSize < 8) return;
                 
@@ -122,10 +125,6 @@ namespace OcUtility
                 {
                     fontSize = fontSize,
                     richText = true,
-                    normal =
-                    {
-                        textColor = gui.color
-                    },
                     alignment = gui.Alignment
                 };
                 GUI.Label(rect, gui.text, style);

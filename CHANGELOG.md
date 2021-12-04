@@ -1,5 +1,13 @@
 ﻿# Changelog
 
+## [1.1.22] - 2021-12-04
+### Fixed
+- GUIDrawer때문에 플레이모드 진입 시, 다른 프로그램을 유니티 위로 띄우지 못하던 버그 수정
+- Printer.WorldGUI 메서드 시그니처를 1개로 줄임
+  - Color 인수를 없애고 RichText로만 작동하게 함
+- ColorExtension의 ToRichText를 Obsolete 표기하고 같은 기능의 Rich 메서드를 추가함
+  - 길이가 길어서 걍 줄인거.
+
 ## [1.1.21] - 2021-12-04
 ### Added
 - Printer에 월드 위치 GUI를 표시할 수 있는 WorldGUI 메서드 추가

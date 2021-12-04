@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Sirenix.Utilities;
@@ -40,7 +41,12 @@ namespace OcUtility
             return new Color(r, g, b);
         }
         
-        public static string ToRichText(this string source, Color target)
+        [Obsolete]public static string ToRichText(this string source, Color target)
+        {
+            return $"<color=#{ColorUtility.ToHtmlStringRGBA(target)}>{source}</color>";
+        }
+
+        public static string Rich(this string source, Color target)
         {
             return $"<color=#{ColorUtility.ToHtmlStringRGBA(target)}>{source}</color>";
         }

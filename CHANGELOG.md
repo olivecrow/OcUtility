@@ -1,5 +1,14 @@
 ﻿# Changelog
 
+## [1.1.23] - 2021-12-07
+### Added
+- Printer에 DrawDonut메서드 추가.
+  - 각도와 거리 범위를 도넛 형태의 기즈모로 표현 가능
+
+### Fixed
+- Printer.WorldGUI를 Obsolete표기하고, Printer.Label을 새로 만듬
+  - 기존 GUI.Label 및 Handles.Label과 시그니처를 비슷하게 함
+
 ## [1.1.22] - 2021-12-04
 ### Fixed
 - GUIDrawer때문에 플레이모드 진입 시, 다른 프로그램을 유니티 위로 띄우지 못하던 버그 수정

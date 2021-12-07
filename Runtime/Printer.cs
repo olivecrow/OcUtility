@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEditor;
 using UnityEngine;
@@ -8,12 +9,10 @@ namespace OcUtility
 {
     public class Printer
     {
-        [RuntimeInitializeOnLoadMethod]
-        static void Init()
-        {
-            var guiDrawer = new GameObject("GUI Drawer // instantiated by OcUtility.Printer").AddComponent<GUIDrawer>();
-        }
-        
+        static List<Vector3> giz_DonutOutVert = new List<Vector3>();
+        static List<Vector3> giz_DonutInVert = new List<Vector3>();
+        static Material giz_Mat;
+
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         public static void Print(object value, LogType type = LogType.Log)
         {
@@ -100,7 +99,7 @@ namespace OcUtility
             Debug.DrawLine(start, end, color, duration, depthTest);
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")][Obsolete]
         public static void WorldGUI(
             string text, 
             in Vector3 worldPos, 
@@ -110,13 +109,181 @@ namespace OcUtility
             bool dynamicSizing = true)
         {
             if(GUIDrawer.Instance == null) return;
-            var gui = new WorldGUI(text, worldPos, size)
+            var style = new GUIStyle()
             {
-                Alignment = align,
+                normal = { textColor = Color.white },
+                richText = true,
+                fontSize = size,
+                alignment = TextAnchor.MiddleCenter
+            };
+            
+            var gui = new WorldGUI(text, worldPos, style)
+            {
                 drawOnGizmos = drawOnGizmos,
-                dynamicSizing = dynamicSizing
             };
             GUIDrawer.Instance.guis.Enqueue(gui);
         }
+        
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        public static void Label(
+            in Vector3 worldPos, 
+            string text,
+            bool drawOnGizmos = false,
+            GUIStyle style = null)
+        {
+            if(GUIDrawer.Instance == null) return;
+
+            if (style == null)
+                style = new GUIStyle()
+                {
+                    normal = { textColor = Color.white },
+                    richText = true,
+                    fontSize = 15,
+                    alignment = TextAnchor.MiddleCenter
+                };
+            
+            EnQueueLabel(text, worldPos, drawOnGizmos, style);
+        }
+        
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        public static void Label(
+            in Vector3 worldPos, 
+            string text,
+            GUIStyle style = null)
+        {
+            if(GUIDrawer.Instance == null) return;
+
+            if (style == null)
+                style = new GUIStyle()
+                {
+                    normal = { textColor = Color.white },
+                    richText = true,
+                    fontSize = 15,
+                    alignment = TextAnchor.MiddleCenter
+                };
+            
+            EnQueueLabel(text, worldPos, false, style);
+        }
+        
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        public static void Label(
+            in Vector3 worldPos, 
+            string text,
+            int size)
+        {
+            if(GUIDrawer.Instance == null) return;
+
+            var style = new GUIStyle()
+                {
+                    normal = { textColor = Color.white },
+                    richText = true,
+                    fontSize = size,
+                    alignment = TextAnchor.MiddleCenter
+                };
+            
+            EnQueueLabel(text, worldPos, false, style);
+        }
+        
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        public static void Label(
+            in Vector3 worldPos, 
+            string text,
+            Color color)
+        {
+            if(GUIDrawer.Instance == null) return;
+
+            var style = new GUIStyle()
+            {
+                normal = { textColor = color },
+                richText = true,
+                fontSize = 15,
+                alignment = TextAnchor.MiddleCenter
+            };
+            
+            EnQueueLabel(text, worldPos, false, style);
+        }
+        
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        public static void Label(
+            in Vector3 worldPos, 
+            string text,
+            int size,
+            Color color)
+        {
+            if(GUIDrawer.Instance == null) return;
+
+            var style = new GUIStyle()
+            {
+                normal = { textColor = color },
+                richText = true,
+                fontSize = size,
+                alignment = TextAnchor.MiddleCenter
+            };
+            
+            EnQueueLabel(text, worldPos, false, style);
+        }
+
+        static void EnQueueLabel(string text, in Vector3 worldPos, bool drawOnGizmos, GUIStyle style)
+        {
+            var gui = new WorldGUI(text, worldPos, style)
+            {
+                drawOnGizmos = drawOnGizmos
+            };
+            GUIDrawer.Instance.guis.Enqueue(gui);
+        }
+        
+        
+        
+        [Conditional("UNITY_EDITOR")]
+        public static void DrawDonut(Vector3 center, Vector3 normal, Vector3 from, float angle, float minRadius, float maxRadius, Color color)
+        {
+            CreateGizmoMaterial();
+            giz_Mat.SetPass(0);
+            giz_DonutOutVert.Clear();
+            giz_DonutInVert.Clear();
+            
+            
+            var resolution = Mathf.CeilToInt(angle / 9);
+
+            for (int i = 0; i < resolution + 1; i++)
+            {
+                var a = angle * i / resolution;
+                var p = Quaternion.AngleAxis(a, normal) * Quaternion.LookRotation(from, normal) * new Vector3(0, 0, maxRadius);
+                giz_DonutOutVert.Add(center + p);
+        
+                var inn = p.normalized * minRadius;
+                giz_DonutInVert.Add(center + inn);
+            }
+
+            GL.PushMatrix();
+            GL.MultMatrix(Handles.matrix);
+            GL.Begin(4);
+            int index = 1;
+            for (int length = resolution + 1; index < length; ++index)
+            {
+                GL.Color(color);
+                GL.Vertex(giz_DonutInVert[index]);
+                GL.Vertex(giz_DonutInVert[index - 1]);
+                GL.Vertex(giz_DonutOutVert[index - 1]);
+            
+            
+                GL.Vertex(giz_DonutOutVert[index - 1]);
+                GL.Vertex(giz_DonutOutVert[index]);
+                GL.Vertex(giz_DonutInVert[index]);
+
+            }
+            GL.End();
+            GL.PopMatrix();
+        }
+
+        static void CreateGizmoMaterial()
+        {
+            if (giz_Mat) return;
+            giz_Mat = new Material(Shader.Find("Hidden/Internal-Colored"));
+            giz_Mat.hideFlags = HideFlags.HideAndDontSave;
+
+            giz_Mat.SetInt("_ZWrite", 1);
+        }
+
     }
 }

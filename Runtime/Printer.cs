@@ -282,7 +282,7 @@ namespace OcUtility
             giz_Mat = new Material(Shader.Find("Hidden/Internal-Colored"));
             giz_Mat.hideFlags = HideFlags.HideAndDontSave;
 
-            giz_Mat.SetInt("_ZWrite", 1);
+            giz_Mat.SetInt("_ZWrite", 0);
         }
 
     }

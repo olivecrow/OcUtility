@@ -1,5 +1,10 @@
 ﻿# Changelog
 
+## [1.1.24] - 2021-12-07
+### Fixed
+- Printer.DrawDonut에서 도넛 간에 ZTest를 활성화함
+- GUIDrawer에 hideflag 설정이 안 되어있던 문제 해결
+
 ## [1.1.23] - 2021-12-07
 ### Added
 - Printer에 DrawDonut메서드 추가.

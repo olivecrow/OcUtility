@@ -28,7 +28,6 @@ namespace OcUtility
         public static GUIDrawer Instance => _instance;
         static GUIDrawer _instance;
         public Queue<WorldGUI> guis = new Queue<WorldGUI>();
-        [ShowInInspector][EnumToggleButtons]public HideFlags HideFlags => hideFlags;
         List<WorldGUI> internalGuis = new List<WorldGUI>();
         object _gameView;
 
@@ -47,7 +46,7 @@ namespace OcUtility
             }
             
             var guiDrawer = new GameObject("GUI Drawer (Don'tSave) // OcUtility").AddComponent<GUIDrawer>();
-            // guiDrawer.gameObject.hideFlags = HideFlags.DontSave;
+            guiDrawer.gameObject.hideFlags = HideFlags.DontSave;
         }
         
         void Awake()

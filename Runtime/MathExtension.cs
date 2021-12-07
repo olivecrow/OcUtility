@@ -115,19 +115,28 @@ public static class MathExtension
     /// <summary> value가 beforeRange에서 갖던 비율 만큼 targetRange 범위에서 정의되는 값을 반환함.</summary>
     public static float Remap(this float value, in Vector2 beforeRange, in Vector2 targetRange, bool useClamp = true)
     {
-        var ratio = (value - beforeRange.x) / (beforeRange.y - beforeRange.x);
+        var denominator = beforeRange.y - beforeRange.x;
+        if (denominator == 0) return targetRange.x;
+        
+        var ratio = (value - beforeRange.x) / denominator;
         var result = (targetRange.y - targetRange.x) * ratio + targetRange.x;
         return useClamp ? Mathf.Clamp(result, targetRange.x, targetRange.y) : result;
     }
     public static float Remap(this float value, float beforeRangeMin, float beforeRangeMax, in Vector2 targetRange, bool useClamp = true)
     {
-        var ratio = (value - beforeRangeMin) / (beforeRangeMax - beforeRangeMin);
+        var denominator = beforeRangeMax - beforeRangeMin;
+        if (denominator == 0) return targetRange.x;
+        
+        var ratio = (value - beforeRangeMin) / denominator;
         var result = (targetRange.y - targetRange.x) * ratio + targetRange.x;
         return useClamp ? Mathf.Clamp(result, targetRange.x, targetRange.y) : result;
     }
     public static float Remap(this float value, in Vector2 beforeRange, float targetRangeMin, float targetRangeMax, bool useClamp = true)
     {
-        var ratio = (value - beforeRange.x) / (beforeRange.y - beforeRange.x);
+        var denominator = beforeRange.y - beforeRange.x;
+        if (denominator == 0) return targetRangeMin;
+        
+        var ratio = (value - beforeRange.x) / denominator;
         var result = (targetRangeMax - targetRangeMin) * ratio + targetRangeMin;
         return useClamp ? Mathf.Clamp(result, targetRangeMin, targetRangeMax) : result;
     }
@@ -135,7 +144,10 @@ public static class MathExtension
     /// <summary> value가 beforeRange에서 갖던 비율 만큼 targetRange 범위에서 정의되는 값을 반환함.</summary>
     public static float Remap(this float value, float beforeRangeMin, float beforeRangeMax, float targetRangeMin, float targetRangeMax, bool useClamp = true)
     {
-        var ratio = (value - beforeRangeMin) / (beforeRangeMax - beforeRangeMin);
+        var denominator = beforeRangeMax - beforeRangeMin;
+        if (denominator == 0) return targetRangeMin;
+        
+        var ratio = (value - beforeRangeMin) / denominator;
         var result = (targetRangeMax - targetRangeMin) * ratio + targetRangeMin;
         return useClamp ? Mathf.Clamp(result, targetRangeMin, targetRangeMax) : result;
     }

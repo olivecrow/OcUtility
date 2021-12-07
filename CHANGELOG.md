@@ -1,5 +1,10 @@
 ﻿# Changelog
 
+## [1.1.25] - 2021-12-08
+### Fixed
+- MathExtension의 Remap에서 beforeRange의 범위가 0일 경우(분모가 0으로 나눠질 경우) tagetRangeMin값을 반환하도록 변경
+
+
 ## [1.1.24] - 2021-12-07
 ### Fixed
 - Printer.DrawDonut에서 도넛 간에 ZTest를 활성화함

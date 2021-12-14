@@ -5,17 +5,16 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEditor;
+using Object = UnityEngine.Object;
 
 namespace OcUtility
 {
     public class EditorComment : MonoBehaviour
         , IHierarchyIconDrawable
     {
-        public Texture2D IconTexture => null;
-        public string IconPath => "EditorComment Icon";
-        public int DistanceToText => 250;
-        public Color IconTint => Color.white;
-        [HideInInspector] GameObject gizmoTarget;
+        public Object IconTarget => this;
+        public Texture2D OverrideIcon => null;
+        public Color IconTint { get; }
         public Context[] Contexts;
 
         void Reset()
@@ -24,10 +23,12 @@ namespace OcUtility
             gameObject.hideFlags = HideFlags.DontSaveInBuild;
         }
 
-        void OnDrawGizmosSelected()
+        void OnDrawGizmos()
         {
             Gizmos.color = ColorExtension.Rainbow(5f).SetA(0.54f);
-            Gizmos.DrawSphere(transform.position, 0.1f * transform.localScale.magnitude);
+
+            var dist = Vector3.Distance(SceneView.lastActiveSceneView.camera.transform.position, transform.position);
+            Gizmos.DrawSphere(transform.position, dist * 0.01f);
         }
 
         [Serializable]

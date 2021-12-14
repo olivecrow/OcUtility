@@ -258,17 +258,7 @@ public static class MathExtension
     #endregion
 
 
-
-    /// <summary> f1과 f2가 근사치 이내의 차이를 갖는지 판단함. </summary>
-    public static bool Approximately(float f1, float f2, float precision = 0.002f)
-    {
-        return -precision < f1 - f2 && f1 - f2 < precision;
-    }
-    /// <summary> 해당 값이 f와 근사치 이내의 차이를 갖는지 판단함. </summary>
-    public static bool IsApproximately(this float source, float f, float precision = 0.002f)
-    {
-        return -precision < source - f && source - f < precision;
-    }
+    #region IEnumerable
 
     /// <summary>
     /// 열거형의 요소 중에서 특정 값이 가장 작은 것의 인덱스를 반환함.
@@ -375,6 +365,70 @@ public static class MathExtension
         return value1 > value2 ? t1 : t2;
     }
 
+    public static float Sum<T>(this IEnumerable<T> enumerable, Func<T, float> getter)
+    {
+        var count = enumerable.Count();
+        var result = 0f;
+        for (int i = 0; i < count; i++)
+        {
+            result += getter.Invoke(enumerable.ElementAt(i));
+        }
+
+        return result;
+    }
+    
+    public static int Sum<T>(this IEnumerable<T> enumerable, Func<T, int> getter)
+    {
+        var count = enumerable.Count();
+        var result = 0;
+        for (int i = 0; i < count; i++)
+        {
+            result += getter.Invoke(enumerable.ElementAt(i));
+        }
+
+        return result;
+    }
+
+    public static float Multiply<T>(this IEnumerable<T> enumerable, Func<T, float> getter)
+    {
+        var count = enumerable.Count();
+        var result = 0f;
+        for (int i = 0; i < count; i++)
+        {
+            result *= getter.Invoke(enumerable.ElementAt(i));
+        }
+
+        return result;
+    }
+    
+    public static int Multiply<T>(this IEnumerable<T> enumerable, Func<T, int> getter)
+    {
+        var count = enumerable.Count();
+        var result = 0;
+        for (int i = 0; i < count; i++)
+        {
+            result *= getter.Invoke(enumerable.ElementAt(i));
+        }
+
+        return result;
+    }
+
+
+
+    #endregion
+
+    /// <summary> f1과 f2가 근사치 이내의 차이를 갖는지 판단함. </summary>
+    public static bool Approximately(float f1, float f2, float precision = 0.002f)
+    {
+        return -precision < f1 - f2 && f1 - f2 < precision;
+    }
+    /// <summary> 해당 값이 f와 근사치 이내의 차이를 갖는지 판단함. </summary>
+    public static bool IsApproximately(this float source, float f, float precision = 0.002f)
+    {
+        return -precision < source - f && source - f < precision;
+    }
+
+
     /// <summary> 해당 숫자를 decimalCount번째 자리 소수로 반올림함. decimalCount = 2면 x.xx가 되는 식. </summary>
     public static float Round(this float source, int decimalCount)
     {
@@ -424,4 +478,52 @@ public static class MathExtension
         _ => 1
         };
     }
+
+    
+    public static bool Has<T>(this Enum type, T value) {
+        try {
+            return ((int)(object)type & (int)(object)value) == (int)(object)value;
+        }
+        catch {
+            return false;
+        }
+    }
+
+    public static bool Is<T>(this Enum type, T value) {
+        try {
+            return (int)(object)type == (int)(object)value;
+        }
+        catch {
+            return false;
+        }
+    }
+
+
+    public static T Add<T>(this Enum type, T value) {
+        try {
+            return (T)(object)((int)(object)type | (int)(object)value);
+        }
+        catch(Exception ex) {
+            throw new ArgumentException(
+                string.Format(
+                    "Could not append value from enumerated type '{0}'.",
+                    typeof(T).Name
+                ), ex);
+        }
+    }
+
+
+    public static T Remove<T>(this Enum type, T value) {
+        try {
+            return (T)(object)((int)(object)type & ~(int)(object)value);
+        }
+        catch (Exception ex) {
+            throw new ArgumentException(
+                string.Format(
+                    "Could not remove value from enumerated type '{0}'.",
+                    typeof(T).Name
+                ), ex);
+        }
+    }
+
 }

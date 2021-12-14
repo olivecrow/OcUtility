@@ -1,5 +1,17 @@
 ﻿# Changelog
 
+## [1.1.26] - 2021-12-14
+### Added
+- MathExtension에서 열거형 타입의 변수를 더하거나 곱하는 Sum, Multiply 확장 메서드 추가
+
+### Fixed
+- HierarchyIconDrawer 최적화
+  - IHierarchyIconDrawable에서 DistanceToText, IconPath 프로퍼티 삭제
+  - 아이콘을 오버라이드 하지 않으면, 기본적으로 사용하고 있는 스크립트의 아이콘을 사용함
+  - 아이콘에서 텍스트로의 거리가 자동으로 지정되도록 변경
+- 네이밍 유틸리티에서 insert할때 메인 에셋인 경우, 이름이 두 번 추가되던 문제 해결
+- GUIDrawer의 OnDrawGizmos삭제
+
 ## [1.1.25] - 2021-12-08
 ### Fixed
 - MathExtension의 Remap에서 beforeRange의 범위가 0일 경우(분모가 0으로 나눠질 경우) tagetRangeMin값을 반환하도록 변경

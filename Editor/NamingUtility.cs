@@ -42,7 +42,7 @@ namespace OcUtility.Editor
             foreach (var o in Selection.objects)
             {
                 o.name = o.name.Insert(start, s);
-                RenameIfMainAsset(o, o.name.Insert(start, s));
+                RenameIfMainAsset(o, o.name);
             }
         }
 

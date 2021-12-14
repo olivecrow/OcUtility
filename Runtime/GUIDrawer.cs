@@ -22,7 +22,6 @@ namespace OcUtility
             this.worldPos = worldPos;
         }
     }
-    // [ExecuteInEditMode]
     public class GUIDrawer : MonoBehaviour
     {
         public static GUIDrawer Instance => _instance;
@@ -39,9 +38,12 @@ namespace OcUtility
         static void Init()
         {
             var exists = Resources.FindObjectsOfTypeAll<GUIDrawer>();
-            if(exists.Length > 0)
+            if(exists.Length > 1)
             {
-                print("GUI Drawer Exist");
+                for (int i = exists.Length - 1; i > 0; i--)
+                {
+                    DestroyImmediate(exists[i].gameObject);
+                }
                 return;
             }
             
@@ -82,55 +84,12 @@ namespace OcUtility
                 internalGuis.Add(guis.Dequeue());
             }
         }
-
-        bool ShouldHideSceneViewGizmo()
-        {
-#if UNITY_EDITOR
-            if (EditorWindow.focusedWindow == null) return true;
-            
-            if(Application.isPlaying)
-            {
-                var typeName = EditorWindow.focusedWindow.GetType().Name;
-                if (typeName == "GameView") return true;
-            }
-
-            return false;
-#else
-            return true;
-#endif
-        }
-
+        
         static int CalcFontSize(in Vector3 wtsPos, in int size)
         {
             return (int)Mathf.Lerp(size, 5, wtsPos.z / 50);
         }
-        
-        void OnDrawGizmos()
-        {
-            if(ShouldHideSceneViewGizmo()) return;
-            if (!Application.isPlaying) UpdateInternalQueue();
-            var count = internalGuis.Count;
-            for (int i = 0; i < count; i++)
-            {
-                var gui = internalGuis[i];
-                if(!gui.drawOnGizmos) return;
-                
-                var wtsPos = SceneView.lastActiveSceneView.camera.WorldToScreenPoint(gui.worldPos);
-                
-                if(wtsPos.x < 0 || wtsPos.x > Screen.width || 
-                   wtsPos.y < 0 || wtsPos.y > Screen.height ||
-                   wtsPos.z < 0) continue;
-                var rect = new Rect(new Vector2(wtsPos.x, Screen.height - wtsPos.y), Vector2.zero);
 
-                var fontSize = CalcFontSize(in wtsPos, gui.style.fontSize);
-                if (Application.isPlaying) fontSize += 2;
-                if(fontSize < 8) return;
-
-                gui.style.fontSize = fontSize;
-                
-                Handles.Label(gui.worldPos + new Vector3(0, wtsPos.z * 0.075f), gui.text, gui.style);
-            }
-        }  
         void OnGUI()
         {
             if(Camera.main == null) return;

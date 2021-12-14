@@ -21,43 +21,27 @@ namespace OcUtility.Editor
         {
             var gao = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
             if(gao == null) return;
-            var drawables = gao.GetComponents<IHierarchyIconDrawable>();
-            if(drawables == null || drawables.Length == 0) return;
-            
-            for (int i = 0; i < drawables.Length; i++)
+
+            // 한 게임 오브젝트에 여러개의 Drawer가 있을 수 있음.
+            var drawers = gao.GetComponents<IHierarchyIconDrawable>();
+            var labelWidth = rect.x + 15 + (gao.name.Length) * 8.2f; 
+            for (int i = 0; i < drawers.Length; i++)
             {
-                var iconGUIContent = new GUIContent(GetIcon(drawables[i], out var xRect, out var tint));
+                var drawer = drawers[i];
+                
                 var iconDrawRect = new Rect(
-                    xRect,
+                     labelWidth + i * 15,
                     rect.yMin,
-                    rect.width,
-                    rect.height);
-                EditorGUIUtility.SetIconSize(new Vector2(15, 15));
-                GUI.contentColor = tint;
-                EditorGUI.LabelField(iconDrawRect, iconGUIContent);
-                GUI.contentColor = Color.white;
+                    15,
+                    15);
+                GUI.color = drawer.IconTint.a == 0 ? Color.white : drawer.IconTint;
+                GUI.DrawTexture(
+                    iconDrawRect, 
+                    drawer.OverrideIcon == null ? EditorGUIUtility.GetIconForObject(drawer.IconTarget) : drawer.OverrideIcon);
+                GUI.color = Color.white;
             }
         }
 
-        static Texture2D GetIcon(IHierarchyIconDrawable drawable, out int xRect, out Color tint)
-        {
-            Texture2D icon;
-            xRect = drawable.DistanceToText;
-            tint = drawable.IconTint;
-
-            if (drawable.IconTexture != null)
-            {
-                icon = drawable.IconTexture;
-                return icon;
-            }
-            
-            icon = (Texture2D) EditorGUIUtility.Load(drawable.IconPath);
-            if (icon == null) icon = Resources.Load<Texture2D>(drawable.IconPath);
-            if (icon == null) icon = AssetDatabase.LoadAssetAtPath<Texture2D>(drawable.IconPath);
-            
-            if (icon == null) return null;
-            return icon;
-        }
         
     }
 }

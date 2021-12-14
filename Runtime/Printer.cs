@@ -284,6 +284,5 @@ namespace OcUtility
 
             giz_Mat.SetInt("_ZWrite", 0);
         }
-
     }
 }

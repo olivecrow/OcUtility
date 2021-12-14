@@ -28,31 +28,11 @@ public class wait : MonoBehaviour
     {
         return _instance.StartCoroutine(WaitFixedFrame(frame, e));
     }
-    
-#if UNITY_EDITOR
-    public static EditorCoroutine editorFrame(int frame, Action e)
-    {
-        return EditorCoroutineUtility.StartCoroutineOwnerless(WaitFrame(frame, e));
-    }
-#endif
-    
     public static Coroutine time(float sec, Action e, bool ignoreTimescale = false)
     {
         return _instance.StartCoroutine(WaitTime(sec, e, ignoreTimescale));
     }
-    
-#if UNITY_EDITOR
-    public static EditorCoroutine editorTime(float time, Action e)
-    {
-        return EditorCoroutineUtility.StartCoroutineOwnerless(WaitTime(time, e, true));
-    }
-#endif
-
-    /// <summary>
-    /// predicate가 true 가 되면 실행
-    /// </summary>
-    /// <param name="predicate"></param>
-    /// <param name="e"></param>
+    /// <summary> predicate가 true 가 되면 실행 </summary>
     public static Coroutine until(Func<bool> predicate, Action e)
     {
         return _instance.StartCoroutine(WaitUntil(predicate, e));
@@ -86,4 +66,25 @@ public class wait : MonoBehaviour
         
         e.Invoke();
     }
+    
+    
+    
+        
+#if UNITY_EDITOR
+    public static EditorCoroutine editorFrame(int frame, Action e)
+    {
+        return EditorCoroutineUtility.StartCoroutineOwnerless(WaitFrame(frame, e));
+    }
+    
+    public static EditorCoroutine editorTime(float time, Action e)
+    {
+        return EditorCoroutineUtility.StartCoroutineOwnerless(WaitTime(time, e, true));
+    }
+    
+    public static EditorCoroutine editorUntil(Func<bool> predicate, Action e)
+    {
+        return EditorCoroutineUtility.StartCoroutineOwnerless(WaitUntil(predicate, e));
+    }
+#endif
+
 }

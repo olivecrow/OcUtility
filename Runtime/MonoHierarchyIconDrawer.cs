@@ -11,15 +11,12 @@ namespace OcUtility
 #endif
     {
 #if UNITY_EDITOR
-        public Texture2D IconTexture => iconTexture;
-        public string IconPath => iconPath;
-        public int DistanceToText => distanceToText;
+        public Object IconTarget => this;
+        public Texture2D OverrideIcon => iconTexture;
         public Color IconTint => iconTint;
 
         public Texture2D iconTexture;
-        [HideIf("iconTexture", null)][FilePath]public string iconPath = "EditorComment Icon";
-
-        public int distanceToText = 250;
+        
         public Color iconTint = Color.white;
 #endif
     }

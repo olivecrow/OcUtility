@@ -36,8 +36,15 @@ namespace OcUtility.Editor
                     15);
                 GUI.color = drawer.IconTint.a == 0 ? Color.white : drawer.IconTint;
                 GUI.DrawTexture(
-                    iconDrawRect, 
+                    iconDrawRect,
+#if UNITY_2021_1_OR_NEWER
                     drawer.OverrideIcon == null ? EditorGUIUtility.GetIconForObject(drawer.IconTarget) : drawer.OverrideIcon);
+#else
+                    drawer.OverrideIcon == null ? 
+                        EditorGUIUtility.ObjectContent(drawer.IconTarget, drawer.IconTarget.GetType()).image : 
+                        drawer.OverrideIcon);
+#endif
+                    
                 GUI.color = Color.white;
             }
         }

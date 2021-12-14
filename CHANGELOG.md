@@ -1,5 +1,10 @@
 ﻿# Changelog
 
+## [1.2.0] - 2021-12-14
+### Fixed
+- HierarchyIconDrawer가 2020 이하버전과 호환되지 않던 문제 해결
+- 버전 넘버링 걍 올림
+
 ## [1.1.26] - 2021-12-14
 ### Added
 - MathExtension에서 열거형 타입의 변수를 더하거나 곱하는 Sum, Multiply 확장 메서드 추가

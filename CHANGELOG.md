@@ -1,5 +1,13 @@
 ﻿# Changelog
 
+## [1.3.1] -2021-12-15
+### Fixed
+- OcPool의 생성자를 private로 변경
+- OcPool.MakePool의 Transform 파라미터를 통합
+- PoolDisposer 초기화 방식 변경
+- OcPool 디버그 기능 추가
+  - Utility/OcPool 에서 현재 생성된 오브젝트 풀에 대한 로그를 출력할 수 있음
+
 ## [1.3.0] -2021-12-15
 ### Added
 - IPool<T>, IPoolMember<T> 인터페이스 추가

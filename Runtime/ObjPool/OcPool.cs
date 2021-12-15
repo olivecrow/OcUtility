@@ -1,24 +1,31 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace OcUtility
 {
-    public class OcPool<T> : IDisposable where T : MonoBehaviour, IPoolMember<T>
+    public class OcPool<T> : IDisposable, IDisposableDebugTarget where T : MonoBehaviour, IPoolMember<T>
     {
         static Dictionary<IPoolMember<T>, OcPool<T>> GlobalPool;
         
         static OcPool()
         {
 #if UNITY_EDITOR
-            Application.quitting += () => GlobalPool = new Dictionary<IPoolMember<T>, OcPool<T>>();      
+            Application.quitting += () =>
+            {
+                GlobalPool = new Dictionary<IPoolMember<T>, OcPool<T>>();
+            };   
 #endif
             GlobalPool = new Dictionary<IPoolMember<T>, OcPool<T>>();
         }
 
-        public static OcPool<T> MakePool(T source, int count, Transform folder)
+        public static OcPool<T> MakePool(T source, int count, Transform folder = null)
         {
             OcPool<T> targetPool;
             if (GlobalPool.ContainsKey(source))
@@ -29,11 +36,6 @@ namespace OcUtility
             else targetPool = new OcPool<T>(source, count, folder);
 
             return targetPool;
-        }
-
-        public static OcPool<T> MakePool(T source, int count)
-        {
-            return MakePool(source, count, null);
         }
 
         /// <summary> 글로벌 풀에서 해당 소스 기반의 풀에서 Call을 반환함. 해당 소스의 풀이 없을 경우 null을 반환함. </summary>
@@ -72,22 +74,22 @@ namespace OcUtility
             PoolDisposer.DisposeAll();
             GlobalPool = new Dictionary<IPoolMember<T>, OcPool<T>>();
         }
-
+        
         public static void Print()
         {
-            Debug.Log("||========================================||");
-            Debug.Log($"||Global Pool<{typeof(T).Name}> | Count : {GlobalPool.Count}||");
+            Debug.Log($"||=========  OcPool<{typeof(T).Name.Rich(Color.cyan)}> DEBUG  ==========".Rich(Color.magenta));
+            Debug.Log($"||{"Global Pool".Rich(Color.white)} | Count : {GlobalPool.Count}".Rich(Color.magenta));
             foreach (var ocPool in GlobalPool)
             {
-                Debug.Log($"||PoolType : {ocPool.Key.GetType()} | Count : {ocPool.Value.TotalCount}||");    
+                Debug.Log($"||{($"Pool : {ocPool.Key.gameObject.name.Rich(Color.cyan)}".Rich(Color.white))} | Count : {ocPool.Value.TotalCount} | Folder : {ocPool.Value.Folder.name}".Rich(Color.magenta));    
             }
-            Debug.Log("||=========================================||");
+            Debug.Log("||=========================================".Rich(Color.magenta));
         }
         
         
         // Non-Static. =======
-        
-        public OcPool(T source, int count, Transform folder)
+
+        OcPool(T source, int count, Transform folder)
         {
             _isOverridenFolder = folder != null;
             Folder = folder == null ? new GameObject().transform : folder;
@@ -190,7 +192,24 @@ namespace OcUtility
             _source = null;
             _sleepingMembers = null;
             _activeMembers = null;
-            if(!_isOverridenFolder) Object.Destroy(Folder.gameObject);
+            if(!_isOverridenFolder && Folder != null) Object.Destroy(Folder.gameObject);
+        }
+
+        public void DebugType()
+        {
+            Print();
+        }
+        public void DebugLog()
+        {
+            Printer.Print($"OcPool<{typeof(T).Name.Rich(Color.cyan)}> | [{_source.gameObject.name}] | Folder : {Folder.name} \n"
+                              .Rich(new Color(1f, 0.5f,1f)) +
+                          $"sleep : {_sleepingMembers.Count} | active : {_activeMembers.Count} | total : {_sleepingMembers.Count + _activeMembers.Count}"
+                              .Rich(new Color(1f, 0.5f,1f)));
+        }
+
+        public Type GetGenericType()
+        {
+            return typeof(T);
         }
     }
 }

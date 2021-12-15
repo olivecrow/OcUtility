@@ -1,5 +1,22 @@
 ﻿# Changelog
 
+## [1.3.0] -2021-12-15
+### Added
+- IPool<T>, IPoolMember<T> 인터페이스 추가
+- OcPool에 멤버 관리 메서드 추가
+  - 활성 상태의 멤버를 찾을 수 있는 FindActiveMember 메서드 추가
+  - 비활성 상태의 멤버를 찾을 수 있는 FindSleepingMember 메서드 추가
+    - 비활성 상태의 멤버는 큐에 저장되어있어서, 내부적으로 배열로 변환한 후 검사하기 때문에 성능상의 이유로 매 프레임 호출하지 않는 것이 좋음
+  - 모든 멤버에 대해 특정 작업의 반복실행이 가능한 Foreach 메서드 추가
+- OcPool을 생성할때 폴더 트랜스폼을 미리 할당할 수 있게 함
+  - UI를 위한 풀을 만들때 해당 트랜스폼의 자식으로 하는 등의 방식으로 사용하면 됨.
+- 모든 풀을 한 번에 리셋할 수 있는 PoolDisposer 클래스 추가
+
+### Fixed
+- OcPool이 IPool<T>, PoolMember가 IPoolMember<T>를 구현하도록 변경
+  - OcPool을 사용할 땐 OcPool<T>.MakePool() 과 같이 사용
+  - PoolMember를 사용할 땐, MyClass : PoolMember<MyClass>와 같이 상속받아서 사용
+
 ## [1.2.0] - 2021-12-14
 ### Fixed
 - HierarchyIconDrawer가 2020 이하버전과 호환되지 않던 문제 해결

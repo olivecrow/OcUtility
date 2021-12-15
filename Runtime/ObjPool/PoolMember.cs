@@ -6,12 +6,13 @@ using UnityEngine.Events;
 
 namespace OcUtility
 {
-    public class PoolMember : MonoBehaviour
+    public abstract class PoolMember<T> : MonoBehaviour, IPoolMember<T> where T : PoolMember<T>
     {
         public UnityEvent OnWakeUp;
         public UnityEvent OnSleep;
-        public OcPool Pool { get; set; }
-        
+
+        public OcPool<T> Pool { get; set; }
+
         /// <summary> 오브젝트를 활성화하고 OnWakeUp 콜백을 실행함. OnEnable에서 호출하지 말 것. </summary>
         public virtual void WakeUp()
         {
@@ -24,7 +25,7 @@ namespace OcUtility
         {
             OnSleep?.Invoke();
             gameObject.SetActive(false);
-            Pool.Return(this);
+            Pool.Return(this as T);
         }
     }
 }

@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace OcUtility
 {
-    public static class PoolDisposer
+    internal static class PoolDisposer
     {
         static List<IDisposableDebugTarget> _CreatedPools;
         static bool _initialized;
@@ -25,13 +25,18 @@ namespace OcUtility
             _initialized = true;
         }
 
-        public static void RegisterPool(IDisposableDebugTarget pool)
+        internal static void RegisterPool(IDisposableDebugTarget pool)
         {
             if(_CreatedPools == null) Init();
             _CreatedPools.Add(pool);
         }
 
-        public static void DisposeAll()
+        internal static void UnRegisterPool(IDisposableDebugTarget pool)
+        {
+            _CreatedPools.Remove(pool);
+        }
+        
+        internal static void DisposeAll()
         {
             Debug.Log("Dispose");
             foreach (var ocPool in _CreatedPools)
@@ -45,7 +50,7 @@ namespace OcUtility
 
 #if UNITY_EDITOR
         [MenuItem("Utility/OcPool/Debug All Types")]
-        public static void DebugAllTypes()
+        internal static void DebugAllTypes()
         {
             if (!Application.isPlaying)
             {
@@ -62,7 +67,7 @@ namespace OcUtility
         }
         
         [MenuItem("Utility/OcPool/Debug All Pools")]
-        public static void DebugAllPools()
+        internal static void DebugAllPools()
         {
             if (!Application.isPlaying)
             {

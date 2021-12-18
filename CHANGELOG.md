@@ -1,5 +1,18 @@
 ﻿# Changelog
 
+## [1.3.2] -2021-12-18
+### Added
+- OcPool의 모든 활성화 멤버를 Sleep상태로 전환하는 SleepAll 메서드 추가
+
+### Fixed
+- OcPool의 Foreach 방식 변경
+  - 기존 방식은 활성 리스트와 비활성 큐에서 각각 반복문을 돌렸음
+  - 하지만 그렇게 하면 Foreach도중에 실행하는 WakeUp, Sleep에서 멤버 변경이 있기때문에 의도치 않은 결과가 발생했음
+  - 그래서 모든 멤버를 임시 리스트에 집어넣고, 그 리스트에서 작업을 실행하도록 변경함
+- OcPool의 Dispose방식 변경
+  - 기존에는 GlobalPool과 PoolDisposer에서 캐싱된 풀을 제거하지 않아서 디버그용 로그 출력시 오류가 발생했음
+- PoolDisposer를 internal로 변경
+
 ## [1.3.1] -2021-12-15
 ### Fixed
 - OcPool의 생성자를 private로 변경

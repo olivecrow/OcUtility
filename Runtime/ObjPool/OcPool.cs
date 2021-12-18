@@ -167,17 +167,21 @@ namespace OcUtility
 
         public void Foreach(Action<T> action)
         {
-            for (int i = 0; i < _activeMembers.Count; i++)
-            {
-                var m = _activeMembers[i];
-                action.Invoke(m);
-            }
+            var allList = new List<T>(_activeMembers);
+            allList.AddRange(_sleepingMembers);
 
-            var toArray = _sleepingMembers.ToArray();
-            for (int i = 0; i < _sleepingMembers.Count; i++)
+            for (int i = 0; i < allList.Count; i++)
             {
-                var m = toArray[i];
-                action.Invoke(m);
+                action.Invoke(allList[i]);
+            }
+        }
+
+        public void SleepAll()
+        {
+            var count = _activeMembers.Count;
+            for (int i = count - 1; i >= 0; i--)
+            {
+                _activeMembers[i].Sleep();
             }
         }
 
@@ -189,6 +193,8 @@ namespace OcUtility
 
         public void Dispose()
         {
+            GlobalPool.Remove(_source);
+            PoolDisposer.UnRegisterPool(this);
             _source = null;
             _sleepingMembers = null;
             _activeMembers = null;

@@ -25,7 +25,7 @@ namespace OcUtility
             GlobalPool = new Dictionary<IPoolMember<T>, OcPool<T>>();
         }
 
-        public static OcPool<T> MakePool(T source, int count, Transform folder = null)
+        public static OcPool<T> MakePool(T source, int count, Transform folder = null, Action<T> initializer = null)
         {
             OcPool<T> targetPool;
             if (GlobalPool.ContainsKey(source))
@@ -33,9 +33,13 @@ namespace OcUtility
                 targetPool = GlobalPool[source];
                 targetPool.AddMember(count);
             }
-            else targetPool = new OcPool<T>(source, count, folder);
+            else targetPool = new OcPool<T>(source, count, folder, initializer);
 
             return targetPool;
+        }
+        public static OcPool<T> MakePool(T source, int count, Action<T> initializer)
+        {
+            return MakePool(source, count, null, initializer);
         }
 
         /// <summary> 글로벌 풀에서 해당 소스 기반의 풀에서 Call을 반환함. 해당 소스의 풀이 없을 경우 null을 반환함. </summary>
@@ -89,7 +93,7 @@ namespace OcUtility
         
         // Non-Static. =======
 
-        OcPool(T source, int count, Transform folder)
+        OcPool(T source, int count, Transform folder, Action<T> initializer)
         {
             _isOverridenFolder = folder != null;
             Folder = folder == null ? new GameObject().transform : folder;
@@ -99,6 +103,7 @@ namespace OcUtility
             _sleepingMembers = new Queue<T>();
             _activeMembers = new List<T>();
             InitialCount = count;
+            _initializer = initializer;
             AddMember(count);
             
             PoolDisposer.RegisterPool(this);
@@ -112,7 +117,7 @@ namespace OcUtility
         T _source;
         Queue<T> _sleepingMembers;
         List<T> _activeMembers;
-        
+        Action<T> _initializer;
         public void AddMember(int count)
         {
             for (int i = 0; i < count; i++)
@@ -121,6 +126,7 @@ namespace OcUtility
                 gao.Pool = this;
                 _sleepingMembers.Enqueue(gao);
                 gao.gameObject.SetActive(false);
+                _initializer?.Invoke(gao);
             }
 
             if(!_isOverridenFolder) Folder.name = $"{_source.name}_Pool [{TotalCount:###,###}]";
@@ -174,6 +180,56 @@ namespace OcUtility
             {
                 action.Invoke(allList[i]);
             }
+        }
+        
+        public T FindMaxMember(Func<T, float> func)
+        {
+            var allList = new List<T>(_activeMembers);
+            allList.AddRange(_sleepingMembers);
+            return allList.GetMaxElement(func);
+        }
+        public T FindMinMember(Func<T, float> func)
+        {
+            var allList = new List<T>(_activeMembers);
+            allList.AddRange(_sleepingMembers);
+            return allList.GetMinElement(func);
+        }
+        public T FindMaxSleepingMember(Func<T, float> func)
+        {
+            return new List<T>(_sleepingMembers).GetMaxElement(func);
+        }
+        public T FindMinSleepingMember(Func<T, float> func)
+        {
+            return new List<T>(_sleepingMembers).GetMaxElement(func);
+        }
+        public T FindMaxActiveMember(Func<T, float> func)
+        {
+            return _activeMembers.GetMaxElement(func);
+        }
+        public T FindMinActiveMember(Func<T, float> func)
+        {
+            return _activeMembers.GetMaxElement(func);
+        }
+
+        public void SetInitializer(Action<T> action, bool applyNow)
+        {
+            _initializer = action;
+            if(!applyNow) return;
+            ApplyInitializer();
+        }
+
+        public void AppendInitializer(Action<T> action, bool applyNow)
+        {
+            _initializer += action;
+            if(!applyNow) return;
+            ApplyInitializer();
+        }
+
+        void ApplyInitializer()
+        {
+            var allMember = new List<T>(_sleepingMembers);
+            allMember.AddRange(_activeMembers);
+            foreach (var member in allMember) _initializer?.Invoke(member);
         }
 
         public void SleepAll()

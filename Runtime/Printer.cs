@@ -1,7 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+
+#if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.ShortcutManagement;
+#endif
+
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -12,7 +17,7 @@ namespace OcUtility
         static List<Vector3> giz_DonutOutVert = new List<Vector3>();
         static List<Vector3> giz_DonutInVert = new List<Vector3>();
         static Material giz_Mat;
-
+        static int _dividerCount;
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         public static void Print(object value, LogType type = LogType.Log)
         {
@@ -284,5 +289,18 @@ namespace OcUtility
 
             giz_Mat.SetInt("_ZWrite", 0);
         }
+
+#if UNITY_EDITOR
+        [Shortcut("OcUtility/PrintDivider", KeyCode.LeftBracket, ShortcutModifiers.Shift)]
+        static void PrintDivider()
+        {
+            Print($"================={_dividerCount++}================");
+        }
+        [Shortcut("OcUtility/PrintColorDivider", KeyCode.RightBracket, ShortcutModifiers.Shift)]
+        static void PrintColorDivider()
+        {
+            Print($"================={_dividerCount++}================".DRT(_dividerCount));
+        }
+#endif
     }
 }

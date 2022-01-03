@@ -1,5 +1,23 @@
 ﻿# Changelog
 
+## [1.4.0] -2022-01-03
+### Added 
+- OcPool에 유틸리티 메서드 추가
+  - FindMaxMember / FindMinMember : 풀 멤버의 필드, 혹은 계산식에서 최소, 최댓값을 가지는 멤버를 반환함
+  - Sleeping, Active 멤버들만 구하는 바리에이션도 있음
+  - 각 멤버를 초기화할때 적용할 수 있는 intializer 델리게이트
+
+- 콘솔 로그에 구분자 출력을 위한 메서드와 단축키 추가
+  - Shift + [  => 콘솔창에 ==========0========== 출력 / 가운데 0은 1씩 늘어나는 카운트
+  - Shift + ]  => 위와 같은 로그를 랜덤 색상으로 출력 
+
+- ColorExtension에 디버그용 리치텍스트를 위한 string.DRT 메서드 추가
+- ColorExtension에 각 채널의 합을 구하는 SumRGB, SumRGBA 메서드 추가
+- -1, 혹은 1을 50% 확률로 곱하는 RandomSign메서드 추가 (float, int 확장)
+
+### Fixed
+- EditorComment를 플레이 중에도 편집 가능하게 함
+
 ## [1.3.2] -2021-12-18
 ### Added
 - OcPool의 모든 활성화 멤버를 Sleep상태로 전환하는 SleepAll 메서드 추가

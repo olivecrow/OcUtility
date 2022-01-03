@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OcUtility;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public static class MathExtension
 {
@@ -526,4 +527,12 @@ public static class MathExtension
         }
     }
 
+    public static float RandomSign(this float source)
+    {
+        return Random.Range(0, 2) == 0 ? source : source * -1;
+    }
+    public static int RandomSign(this int source)
+    {
+        return Random.Range(0, 2) == 0 ? source : source * -1;
+    }
 }

@@ -51,6 +51,30 @@ namespace OcUtility
             return $"<color=#{ColorUtility.ToHtmlStringRGBA(target)}>{source}</color>";
         }
 
+        /// <summary> Debug Rich Text by seed value </summary>
+        public static string DRT(this string source, int seed)
+        {
+            var color = Random(seed);
+            return color.SumRGB() < 1.5f ? source.Rich(color.Brighten(0.33f)) : source.Rich(color);
+        }
+        
+        /// <summary> Debug Rich Text </summary>
+        public static string DRT(this string source, object seed)
+        {
+            return DRT(source, seed.GetHashCode());
+        }
+
+        public static float SumRGB(this Color source)
+        {
+            return source.r + source.g + source.b;
+        }
+
+        public static float SumRGBA(this Color source)
+        {
+            return source.r + source.g + source.b + source.a;
+        }
+        
+
         /// <summary> 색을 밝게 함. 각 채널에 더해주는 방식. 어둡게 하는 경우, 색이 강한 채널의 채도가 강하게 남는 경향이 있다. </summary>
         public static Color Brighten(this Color source, float value)
         {

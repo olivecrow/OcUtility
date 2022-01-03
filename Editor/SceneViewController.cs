@@ -110,25 +110,25 @@ public static class SceneViewController
     [Shortcut("Tools/SceneViewControl/MoveLeft", typeof(SceneView), KeyCode.Keypad4, ShortcutModifiers.Action)]
     private static void MoveLeft()
     {
-        Move(SceneView.lastActiveSceneView.camera.transform.right * -1f);
+        Move(SceneView.lastActiveSceneView.camera.transform.right * -0.25f);
     }
 
     [Shortcut("Tools/SceneViewControl/MoveRight", typeof(SceneView), KeyCode.Keypad6, ShortcutModifiers.Action)]
     private static void MoveRight()
     {
-        Move(SceneView.lastActiveSceneView.camera.transform.right);
+        Move(SceneView.lastActiveSceneView.camera.transform.right * 0.25f);
     }
     
     [Shortcut("Tools/SceneViewControl/MoveUp", typeof(SceneView), KeyCode.Keypad8, ShortcutModifiers.Action)]
     private static void MoveUp()
     {
-        Move(Vector3.up * 0.5f);
+        Move(Vector3.up * 0.25f);
     }
 
     [Shortcut("Tools/SceneViewControl/MoveDown", typeof(SceneView), KeyCode.Keypad2, ShortcutModifiers.Action)]
     private static void MoveDown()
     {
-        Move(Vector3.down * 0.5f);
+        Move(Vector3.down * 0.25f);
     }
 
     #endregion

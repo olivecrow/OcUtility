@@ -40,7 +40,7 @@ namespace OcUtility
             var exists = Resources.FindObjectsOfTypeAll<GUIDrawer>();
             if(exists.Length > 1)
             {
-                for (int i = exists.Length - 1; i > 0; i--)
+                for (int i = exists.Length - 1; i >= 0; i--)
                 {
                     DestroyImmediate(exists[i].gameObject);
                 }

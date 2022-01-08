@@ -24,6 +24,7 @@ namespace OcUtility.Editor
 
             // 한 게임 오브젝트에 여러개의 Drawer가 있을 수 있음.
             var drawers = gao.GetComponents<IHierarchyIconDrawable>();
+            var inputColor = GUI.color;
             var labelWidth = rect.x + 15 + (gao.name.Length) * 8.2f; 
             for (int i = 0; i < drawers.Length; i++)
             {
@@ -34,7 +35,7 @@ namespace OcUtility.Editor
                     rect.yMin,
                     15,
                     15);
-                GUI.color = drawer.IconTint.a == 0 ? Color.white : drawer.IconTint;
+                GUI.color = drawer.IconTint.a == 0 ? inputColor : drawer.IconTint;
                 GUI.DrawTexture(
                     iconDrawRect,
 #if UNITY_2021_1_OR_NEWER
@@ -45,7 +46,7 @@ namespace OcUtility.Editor
                         drawer.OverrideIcon);
 #endif
                     
-                GUI.color = Color.white;
+                GUI.color = inputColor;
             }
         }
 

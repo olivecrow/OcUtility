@@ -54,8 +54,7 @@ namespace OcUtility
         /// <summary> Debug Rich Text by seed value </summary>
         public static string DRT(this string source, int seed)
         {
-            var color = Random(seed);
-            return color.SumRGB() < 1.5f ? source.Rich(color.Brighten(0.33f)) : source.Rich(color);
+            return source.Rich(Random(seed, 0.5f));
         }
         
         /// <summary> Debug Rich Text </summary>
@@ -103,6 +102,12 @@ namespace OcUtility
 
         /// <summary> 무작위의 한 색깔을 출력함. </summary>
         public static Color Random() => new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
+        /// <summary> 무작위의 한 색깔을 출력함. </summary>
+        public static Color SystemRandom()
+        {
+            var random = new System.Random();
+            return new Color(random.Next(0, 255) * 0.0039f, random.Next(0, 255) * 0.0039f, random.Next(0, 255) * 0.0039f);
+        }
 
         /// <summary> 전달된 seed에 맞는 색을 하나 출력함. seed가 같으면 같은 색이 출력됨.
         /// 색상의 밝기 범위를 지정하려면 remap에 범위를 추가하면 됨.</summary>

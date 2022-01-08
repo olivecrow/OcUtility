@@ -55,6 +55,23 @@ public static class MathExtension
     public static float SelfMultiply(this Vector4 source)
         => source.x * source.y * source.z * source.w;
 
+    public static Vector2 Multiply(this Vector2 a, Vector2 b)
+    {
+        return new Vector2(a.x * b.x, a.y * b.y);
+    }
+    public static Vector3 Multiply(this Vector3 a, Vector3 b)
+    {
+        return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
+    }
+    public static Vector4 Multiply(this Vector4 a, Vector4 b)
+    {
+        return new Vector4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
+    }
+    
+    public static float Avg(this Vector2 a) => a.Sum() / 2f;
+    public static float Avg(this Vector3 a) => a.Sum() / 3f;
+    public static float Avg(this Vector4 a) => a.Sum() / 4f;
+    
     #endregion
 
     #region VectorInt
@@ -98,6 +115,18 @@ public static class MathExtension
     public static int SelfMultiply(this Vector3Int source)
         => source.x * source.y * source.z;
     
+    public static Vector2Int Multiply(this Vector2Int a, Vector2Int b)
+    {
+        return new Vector2Int(a.x * b.x, a.y * b.y);
+    }
+    public static Vector3Int Multiply(this Vector3Int a, Vector3Int b)
+    {
+        return new Vector3Int(a.x * b.x, a.y * b.y, a.z * b.z);
+    }
+    
+    public static float Avg(this Vector2Int a) => a.Sum() / 2f;
+    public static float Avg(this Vector3Int a) => a.Sum() / 3f;
+
     #endregion
 
 
@@ -414,6 +443,26 @@ public static class MathExtension
         return result;
     }
 
+    public static int IndexOf<T>(this IEnumerable<T> enumerable, T member)
+    {
+        var count = enumerable.Count();
+        for (int i = 0; i < count; i++)
+        {
+            if (enumerable.ElementAt(i).Equals(member)) return i;
+        }
+
+        return -1;
+    }
+    public static int IndexOf<T>(this IEnumerable<T> enumerable, Predicate<T> predicate)
+    {
+        var count = enumerable.Count();
+        for (int i = 0; i < count; i++)
+        {
+            if (predicate.Invoke(enumerable.ElementAt(i))) return i;
+        }
+
+        return -1;
+    }
 
 
     #endregion
@@ -535,4 +584,89 @@ public static class MathExtension
     {
         return Random.Range(0, 2) == 0 ? source : source * -1;
     }
+
+    #region Physics
+
+    static float ScaledCapsuleRadius(CapsuleCollider capsule)
+    {
+        var scale = capsule.transform.localScale;
+        float max;
+        switch (capsule.direction)
+        {
+            case 0: // X-Axis.
+                max = scale.y > scale.z ? scale.y : scale.z;
+                break;
+            case 1: // Y-Axis.
+                max = scale.x > scale.z ? scale.x : scale.z;
+                break;
+            case 2: // Z-Axis.
+                max = scale.x > scale.y ? scale.x : scale.y;
+                break;
+            default: goto case 1;
+        }
+
+        return max * capsule.radius;
+    }
+    static float ScaledCapsuleHeight(CapsuleCollider capsule)
+    {
+        var scale = capsule.transform.localScale;
+        float height;
+        switch (capsule.direction)
+        {
+            case 0: // X-Axis.
+                height = capsule.height * scale.x;
+                break;
+            case 1: // Y-Axis.
+                height =  capsule.height * scale.y;
+                break;
+            case 2: // Z-Axis.
+                height =  capsule.height * scale.z;
+                break;
+            default: goto case 1;
+        }
+
+        var scaledRadius = ScaledCapsuleRadius(capsule);
+        if (height < scaledRadius * 2f) height = scaledRadius * 2f;
+        return height;
+    }
+
+    public static Vector3 GetWorldTopHemiPoint(this CapsuleCollider capsule)
+    {
+        var scaledRadius = ScaledCapsuleRadius(capsule);
+        var scaledHeight = ScaledCapsuleHeight(capsule);
+        switch (capsule.direction)
+        {
+            case 0:
+                return capsule.transform.position + capsule.center.Multiply(capsule.transform.localScale) + 
+                       new Vector3(scaledHeight * 0.5f - scaledRadius, 0, 0); 
+            case 1:
+                return capsule.transform.position + capsule.center.Multiply(capsule.transform.localScale) + 
+                       new Vector3(0, scaledHeight * 0.5f - scaledRadius, 0);
+            case 2:
+                return capsule.transform.position + capsule.center.Multiply(capsule.transform.localScale) + 
+                       new Vector3(0, 0, scaledHeight * 0.5f - scaledRadius);
+            default: goto case 1;
+        }
+    }
+    
+    public static Vector3 GetWorldBottomHemiPoint(this CapsuleCollider capsule)
+    {
+        var scaledRadius = ScaledCapsuleRadius(capsule);
+        var scaledHeight = ScaledCapsuleHeight(capsule);
+        switch (capsule.direction)
+        {
+            case 0:
+                return capsule.transform.position + capsule.center.Multiply(capsule.transform.localScale) - 
+                       new Vector3(scaledHeight * 0.5f - scaledRadius, 0, 0); 
+            case 1:
+                return capsule.transform.position + capsule.center.Multiply(capsule.transform.localScale) - 
+                       new Vector3(0, scaledHeight * 0.5f - scaledRadius, 0);
+            case 2:
+                return capsule.transform.position + capsule.center.Multiply(capsule.transform.localScale) - 
+                       new Vector3(0, 0, scaledHeight * 0.5f - scaledRadius);
+            default: goto case 1;
+        }
+    }
+
+    #endregion
 }

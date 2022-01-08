@@ -38,7 +38,6 @@ namespace OcUtility
         
         internal static void DisposeAll()
         {
-            Debug.Log("Dispose");
             foreach (var ocPool in _CreatedPools)
             {
                 ocPool.Dispose();

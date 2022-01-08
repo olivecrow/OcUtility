@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -9,6 +10,7 @@ using UnityEditor.ShortcutManagement;
 
 using UnityEngine;
 using Debug = UnityEngine.Debug;
+using Object = UnityEngine.Object;
 
 namespace OcUtility
 {
@@ -18,6 +20,13 @@ namespace OcUtility
         static List<Vector3> giz_DonutInVert = new List<Vector3>();
         static Material giz_Mat;
         static int _dividerCount;
+
+        [RuntimeInitializeOnLoadMethod]
+        static void Init()
+        {
+            var shortCutListener = new GameObject("Shortcut Listener // OcUtility").AddComponent<ShortcutListener>();
+        }
+        
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
         public static void Print(object value, LogType type = LogType.Log)
         {
@@ -240,7 +249,8 @@ namespace OcUtility
         
         
         [Conditional("UNITY_EDITOR")]
-        public static void DrawDonut(Vector3 center, Vector3 normal, Vector3 from, float angle, float minRadius, float maxRadius, Color color)
+        public static void DrawDonut(in Vector3 center, in Vector3 normal, in Vector3 from, 
+            in float angle, in float minRadius, in float maxRadius, in Color color)
         {
             CreateGizmoMaterial();
             giz_Mat.SetPass(0);
@@ -281,6 +291,42 @@ namespace OcUtility
             GL.PopMatrix();
         }
 
+        [Conditional("UNITY_EDITOR")]
+        public static void DrawDonut(in Vector3 center, in Vector3 normal, in Vector3 from, 
+            in float angle, in Vector2 range, in Color color)
+        {
+            DrawDonut(in center, in normal, in from, in angle, in range.x, in range.y, in color);
+        }
+        [Conditional("UNITY_EDITOR")]
+        public static void DrawDonut(in Vector3 center, in Vector3 from, 
+            in float angle, in Vector2 range, in Color color)
+        {
+            DrawDonut(in center, Vector3.up, in from, in angle, in range.x, in range.y, in color);
+        }
+
+        [Conditional("UNITY_EDITOR")]
+        public static void DrawDonut(in Vector3 center, in Vector3 normal, 
+            in float centerAngle, in float angle, in float minRadius, in float maxRadius, in Color color)
+        {
+            var from = Quaternion.AngleAxis(centerAngle, normal) * Vector3.forward;
+            DrawDonut(in center, in normal, in from, in angle, in minRadius, in maxRadius, in color);
+        }
+
+        [Conditional("UNITY_EDITOR")]
+        public static void DrawDonut(in Vector3 center, in Vector3 normal, 
+            in float centerAngle, in float angle, in Vector2 range, in Color color)
+        {
+            var from = Quaternion.AngleAxis(centerAngle, normal) * Vector3.forward;
+            DrawDonut(in center, in normal, in from, in angle, in range, in color);
+        }
+        [Conditional("UNITY_EDITOR")]
+        public static void DrawDonut(in Vector3 center, in float centerAngle, 
+            in float angle, in Vector2 range, in Color color)
+        {
+            var from = Quaternion.AngleAxis(centerAngle, Vector3.up) * Vector3.forward;
+            DrawDonut(in center, Vector3.up, in from, in angle, in range, in color);
+        }
+
         static void CreateGizmoMaterial()
         {
             if (giz_Mat) return;
@@ -290,17 +336,23 @@ namespace OcUtility
             giz_Mat.SetInt("_ZWrite", 0);
         }
 
-#if UNITY_EDITOR
-        [Shortcut("OcUtility/PrintDivider", KeyCode.LeftBracket, ShortcutModifiers.Shift)]
-        static void PrintDivider()
+        [Shortcut("OcUtility/PrintDivider", KeyCode.LeftBracket, ShortcutModifiers.Alt)]
+        public static void PrintDivider()
         {
             Print($"================={_dividerCount++}================");
         }
-        [Shortcut("OcUtility/PrintColorDivider", KeyCode.RightBracket, ShortcutModifiers.Shift)]
-        static void PrintColorDivider()
+        [Shortcut("OcUtility/PrintColorDivider", KeyCode.RightBracket, ShortcutModifiers.Alt)]
+        public static void PrintColorDivider()
         {
             Print($"================={_dividerCount++}================".DRT(_dividerCount));
         }
-#endif
+
+        [Shortcut("OcUtility/ClearLogs", KeyCode.LeftBracket, ShortcutModifiers.Alt | ShortcutModifiers.Action)]
+        public static void ClearLogs()
+        {
+            var logEntries = Type.GetType("UnityEditor.LogEntries, UnityEditor.dll");
+            var clearMethod = logEntries?.GetMethod("Clear", BindingFlags.Static | BindingFlags.Public);
+            clearMethod?.Invoke(null, null);
+        }
     }
 }

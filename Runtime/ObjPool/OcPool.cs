@@ -32,6 +32,8 @@ namespace OcUtility
             {
                 targetPool = GlobalPool[source];
                 targetPool.AddMember(count);
+                if (targetPool.MaxInitialCount < count) targetPool.MaxInitialCount = count;
+                targetPool._numberOfMakeRequest++;
             }
             else targetPool = new OcPool<T>(source, count, folder, initializer);
 
@@ -52,7 +54,7 @@ namespace OcUtility
                 // 씬이 변경되는 등의 이유로 참조가 Missing 상태일 경우 다시 풀을 재생성함.
                 if (targetPool.Folder == null)
                 {
-                    GlobalPool[source] = MakePool(source, targetPool.InitialCount);
+                    GlobalPool[source] = MakePool(source, targetPool.MaxInitialCount);
                     targetPool = GlobalPool[source];
                 }
                 return targetPool.Call(in position, in rotation);
@@ -102,24 +104,33 @@ namespace OcUtility
             GlobalPool[source] = this;
             _sleepingMembers = new Queue<T>();
             _activeMembers = new List<T>();
-            InitialCount = count;
+            MaxInitialCount = count;
             _initializer = initializer;
-            AddMember(count);
+            _numberOfMakeRequest++;
+            AddMember(count, true);
             
             PoolDisposer.RegisterPool(this);
         }
         
         public Transform Folder { get; }
         public int TotalCount => _sleepingMembers.Count + _activeMembers.Count;
-        public int InitialCount { get; }
+        public int MaxInitialCount { get; private set; }
 
-        bool _isOverridenFolder;
+        readonly bool _isOverridenFolder;
+        int _numberOfMakeRequest;
         T _source;
         Queue<T> _sleepingMembers;
         List<T> _activeMembers;
         Action<T> _initializer;
-        public void AddMember(int count)
+        void AddMember(int count, bool forceAdd = false)
         {
+            if (!forceAdd)
+            {
+                if (_numberOfMakeRequest < 5) goto ADD;
+                if(_sleepingMembers.Count > count * 2) return;
+                if(MaxInitialCount > count  * 5) return;
+            }
+            ADD:
             for (int i = 0; i < count; i++)
             {
                 var gao = Object.Instantiate(_source, Folder, true);
@@ -134,7 +145,7 @@ namespace OcUtility
 
         public T Call(in Vector3 position, in Quaternion rotation)
         {
-            if(_sleepingMembers.Count == 0) AddMember(InitialCount);
+            if(_sleepingMembers.Count == 0) AddMember(MaxInitialCount, true);
 
             var member = _sleepingMembers.Dequeue();
             member.transform.SetPositionAndRotation(position, rotation);

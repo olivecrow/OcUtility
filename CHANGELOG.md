@@ -1,5 +1,24 @@
 ﻿# Changelog
 
+## [1.4.1] -2022-01-08
+### Added
+- MathExtension에 IEnumerable<T> 확장 메서드 추가
+  - 멤버의 인덱스를 알 수 있는 IndexOf(T), IndexOf(Predicate<T>)
+- 로그를 클리어 할 수 있는 단축키 추가
+  - Printer.ClearLogs
+  - Ctrl + Alt + [
+- 게임 중 OcUtility의 단축키 사용을 위한 ShortcutListener추가
+  - Printer.Divider 추가.
+  - Printer.ClearLogs추가.
+- 직렬화 순간에도 호출 가능한 무작위 색상인 ColorExtension.SystemRandom 메서드 추가
+- 캡슐 콜라이더의 위, 아래 구체의 중심 위치를 구할 수 있는 메서드 추가
+  - GetWorldTopHemiPoint, GetWorldBottmHemiPoint
+### Fixed
+- OcPool에서 초기화 시점의 풀 개수를 최적화함
+- Printer.Divider의 단축키를 Shift에서 Alt로 변경
+- Printer.DrawDonut을 쉽게 쓸 수 있도록 시그니처 여러개 추가.
+- HierarchyIconDrawer에서 GUI색상이 잘못 출력되던 오류 수정
+
 ## [1.4.0] -2022-01-03
 ### Added 
 - OcPool에 유틸리티 메서드 추가

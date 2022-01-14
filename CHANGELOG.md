@@ -1,5 +1,19 @@
 ﻿# Changelog
 
+## [1.4.2] -2022-01-15
+### Added
+- Editor Comment Asset 및 Editor Comment Window 추가
+  - EditorComment를 에셋으로 관리해서, 여러 씬에서도 편집할 수 있게 함.
+  - 기존의 코멘트들은 지워지기때문에 업데이트 하기 전에 백업해놓던가 해야함.
+  - 기존처럼 게임오브젝트에 EditorComment 스크립트를 부착해서 쓸 수도 있음.
+- OcPool에 파라미터가 없는 Call 메서드 추가
+- GetMaxIndex, GetMaxElement 등 일부 메서드에 대해서 길이를 지정해서 넣을 수 있도록 시그니처를 추가함.
+  - RaycastNonAlloc등과 같이 배열의 길이를 반환하는 메서드와 같이 사용할때 유용함.
+
+### Fixed
+- OcPool에서 폴더 게임오브젝트 이름 앞에 타입명을 붙이도록 변경
+- PoolMember.Sleep에서 Pool에 null 체크를 추가함.
+
 ## [1.4.1] -2022-01-08
 ### Added
 - MathExtension에 IEnumerable<T> 확장 메서드 추가

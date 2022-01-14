@@ -18,63 +18,63 @@ namespace OcUtility
         public Object IconTarget => this;
         public Texture2D OverrideIcon => null;
         public Color IconTint { get; }
-        public Context[] Contexts;
-
-        static Dictionary<int, Preset> _playModeCopies;
-        [HideInInspector]public int guid;
-        bool _isDirty;
-        bool _enteredPlaymode;
-        [RuntimeInitializeOnLoadMethod]
-        static void Init()
-        {
-            if(_playModeCopies == null)
-                _playModeCopies = new Dictionary<int, Preset>();
-            else _playModeCopies.Clear();
-        }
+        [InlineEditor(InlineEditorModes.FullEditor, Expanded = true, DrawHeader = false)]
         
-        void Awake()
-        {
-            EditorApplication.playModeStateChanged += ApplyChanges;
-        }
+        public EditorCommentAsset asset;
 
-        void ApplyChanges(PlayModeStateChange change)
+        [ShowInInspector][ShowIf(nameof(_renameAsset)), DelayedProperty]
+        public string nameInputField
         {
-            if(change != PlayModeStateChange.EnteredEditMode) return;
-            if (_playModeCopies.ContainsKey(guid))
+            get => asset == null ? name : asset.name;
+            set
             {
-                var editModeInstance = Resources
-                    .FindObjectsOfTypeAll<EditorComment>().First(x => x.guid == guid);
-                _playModeCopies[guid].ApplyTo(editModeInstance);
+                AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(asset), GetValidName(value));
+                name = value;
+                _renameAsset = false;
             }
-            EditorApplication.playModeStateChanged -= ApplyChanges;
-        }
+        } 
+        const string FolderPath = "Assets/Editor Default Resources/Editor Comments";
+        bool _renameAsset;
 
-        void OnValidate()
+        [ShowIf("@asset == null")][Button]
+        void CreateAsset()
         {
-            if(!Application.isPlaying) return;
-            if (!_enteredPlaymode)
+            var comment = ScriptableObject.CreateInstance<EditorCommentAsset>();
+            comment.name = GetValidName("New Comment");
+            
+            if (!AssetDatabase.IsValidFolder(FolderPath))
             {
-                _enteredPlaymode = true;
-                return;
+                AssetDatabase.CreateFolder("Assets/Editor Default Resources", "Editor Comments");
             }
-            _isDirty = true;
-        }
-
-        void OnDestroy()
-        {
-            if(_isDirty)
+            
+            AssetDatabase.CreateAsset(comment, $"{FolderPath}/{comment.name}.asset");
+            asset = comment;
+            if (name == "GameObject")
             {
-                _playModeCopies[guid] = new Preset(this);
+                Undo.RecordObject(gameObject, "Rename");
+                name = comment.name;
             }
         }
-
-        void Reset()
+        [Button, ShowIf("@asset != null && !_renameAsset")][HideIf(nameof(_renameAsset))]
+        void Rename()
         {
-            guid = Random.Range(int.MinValue, int.MaxValue);
-            Contexts = new Context[1];
-            gameObject.hideFlags = HideFlags.DontSaveInBuild;
+            _renameAsset = true;
         }
 
+        string GetValidName(string targetName)
+        {
+            for (int i = 0; true; i++)
+            {
+                var nextName = i == 0 ? targetName : $"{targetName} {i}";
+                var exist = AssetDatabase.FindAssets($"t:EditorCommentAsset")
+                    .Select(AssetDatabase.GUIDToAssetPath).Select(AssetDatabase.LoadAssetAtPath<EditorCommentAsset>);
+
+                if (exist.All(x => x.name != nextName))
+                {
+                    return nextName;
+                }
+            }
+        }
         void OnDrawGizmos()
         {
             Gizmos.color = ColorExtension.Rainbow(5f).SetA(0.54f);
@@ -83,34 +83,7 @@ namespace OcUtility
             Gizmos.DrawSphere(transform.position, dist * 0.01f);
         }
 
-        [Serializable]
-        public class Context
-        {
-            [HideLabel] public string header;
 
-            public enum ContextType
-            {
-                TextArea,
-                CheckRow
-            }
-
-            [EnumToggleButtons, HideLabel] public ContextType Type;
-
-            [TextArea(minLines: 5, maxLines: 20), HideLabel, ShowIf("Type", ContextType.TextArea)]
-            public string content;
-
-            [HideLabel, ShowIf("Type", ContextType.CheckRow), TableList]
-            public CheckRow[] checkRow;
-
-            [Serializable]
-            public class CheckRow
-            {
-                [GUIColor("color")] public string text;
-                [TableColumnWidth(25, false)]public bool V;
-
-                Color color => V ? new Color(.5f, 1f, .5f) : Color.white;
-            }
-        }
 
     }
 }

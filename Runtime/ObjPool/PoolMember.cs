@@ -25,7 +25,7 @@ namespace OcUtility
         {
             OnSleep?.Invoke();
             gameObject.SetActive(false);
-            Pool.Return(this as T);
+            Pool?.Return(this as T);
         }
     }
 }

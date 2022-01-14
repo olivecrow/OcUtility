@@ -47,25 +47,36 @@ namespace OcUtility
         /// <summary> 글로벌 풀에서 해당 소스 기반의 풀에서 Call을 반환함. 해당 소스의 풀이 없을 경우 null을 반환함. </summary>
         public static T Call(T source, in Vector3 position, in Quaternion rotation)
         {
-            if (GlobalPool.ContainsKey(source))
-            {
-                var targetPool = GlobalPool[source];
-                
-                // 씬이 변경되는 등의 이유로 참조가 Missing 상태일 경우 다시 풀을 재생성함.
-                if (targetPool.Folder == null)
-                {
-                    GlobalPool[source] = MakePool(source, targetPool.MaxInitialCount);
-                    targetPool = GlobalPool[source];
-                }
-                return targetPool.Call(in position, in rotation);
-            }
-
-            return null;
+            var targetPool = GetPoolInternal(source);
+            return targetPool?.Call(position, rotation);
         }
 
         public static T Call(T source, in Vector3 position)
         {
             return Call(source, in position, Quaternion.identity);
+        }
+
+        public static T Call(T source)
+        {
+            var targetPool = GetPoolInternal(source);
+            return targetPool?.Call();
+
+        }
+
+        static OcPool<T> GetPoolInternal(T source)
+        {
+            if (!GlobalPool.ContainsKey(source)) return null;
+            
+            var targetPool = GlobalPool[source];
+                
+            // 씬이 변경되는 등의 이유로 참조가 Missing 상태일 경우 다시 풀을 재생성함.
+            if (targetPool.Folder == null)
+            {
+                GlobalPool[source] = MakePool(source, targetPool.MaxInitialCount);
+                targetPool = GlobalPool[source];
+            }
+
+            return targetPool;
         }
 
         public static OcPool<T> FindPool(T source)
@@ -140,23 +151,35 @@ namespace OcUtility
                 _initializer?.Invoke(gao);
             }
 
-            if(!_isOverridenFolder) Folder.name = $"{_source.name}_Pool [{TotalCount:###,###}]";
+            if(!_isOverridenFolder) Folder.name = $"[{_source.GetType().Name}] {_source.name}_Pool [{TotalCount:###,###}]";
         }
 
         public T Call(in Vector3 position, in Quaternion rotation)
         {
-            if(_sleepingMembers.Count == 0) AddMember(MaxInitialCount, true);
-
-            var member = _sleepingMembers.Dequeue();
+            var member = CallInternal();
+            if (member == null) return null;
             member.transform.SetPositionAndRotation(position, rotation);
-            member.WakeUp();
-            _activeMembers.Add(member);
             return member;
         }
 
         public T Call(in Vector3 position)
         {
             return Call(in position, Quaternion.identity);
+        }
+
+        public T Call()
+        {
+            return CallInternal();
+        }
+
+        T CallInternal()
+        {
+            if(_sleepingMembers.Count == 0) AddMember(MaxInitialCount, true);
+
+            var member = _sleepingMembers.Dequeue();
+            member.WakeUp();
+            _activeMembers.Add(member);
+            return member;
         }
 
         public T FindActiveMember(Predicate<T> predicate)

@@ -295,10 +295,13 @@ public static class MathExtension
     /// </summary>
     public static int GetMinElementIndex<T>(this IEnumerable<T> enumerable, Func<T, float> calculate)
     {
-        var count = enumerable.Count();
+        return GetMinElementIndex(enumerable, calculate, enumerable.Count());
+    }
+    public static int GetMinElementIndex<T>(this IEnumerable<T> enumerable, Func<T, float> calculate, int length)
+    {
         var min = float.MaxValue;
         var idx = -1;
-        for (var i = 0; i < count; i++)
+        for (var i = 0; i < length; i++)
         {
             var value = calculate.Invoke(enumerable.ElementAt(i));
             if (value < min)
@@ -316,10 +319,13 @@ public static class MathExtension
     /// </summary>
     public static T GetMinElement<T>(this IEnumerable<T> enumerable, Func<T, float> calculate)
     {
-        var count = enumerable.Count();
+        return GetMinElement(enumerable, calculate, enumerable.Count());
+    }
+    public static T GetMinElement<T>(this IEnumerable<T> enumerable, Func<T, float> calculate, int length)
+    {
         var min = float.MaxValue;
         var idx = -1;
-        for (var i = 0; i < count; i++)
+        for (var i = 0; i < length; i++)
         {
             var value = calculate.Invoke(enumerable.ElementAt(i));
             if (value < min)
@@ -348,10 +354,13 @@ public static class MathExtension
     /// </summary>
     public static int GetMaxElementIndex<T>(this IEnumerable<T> enumerable, Func<T, float> calculate)
     {
-        var count = enumerable.Count();
+        return GetMaxElementIndex(enumerable, calculate, enumerable.Count());
+    }
+    public static int GetMaxElementIndex<T>(this IEnumerable<T> enumerable, Func<T, float> calculate, int length)
+    {
         var max = float.MinValue;
         var idx = -1;
-        for (var i = 0; i < count; i++)
+        for (var i = 0; i < length; i++)
         {
             var value = calculate.Invoke(enumerable.ElementAt(i));
             if (value > max)
@@ -368,10 +377,13 @@ public static class MathExtension
     /// </summary>
     public static T GetMaxElement<T>(this IEnumerable<T> enumerable, Func<T, float> calculate)
     {
-        var count = enumerable.Count();
+        return GetMaxElement(enumerable, calculate, enumerable.Count());
+    }
+    public static T GetMaxElement<T>(this IEnumerable<T> enumerable, Func<T, float> calculate, int length)
+    { ;
         var max = float.MinValue;
         var idx = -1;
-        for (var i = 0; i < count; i++)
+        for (var i = 0; i < length; i++)
         {
             var value = calculate.Invoke(enumerable.ElementAt(i));
             if (value > max)
@@ -394,7 +406,7 @@ public static class MathExtension
 
         return value1 > value2 ? t1 : t2;
     }
-
+    
     public static float Sum<T>(this IEnumerable<T> enumerable, Func<T, float> getter)
     {
         var count = enumerable.Count();
@@ -445,8 +457,11 @@ public static class MathExtension
 
     public static int IndexOf<T>(this IEnumerable<T> enumerable, T member)
     {
-        var count = enumerable.Count();
-        for (int i = 0; i < count; i++)
+        return IndexOf(enumerable, member, enumerable.Count());
+    }
+    public static int IndexOf<T>(this IEnumerable<T> enumerable, T member, int length)
+    {
+        for (int i = 0; i < length; i++)
         {
             if (enumerable.ElementAt(i).Equals(member)) return i;
         }
@@ -455,8 +470,11 @@ public static class MathExtension
     }
     public static int IndexOf<T>(this IEnumerable<T> enumerable, Predicate<T> predicate)
     {
-        var count = enumerable.Count();
-        for (int i = 0; i < count; i++)
+        return IndexOf(enumerable, predicate, enumerable.Count());
+    }
+    public static int IndexOf<T>(this IEnumerable<T> enumerable, Predicate<T> predicate, int length)
+    {
+        for (int i = 0; i < length; i++)
         {
             if (predicate.Invoke(enumerable.ElementAt(i))) return i;
         }

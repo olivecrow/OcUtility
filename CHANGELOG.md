@@ -1,5 +1,13 @@
 ﻿# Changelog
 
+## [1.4.3] -2022-01-16
+### Added
+- 소수점 자리수를 지정하여 반올림하는 Round메서드를 Vector에서도 사용 가능하도록 확장함
+- Bound 내의 임의의 한 점을 반환하는 Bounds의 확장인 GetRandomPosition 추가
+
+### Fixed
+- GUIDrawer 및 Printer의 Label 메서드를 완전히 삭제함.
+
 ## [1.4.2] -2022-01-15
 ### Added
 - Editor Comment Asset 및 Editor Comment Window 추가

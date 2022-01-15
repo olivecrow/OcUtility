@@ -503,6 +503,23 @@ public static class MathExtension
         return Mathf.Round(source * Pow10(decimalCount)) / Pow10(decimalCount);
     }
 
+    /// <summary> 벡터의 각 요소를 decimalCount번째 자리 소수로 반올림함. decimalCount = 2면 x.xx가 되는 식. </summary>
+    public static Vector2 Round(this Vector2 source, int decimalCount)
+    {
+        return new Vector2(source.x.Round(decimalCount), source.y.Round(decimalCount));
+    }
+    /// <summary> 벡터의 각 요소를 decimalCount번째 자리 소수로 반올림함. decimalCount = 2면 x.xx가 되는 식. </summary>
+    public static Vector3 Round(this Vector3 source, int decimalCount)
+    {
+        return new Vector3(source.x.Round(decimalCount), source.y.Round(decimalCount), source.z.Round(decimalCount));
+    }
+    /// <summary> 벡터의 각 요소를 decimalCount번째 자리 소수로 반올림함. decimalCount = 2면 x.xx가 되는 식. </summary>
+    public static Vector4 Round(this Vector4 source, int decimalCount)
+    {
+        return new Vector4(source.x.Round(decimalCount), source.y.Round(decimalCount), 
+            source.z.Round(decimalCount), source.w.Round(decimalCount));
+    }
+    
     /// <summary> 매개 변수값에 따른 10의 거듭제곱을 반환함. Mathf.Pow(10, pow)를 더욱 빨리 쓰도록 한 것.
     /// 정확도 및 int의 최댓값 제한으로, -5 ~ 19 까지의 값만 매개변수로 사용할 수 있다.</summary>
     public static float Pow10(int pow)
@@ -547,7 +564,8 @@ public static class MathExtension
         };
     }
 
-    
+    #region EnumFlags
+
     public static bool Has<T>(this Enum type, T value) {
         try {
             return ((int)(object)type & (int)(object)value) == (int)(object)value;
@@ -580,7 +598,6 @@ public static class MathExtension
         }
     }
 
-
     public static T Remove<T>(this Enum type, T value) {
         try {
             return (T)(object)((int)(object)type & ~(int)(object)value);
@@ -593,6 +610,11 @@ public static class MathExtension
                 ), ex);
         }
     }
+    
+    #endregion
+
+
+    #region Random
 
     public static float RandomSign(this float source)
     {
@@ -602,6 +624,18 @@ public static class MathExtension
     {
         return Random.Range(0, 2) == 0 ? source : source * -1;
     }
+
+    public static Vector3 GetRandomPosition(this Bounds bounds)
+    {
+        var x = Random.Range(bounds.min.x, bounds.max.x);
+        var y = Random.Range(bounds.min.y, bounds.max.y);
+        var z = Random.Range(bounds.min.z, bounds.max.z);
+
+        return new Vector3(x, y, z);
+    }
+
+    #endregion
+    
 
     #region Physics
 

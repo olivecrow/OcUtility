@@ -482,6 +482,14 @@ public static class MathExtension
         return -1;
     }
 
+    public static void Foreach<T>(this IEnumerable<T> enumerable, Action<T> action, int length)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            action?.Invoke(enumerable.ElementAt(i));
+        }
+    }
+
 
     #endregion
 

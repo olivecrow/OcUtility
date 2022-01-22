@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using Sirenix.OdinInspector;
 using UnityEngine;
-
 namespace OcUtility
 {
     [CreateAssetMenu(fileName = "New Editor Comment", menuName = "Utility/Editor Comment", order = 0)]
@@ -14,6 +14,28 @@ namespace OcUtility
         {
             Contexts = new Context[1];
             hideFlags = HideFlags.DontSaveInBuild;
+        }
+        [Button("클립보드에 복사")]
+        void Copy()
+        {
+            var sb = new StringBuilder();
+            for (int i = 0; i < Contexts.Length; i++)
+            {
+                var context = Contexts[i];
+                sb.Append($"{i + 1}.");
+                sb.Append('\n');
+                sb.Append(context.header);
+                sb.Append('\n');
+                sb.Append(context.content);
+                
+                if(i < Contexts.Length - 1)
+                {
+                    sb.Append('\n');
+                    sb.Append('\n');
+                }   
+            }
+
+            GUIUtility.systemCopyBuffer = sb.ToString();
         }
 
         [Serializable]

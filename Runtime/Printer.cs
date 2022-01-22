@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -20,7 +21,7 @@ namespace OcUtility
         static List<Vector3> giz_DonutInVert = new List<Vector3>();
         static Material giz_Mat;
         static int _dividerCount;
-
+        
         [RuntimeInitializeOnLoadMethod]
         static void Init()
         {
@@ -219,5 +220,6 @@ namespace OcUtility
             var clearMethod = logEntries?.GetMethod("Clear", BindingFlags.Static | BindingFlags.Public);
             clearMethod?.Invoke(null, null);
         }
+        
     }
 }

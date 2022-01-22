@@ -1,5 +1,10 @@
 ﻿# Changelog
 
+## Working...
+### Added
+- MathExtension에 길이를 지정해서 사용하는 Foreach<T>메서드 추가
+- EditorComment의 내용을 클립보드에 복사할 수 있는 기능 추가
+
 ## [1.4.3] -2022-01-16
 ### Added
 - 소수점 자리수를 지정하여 반올림하는 Round메서드를 Vector에서도 사용 가능하도록 확장함

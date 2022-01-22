@@ -41,6 +41,11 @@ namespace OcUtility
         {
             var comment = ScriptableObject.CreateInstance<EditorCommentAsset>();
             comment.name = GetValidName("New Comment");
+
+            if (!AssetDatabase.IsValidFolder("Assets/Editor Default Resources"))
+            {
+                AssetDatabase.CreateFolder("Assets", "Editor Default Resources");
+            }
             
             if (!AssetDatabase.IsValidFolder(FolderPath))
             {

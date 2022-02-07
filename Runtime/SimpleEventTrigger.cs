@@ -9,8 +9,49 @@ using UnityEngine.Events;
 public class SimpleEventTrigger : MonoBehaviour
 {
     public bool useMultipleEvent;
-    [HideIf("useMultipleEvent")]public UnityEvent e;
+    [HideIf("useMultipleEvent")] public EventTiming timing;
+    [HideIf("useMultipleEvent")] public UnityEvent e;
     [ShowIf("useMultipleEvent"), TableList]public EventKeyPair[] events;
+
+    void Awake()
+    {
+        InvokeByTiming(EventTiming.Awake);
+    }
+
+    void OnEnable()
+    {
+        InvokeByTiming(EventTiming.OnEnable);
+    }
+
+    void OnDisable()
+    {
+        InvokeByTiming(EventTiming.OnDisable);
+    }
+
+    void Start()
+    {
+        InvokeByTiming(EventTiming.Start);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        InvokeByTiming(EventTiming.TriggerEnter);
+    }
+
+    void InvokeByTiming(EventTiming t)
+    {
+        if (useMultipleEvent)
+        {
+            foreach (var pair in events)
+            {
+                if(pair.timing == t) pair.Invoke();
+            }
+        }
+        else
+        {
+            if(timing == t) Invoke();
+        }
+    }
 
     [HideIf("useMultipleEvent"), Button]
     public void Invoke()
@@ -20,14 +61,14 @@ public class SimpleEventTrigger : MonoBehaviour
         
     public void InvokeByKey(string key)
     {
-        var e = events.FirstOrDefault(x => x.key == key);
-        if (e == null)
+        var pair = events.FirstOrDefault(x => x.key == key);
+        if (pair == null)
         {
             Debug.Log($"해당 Key값의 이벤트가 없음 | key : {key}");
             return;
         }
             
-        e.e.Invoke();
+        pair.Invoke();
     }
         
     public void InvokeByIndex(int index)
@@ -38,19 +79,30 @@ public class SimpleEventTrigger : MonoBehaviour
             return;
         }
             
-        events[index].e.Invoke();
+        events[index].Invoke();
     }
 
     [Serializable]
     public class EventKeyPair
     {
+        public EventTiming timing;
         [TableColumnWidth(100, false)]public string key;
         [VerticalGroup("E")]public UnityEvent e;
 
         [VerticalGroup("E"), Button]
-        void Invoke()
+        public void Invoke()
         {
             e.Invoke();
         }
+    }
+
+    public enum EventTiming
+    {
+        Manual,
+        Awake,
+        Start,
+        OnEnable,
+        OnDisable,
+        TriggerEnter
     }
 }

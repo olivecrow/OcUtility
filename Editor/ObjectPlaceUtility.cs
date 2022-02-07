@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
+using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,7 +15,6 @@ namespace OcUtility.Editor
         public enum Shape
         {
             Line,
-            Arc,
             Circle
         }
 
@@ -57,8 +57,10 @@ namespace OcUtility.Editor
         [LabelWidth(100)][ShowIf(nameof(rotationType), RotationType.LookAt)]
         public Vector3 lookAtAxis = new Vector3(0,1,0);
 
+        Vector3 CenterOfAll => Selection.count > 0 ? 
+            Selection.transforms.Select(x => x.position).Sum() / Selection.count : Vector3.zero;
+        
         [HideInInspector]public List<GameObject> targets;
-        [HideInInspector]public int _undoID;
         [MenuItem("Utility/오브젝트 배치 유틸리티")]
         static void Open()
         {
@@ -73,7 +75,22 @@ namespace OcUtility.Editor
         protected override void OnEnable()
         {
             base.OnEnable();
+            
+            if(start == Vector3.zero)
+            {
+                start = Selection.activeTransform != null ? Selection.activeTransform.position : Vector3.zero;
+                end = start + Vector3.forward;
+                center = start;
+                lookAtPoint = start + Vector3.right;
+            }
             OnSelectionChange();
+            SceneView.duringSceneGui += DrawHandles;
+            Tools.hidden = true;
+        }
+
+        void OnDisable()
+        {
+            Tools.hidden = false;
         }
 
         void OnSelectionChange()
@@ -81,6 +98,39 @@ namespace OcUtility.Editor
             targets = Selection.gameObjects.OrderBy(x => x.name).ToList();
             _count = $"오브젝트 수 : {targets.Count}";
         }
+
+        void DrawHandles(SceneView sceneView)
+        {
+            switch (shape)
+            {
+                case Shape.Line:
+                    start = Handles.DoPositionHandle(start, Quaternion.identity);
+                    Handles.Label(start, "start");
+                    end = Handles.DoPositionHandle(end, Quaternion.identity);
+                    Handles.Label(end, "end");
+                    break;
+                case Shape.Circle:
+                    center = Handles.DoPositionHandle(center, Quaternion.identity);
+                    Handles.Label(center, "center");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            switch (rotationType)
+            {
+                case RotationType.Same:
+                    rotation = Handles.DoRotationHandle(Quaternion.Euler(rotation), CenterOfAll).eulerAngles;
+                    break;
+                case RotationType.LookAt:
+                    lookAtPoint = Handles.DoPositionHandle(lookAtPoint, Quaternion.identity);
+                    Handles.Label(lookAtPoint, "LookAtPoint");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         void Update()
         {
             if(!isActive) return;
@@ -90,26 +140,16 @@ namespace OcUtility.Editor
                 case Shape.Line:
                     for (int i = 0; i < targets.Count; i++)
                     {
-                        Undo.RecordObject(targets[i].transform, "오브젝트 배치");
                         targets[i].transform.position = Vector3.Lerp(start, end, (float) i / (targets.Count - 1));
-                        SetRotation(targets[i].transform);
-                    }
-                    break;
-                case Shape.Arc:
-                    for (int i = 0; i < targets.Count; i++)
-                    {
-                        Undo.RecordObject(targets[i].transform, "오브젝트 배치");
-                        targets[i].transform.position = Vector3.Slerp(start, end, (float) i / (targets.Count - 1));
                         SetRotation(targets[i].transform);
                     }
                     break;
                 case Shape.Circle:
                     for (int i = 0; i < targets.Count; i++)
                     {
-                        Undo.RecordObject(targets[i].transform, "오브젝트 배치");
                         var angle = (float)i / targets.Count * 360f;
                         var rot = Quaternion.AngleAxis(angle, axis);
-                        var pos = rot * Vector3.forward * radius;
+                        var pos = center + rot * Vector3.forward * radius;
                         
                         targets[i].transform.position = pos;
                         SetRotation(targets[i].transform);
@@ -164,6 +204,5 @@ namespace OcUtility.Editor
                 Undo.CollapseUndoOperations(undoIndex);
             }
         }
-        
     }
 }

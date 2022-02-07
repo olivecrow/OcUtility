@@ -22,6 +22,10 @@ namespace OcUtility
         
         public EditorCommentAsset asset;
 
+        public bool hideGizmo = true;
+        [HideIf(nameof(hideGizmo)), Indent()]public Color gizmoColor = Color.red;
+        [HideIf(nameof(hideGizmo)), Indent()]public bool blinkGizmo;
+
         [ShowInInspector][ShowIf(nameof(_renameAsset)), DelayedProperty]
         public string nameInputField
         {
@@ -32,32 +36,22 @@ namespace OcUtility
                 name = value;
                 _renameAsset = false;
             }
-        } 
-        const string FolderPath = "Assets/Editor Default Resources/Editor Comments";
+        }
         bool _renameAsset;
 
         [ShowIf("@asset == null")][Button]
         void CreateAsset()
         {
-            var comment = ScriptableObject.CreateInstance<EditorCommentAsset>();
-            comment.name = GetValidName("New Comment");
+            var assetName = name == "GameObject" ? "New Comment" : name;
+            
+            var baseFolder = "Assets/Editor Default Resources/Editor Comments";
+            var folderPath = $"{baseFolder}/{gameObject.scene.name}";
+            
+            asset = CreateAsset(folderPath, assetName);
 
-            if (!AssetDatabase.IsValidFolder("Assets/Editor Default Resources"))
+            if (asset.name != "GameObject")
             {
-                AssetDatabase.CreateFolder("Assets", "Editor Default Resources");
-            }
-            
-            if (!AssetDatabase.IsValidFolder(FolderPath))
-            {
-                AssetDatabase.CreateFolder("Assets/Editor Default Resources", "Editor Comments");
-            }
-            
-            AssetDatabase.CreateAsset(comment, $"{FolderPath}/{comment.name}.asset");
-            asset = comment;
-            if (name == "GameObject")
-            {
-                Undo.RecordObject(gameObject, "Rename");
-                name = comment.name;
+                name = asset.name;
             }
         }
         [Button, ShowIf("@asset != null && !_renameAsset")][HideIf(nameof(_renameAsset))]
@@ -65,8 +59,19 @@ namespace OcUtility
         {
             _renameAsset = true;
         }
+        
+        void OnDrawGizmos()
+        {
+            var color = blinkGizmo ? gizmoColor.SetA(Time.realtimeSinceStartup % 0.5f) : gizmoColor; 
+            Gizmos.color = color;
 
-        string GetValidName(string targetName)
+            var dist = Vector3.Distance(SceneView.lastActiveSceneView.camera.transform.position, transform.position);
+            Gizmos.DrawSphere(transform.position, dist * 0.01f);
+        }
+
+
+        // static-------
+        static string GetValidName(string targetName)
         {
             for (int i = 0; true; i++)
             {
@@ -80,16 +85,23 @@ namespace OcUtility
                 }
             }
         }
-        void OnDrawGizmos()
+        
+        public static EditorCommentAsset CreateAsset(string folderPath, string fileName)
         {
-            Gizmos.color = ColorExtension.Rainbow(5f).SetA(0.54f);
+            var comment = ScriptableObject.CreateInstance<EditorCommentAsset>();
+            comment.name = GetValidName(fileName);
 
-            var dist = Vector3.Distance(SceneView.lastActiveSceneView.camera.transform.position, transform.position);
-            Gizmos.DrawSphere(transform.position, dist * 0.01f);
+            
+            if (!AssetDatabase.IsValidFolder(folderPath))
+            {
+                System.IO.Directory.CreateDirectory(folderPath);
+                AssetDatabase.ImportAsset(folderPath);
+            }
+            
+            AssetDatabase.CreateAsset(comment, $"{folderPath}/{comment.name}.asset");
+
+            return comment;
         }
-
-
-
     }
 }
 #endif

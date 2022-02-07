@@ -12,7 +12,7 @@ namespace OcUtility
         public UnityEvent OnSleep;
 
         public OcPool<T> Pool { get; set; }
-
+        public bool IsParentChanged { get; private set; }
         /// <summary> 오브젝트를 활성화하고 OnWakeUp 콜백을 실행함. OnEnable에서 호출하지 말 것. </summary>
         public virtual void WakeUp()
         {
@@ -25,7 +25,20 @@ namespace OcUtility
         {
             OnSleep?.Invoke();
             gameObject.SetActive(false);
-            Pool?.Return(this as T);
+            if(Pool != null)
+            {
+                Pool.Return(this as T);
+                if (IsParentChanged && Pool.Folder != null)
+                {
+                    transform.SetParent(Pool.Folder);
+                    IsParentChanged = false;
+                }
+            }
+        }
+
+        void OnTransformParentChanged()
+        {
+            IsParentChanged = true;
         }
     }
 }

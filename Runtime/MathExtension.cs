@@ -406,6 +406,39 @@ public static class MathExtension
 
         return value1 > value2 ? t1 : t2;
     }
+    public static Vector2 Sum(this IEnumerable<Vector2> enumerable)
+    {
+        var count = enumerable.Count();
+        Vector2 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += enumerable.ElementAt(i);
+        }
+
+        return result;
+    }
+    public static Vector3 Sum(this IEnumerable<Vector3> enumerable)
+    {
+        var count = enumerable.Count();
+        Vector3 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += enumerable.ElementAt(i);
+        }
+
+        return result;
+    }
+    public static Vector4 Sum(this IEnumerable<Vector4> enumerable)
+    {
+        var count = enumerable.Count();
+        Vector4 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += enumerable.ElementAt(i);
+        }
+
+        return result;
+    }
     
     public static float Sum<T>(this IEnumerable<T> enumerable, Func<T, float> getter)
     {
@@ -572,6 +605,40 @@ public static class MathExtension
         };
     }
 
+    public static int Sign(this int source)
+    {
+        return source > 0 ? 1 : -1;
+    }
+
+    public static int Sign(this float source)
+    {
+        return source > 0 ? 1 : -1;
+    }
+
+    public static int Sign(this double source)
+    {
+        return source > 0 ? 1 : -1;
+    }
+    public static Vector2 Sign(this Vector2 source)
+    {
+        return new Vector2(source.x.Sign(), source.y.Sign());
+    }
+    public static Vector3 Sign(this Vector3 source)
+    {
+        return new Vector3(source.x.Sign(), source.y.Sign(), source.z.Sign());
+    }
+    public static Vector4 Sign(this Vector4 source)
+    {
+        return new Vector4(source.x.Sign(), source.y.Sign(), source.z.Sign(), source.w.Sign());
+    }
+
+    public static int abs(this int source) => source > 0 ? source : -1 * source;
+    public static float abs(this float source) => source > 0 ? source : -1 * source;
+    public static double abs(this double source) => source > 0 ? source : -1 * source;
+    public static Vector2 abs(this Vector2 source) => new Vector2(source.x.abs(), source.y.abs());
+    public static Vector3 abs(this Vector3 source) => new Vector3(source.x.abs(), source.y.abs(), source.z.abs());
+    public static Vector4 abs(this Vector4 source) => new Vector4(source.x.abs(), source.y.abs(), source.z.abs(), source.w.abs());
+
     #region EnumFlags
 
     public static bool Has<T>(this Enum type, T value) {
@@ -649,7 +716,7 @@ public static class MathExtension
 
     static float ScaledCapsuleRadius(CapsuleCollider capsule)
     {
-        var scale = capsule.transform.localScale;
+        var scale = capsule.transform.lossyScale;
         float max;
         switch (capsule.direction)
         {
@@ -669,7 +736,7 @@ public static class MathExtension
     }
     static float ScaledCapsuleHeight(CapsuleCollider capsule)
     {
-        var scale = capsule.transform.localScale;
+        var scale = capsule.transform.lossyScale;
         float height;
         switch (capsule.direction)
         {
@@ -690,42 +757,48 @@ public static class MathExtension
         return height;
     }
 
-    public static Vector3 GetWorldTopHemiPoint(this CapsuleCollider capsule)
+    public static void ToWorldSpaceCapsule(this CapsuleCollider capsule, out Vector3 point0, out Vector3 point1, out float radius)
     {
-        var scaledRadius = ScaledCapsuleRadius(capsule);
-        var scaledHeight = ScaledCapsuleHeight(capsule);
-        switch (capsule.direction)
-        {
-            case 0:
-                return capsule.transform.position + capsule.center.Multiply(capsule.transform.localScale) + 
-                       new Vector3(scaledHeight * 0.5f - scaledRadius, 0, 0); 
-            case 1:
-                return capsule.transform.position + capsule.center.Multiply(capsule.transform.localScale) + 
-                       new Vector3(0, scaledHeight * 0.5f - scaledRadius, 0);
-            case 2:
-                return capsule.transform.position + capsule.center.Multiply(capsule.transform.localScale) + 
-                       new Vector3(0, 0, scaledHeight * 0.5f - scaledRadius);
-            default: goto case 1;
+        var center = capsule.transform.TransformPoint(capsule.center);
+        radius = 0f;
+        float height = 0f;
+        Vector3 lossyScale = capsule.transform.lossyScale.abs();
+        Vector3 dir = Vector3.zero;
+
+        switch (capsule.direction) {
+            case 0: // x
+                radius = Mathf.Max(lossyScale.y, lossyScale.z) * capsule.radius;
+                height = lossyScale.x * capsule.height;
+                dir = capsule.transform.TransformDirection(Vector3.right);
+                break;
+            case 1: // y
+                radius = Mathf.Max(lossyScale.x, lossyScale.z) * capsule.radius;
+                height = lossyScale.y * capsule.height;
+                dir = capsule.transform.TransformDirection(Vector3.up);
+                break;
+            case 2: // z
+                radius = Mathf.Max(lossyScale.x, lossyScale.y) * capsule.radius;
+                height = lossyScale.z * capsule.height;
+                dir = capsule.transform.TransformDirection(Vector3.forward);
+                break;
         }
+
+        if (height < radius*2f) {
+            dir = Vector3.zero;
+        }
+
+        point0 = center + dir * (height * 0.5f - radius);
+        point1 = center - dir * (height * 0.5f - radius);
     }
-    
-    public static Vector3 GetWorldBottomHemiPoint(this CapsuleCollider capsule)
+    public static Vector3 DirectionAxis(this CapsuleCollider capsule)
     {
-        var scaledRadius = ScaledCapsuleRadius(capsule);
-        var scaledHeight = ScaledCapsuleHeight(capsule);
-        switch (capsule.direction)
+        return capsule.direction switch
         {
-            case 0:
-                return capsule.transform.position + capsule.center.Multiply(capsule.transform.localScale) - 
-                       new Vector3(scaledHeight * 0.5f - scaledRadius, 0, 0); 
-            case 1:
-                return capsule.transform.position + capsule.center.Multiply(capsule.transform.localScale) - 
-                       new Vector3(0, scaledHeight * 0.5f - scaledRadius, 0);
-            case 2:
-                return capsule.transform.position + capsule.center.Multiply(capsule.transform.localScale) - 
-                       new Vector3(0, 0, scaledHeight * 0.5f - scaledRadius);
-            default: goto case 1;
-        }
+            0 => Vector3.right,
+            1 => Vector3.up,
+            2 => Vector3.forward,
+            _ => Vector3.up
+        };
     }
 
     #endregion

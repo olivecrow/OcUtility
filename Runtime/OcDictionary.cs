@@ -142,9 +142,9 @@ namespace OcUtility
     public class OcKVPair<TKey, TValue>
     {
         public TKey Key;
-        [HideLabel][VerticalGroup("Value")][HideIf("@Value is UnityEngine.Object")]public TValue Value;
+        [HideLabel][VerticalGroup("Value")][HideIf(nameof(e_previewValue))]public TValue Value;
 
-        [VerticalGroup("Value")][ShowInInspector][ShowIf("@Value is UnityEngine.Object")][PreviewField(ObjectFieldAlignment.Left)]
+        [VerticalGroup("Value")][ShowInInspector][ShowIf(nameof(e_previewValue))][PreviewField(ObjectFieldAlignment.Left)]
         [HideLabel][SuffixLabel("@Preview == null ? \"null\" : Preview.name")]
         Object Preview
         {
@@ -154,7 +154,13 @@ namespace OcUtility
                 if(value is TValue value1) Value = value1;
             }
         }
-        public OcKVPair(){}
+
+        [HideInInspector] public bool e_previewValue;
+
+        public OcKVPair(bool preview = true)
+        {
+            e_previewValue = preview;
+        }
 
         public OcKVPair(TKey key, TValue value)
         {

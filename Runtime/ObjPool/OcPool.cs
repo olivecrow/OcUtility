@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEditor;
 #endif
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace OcUtility
@@ -17,13 +18,17 @@ namespace OcUtility
         static OcPool()
         {
 #if UNITY_EDITOR
-            Application.quitting += () =>
-            {
-                GlobalPool = new Dictionary<IPoolMember<T>, OcPool<T>>();
-            };   
+            Application.quitting += Release; 
 #endif
             GlobalPool = new Dictionary<IPoolMember<T>, OcPool<T>>();
         }
+#if UNITY_EDITOR
+        static void Release()
+        {
+            GlobalPool = null;
+            Application.quitting -= Release;
+        }
+#endif
 
         public static OcPool<T> MakePool(T source, int count, Transform folder = null, Action<T> initializer = null)
         {

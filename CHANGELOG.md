@@ -1,9 +1,24 @@
 ﻿# Changelog
 
-## Working...
+## [1.4.4] -2022-02-07
 ### Added
-- MathExtension에 길이를 지정해서 사용하는 Foreach<T>메서드 추가
-- EditorComment의 내용을 클립보드에 복사할 수 있는 기능 추가
+- MathExtension 기능 추가
+  - 길이를 지정해서 사용하는 Foreach<T>메서드 추가
+  - float, int, double, vector의 절댓값을 반환하는 abs 메서드 추가
+  - float, int, double의 부호를 반환하는 Sign 메서드 추가
+  - CapsuleCollider의 위, 아래 구체의 중심과 반지름을 반환하는 ToWorldSpaceCapsule 추가
+  - CapsuleCollider의 축 방향을 반환하는 DirectionAxis 추가
+
+- EditorComment 기능 추가
+  - EditorComment의 내용을 클립보드에 복사할 수 있는 기능 추가
+  - Editor Comment Window에서 에셋 생성, 삭제하는 기능 추가
+
+- SimpleEventTrigger에 유니티 이벤트 타이밍에 따라 호출할 수 있는 기능 추가
+- 오브젝트 배치 유틸리티에 핸들 추가
+
+### Fixed
+- Editor Comment에서 에셋을 생성할때, 게임오브젝트의 씬 이름을 폴더로 생성하도록 변경
+- 오브젝트 배치 유틸리티에서 Arc타입 삭제
 
 ## [1.4.3] -2022-01-16
 ### Added

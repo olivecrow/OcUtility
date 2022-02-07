@@ -790,6 +790,7 @@ public static class MathExtension
         point0 = center + dir * (height * 0.5f - radius);
         point1 = center - dir * (height * 0.5f - radius);
     }
+    
     public static Vector3 DirectionAxis(this CapsuleCollider capsule)
     {
         return capsule.direction switch

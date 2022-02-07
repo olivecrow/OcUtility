@@ -17,8 +17,8 @@ namespace OcUtility
 {
     public class Printer
     {
-        static List<Vector3> giz_DonutOutVert = new List<Vector3>();
-        static List<Vector3> giz_DonutInVert = new List<Vector3>();
+        static List<Vector3> giz_GLVert_1 = new List<Vector3>();
+        static List<Vector3> giz_GLVert_2 = new List<Vector3>();
         static Material giz_Mat;
         static int _dividerCount;
         
@@ -115,13 +115,18 @@ namespace OcUtility
         }
 
         [Conditional("UNITY_EDITOR")]
-        public static void DrawDonut(in Vector3 center, in Vector3 normal, in Vector3 from, 
-            in float angle, in float minRadius, in float maxRadius, in Color color)
+        public static void DrawDonut(Vector3 center, Vector3 normal, Vector3 from, 
+            float angle, float minRadius, float maxRadius, Color color, float duration = 0)
         {
+            if (duration > 0 && Application.isPlaying)
+            {
+                wait.doUntilTime(duration, () => DrawDonut(center, normal, from, angle, minRadius, maxRadius, color));
+                return;
+            }
             CreateGizmoMaterial();
             giz_Mat.SetPass(0);
-            giz_DonutOutVert.Clear();
-            giz_DonutInVert.Clear();
+            giz_GLVert_1.Clear();
+            giz_GLVert_2.Clear();
             
             
             var resolution = Mathf.CeilToInt(angle / 9);
@@ -130,27 +135,27 @@ namespace OcUtility
             {
                 var a = angle * i / resolution;
                 var p = Quaternion.AngleAxis(a, normal) * Quaternion.LookRotation(from, normal) * new Vector3(0, 0, maxRadius);
-                giz_DonutOutVert.Add(center + p);
+                giz_GLVert_1.Add(center + p);
         
                 var inn = p.normalized * minRadius;
-                giz_DonutInVert.Add(center + inn);
+                giz_GLVert_2.Add(center + inn);
             }
-
+            
             GL.PushMatrix();
             GL.MultMatrix(Handles.matrix);
-            GL.Begin(4);
+            GL.Begin(GL.TRIANGLES);
             int index = 1;
             for (int length = resolution + 1; index < length; ++index)
             {
                 GL.Color(color);
-                GL.Vertex(giz_DonutInVert[index]);
-                GL.Vertex(giz_DonutInVert[index - 1]);
-                GL.Vertex(giz_DonutOutVert[index - 1]);
+                GL.Vertex(giz_GLVert_2[index]);
+                GL.Vertex(giz_GLVert_2[index - 1]);
+                GL.Vertex(giz_GLVert_1[index - 1]);
             
             
-                GL.Vertex(giz_DonutOutVert[index - 1]);
-                GL.Vertex(giz_DonutOutVert[index]);
-                GL.Vertex(giz_DonutInVert[index]);
+                GL.Vertex(giz_GLVert_1[index - 1]);
+                GL.Vertex(giz_GLVert_1[index]);
+                GL.Vertex(giz_GLVert_2[index]);
 
             }
             GL.End();
@@ -158,39 +163,39 @@ namespace OcUtility
         }
 
         [Conditional("UNITY_EDITOR")]
-        public static void DrawDonut(in Vector3 center, in Vector3 normal, in Vector3 from, 
-            in float angle, in Vector2 range, in Color color)
+        public static void DrawDonut(Vector3 center, Vector3 normal, Vector3 from, 
+            float angle, Vector2 range, Color color, float duration = 0)
         {
-            DrawDonut(in center, in normal, in from, in angle, in range.x, in range.y, in color);
+            DrawDonut(center, normal, from, angle, range.x, range.y, color, duration);
         }
         [Conditional("UNITY_EDITOR")]
-        public static void DrawDonut(in Vector3 center, in Vector3 from, 
-            in float angle, in Vector2 range, in Color color)
+        public static void DrawDonut(Vector3 center, Vector3 from, 
+            float angle, Vector2 range, Color color, float duration = 0)
         {
-            DrawDonut(in center, Vector3.up, in from, in angle, in range.x, in range.y, in color);
-        }
-
-        [Conditional("UNITY_EDITOR")]
-        public static void DrawDonut(in Vector3 center, in Vector3 normal, 
-            in float centerAngle, in float angle, in float minRadius, in float maxRadius, in Color color)
-        {
-            var from = Quaternion.AngleAxis(centerAngle, normal) * Vector3.forward;
-            DrawDonut(in center, in normal, in from, in angle, in minRadius, in maxRadius, in color);
+            DrawDonut(center, Vector3.up, from, angle, range.x, range.y, color);
         }
 
         [Conditional("UNITY_EDITOR")]
-        public static void DrawDonut(in Vector3 center, in Vector3 normal, 
-            in float centerAngle, in float angle, in Vector2 range, in Color color)
+        public static void DrawDonut(Vector3 center, Vector3 normal, 
+            float centerAngle, float angle, float minRadius, float maxRadius, Color color, float duration = 0)
         {
             var from = Quaternion.AngleAxis(centerAngle, normal) * Vector3.forward;
-            DrawDonut(in center, in normal, in from, in angle, in range, in color);
+            DrawDonut(center, normal, from, angle, minRadius, maxRadius, color, duration);
+        }
+
+        [Conditional("UNITY_EDITOR")]
+        public static void DrawDonut(Vector3 center, Vector3 normal, 
+            float centerAngle, float angle, Vector2 range, Color color, float duration = 0)
+        {
+            var from = Quaternion.AngleAxis(centerAngle, normal) * Vector3.forward;
+            DrawDonut(center, normal, from, angle, range, color, duration);
         }
         [Conditional("UNITY_EDITOR")]
-        public static void DrawDonut(in Vector3 center, in float centerAngle, 
-            in float angle, in Vector2 range, in Color color)
+        public static void DrawDonut(Vector3 center, float centerAngle, 
+            float angle, Vector2 range, Color color, float duration = 0)
         {
             var from = Quaternion.AngleAxis(centerAngle, Vector3.up) * Vector3.forward;
-            DrawDonut(in center, Vector3.up, in from, in angle, in range, in color);
+            DrawDonut(center, Vector3.up, from, angle, range, color, duration);
         }
 
         static void CreateGizmoMaterial()
@@ -202,18 +207,51 @@ namespace OcUtility
             giz_Mat.SetInt("_ZWrite", 0);
         }
 
-        [Shortcut("OcUtility/PrintDivider", KeyCode.LeftBracket, ShortcutModifiers.Alt)]
+        [Conditional("UNITY_EDITOR")]
+        public static void DrawCross(Vector3 position, float size, Color color, float duration = 0)
+        {
+            if (duration > 0 && Application.isPlaying)
+            {
+                wait.doUntilTime(duration, () => DrawCross(position, size, color));
+                return;
+            }
+            CreateGizmoMaterial();
+            giz_Mat.SetPass(0);
+            giz_GLVert_1.Clear();
+            
+            giz_GLVert_1.Add(position - Vector3.right * size);
+            giz_GLVert_1.Add(position + Vector3.right * size);
+            giz_GLVert_1.Add(position - Vector3.up * size);
+            giz_GLVert_1.Add(position + Vector3.up * size);
+            giz_GLVert_1.Add(position - Vector3.forward * size);
+            giz_GLVert_1.Add(position + Vector3.forward * size);
+            
+            
+            GL.PushMatrix();
+            GL.MultMatrix(Handles.matrix);
+            GL.Begin(GL.LINES);
+            GL.Color(color);
+            for (int i = 0; i < giz_GLVert_1.Count; i++)
+            {
+                GL.Vertex(giz_GLVert_1[i]);
+            }
+            GL.End();
+            GL.PopMatrix();
+        }
+        
+
+        [Shortcut("OcUtility/PrintDivider", KeyCode.LeftBracket, ShortcutModifiers.Alt)][Conditional("UNITY_EDITOR")]
         public static void PrintDivider()
         {
             Print($"================={_dividerCount++}================");
         }
-        [Shortcut("OcUtility/PrintColorDivider", KeyCode.RightBracket, ShortcutModifiers.Alt)]
+        [Shortcut("OcUtility/PrintColorDivider", KeyCode.RightBracket, ShortcutModifiers.Alt)][Conditional("UNITY_EDITOR")]
         public static void PrintColorDivider()
         {
             Print($"================={_dividerCount++}================".DRT(_dividerCount));
         }
 
-        [Shortcut("OcUtility/ClearLogs", KeyCode.LeftBracket, ShortcutModifiers.Alt | ShortcutModifiers.Action)]
+        [Shortcut("OcUtility/ClearLogs", KeyCode.LeftBracket, ShortcutModifiers.Alt | ShortcutModifiers.Action)][Conditional("UNITY_EDITOR")]
         public static void ClearLogs()
         {
             var logEntries = Type.GetType("UnityEditor.LogEntries, UnityEditor.dll");

@@ -1,5 +1,13 @@
 ﻿# Changelog
 
+## [1.4.5] -2020-02-08
+### Added
+- Printer.DrawCross 기능 추가
+- Printer.DrawDonut에 duration 옵션 추가. 플레이모드에서만 적용됨.
+
+### Fixed
+- OcPool 초기화 오류 해결
+
 ## [1.4.4] -2022-02-07
 ### Added
 - MathExtension 기능 추가

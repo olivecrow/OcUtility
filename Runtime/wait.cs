@@ -23,7 +23,7 @@ public class wait : MonoBehaviour
     {
         return _instance.StartCoroutine(WaitFrame(frame, e));
     }
-    
+
     public static Coroutine fixedFrame(int frame, Action e)
     {
         return _instance.StartCoroutine(WaitFixedFrame(frame, e));
@@ -38,25 +38,34 @@ public class wait : MonoBehaviour
         return _instance.StartCoroutine(WaitUntil(predicate, e));
     }
 
+    public static Coroutine doUntilTime(float duration, Action e)
+    {
+        return _instance.StartCoroutine(DoUntilTime(duration, e));
+    }
+    public static Coroutine doUntilFrame(int frame, Action e)
+    {
+        return _instance.StartCoroutine(DoUntilFrame(frame, e));
+    }
+    
     static IEnumerator WaitFixedFrame(int frame, Action e)
     {
         for (int i = 0; i < frame; i++)
             yield return WAIT_FOR_FIXEDUPDATE;
-        e.Invoke();
+        e?.Invoke();
     }
     
     static IEnumerator WaitFrame(int frame, Action e)
     {
         for (int i = 0; i < frame; i++)
             yield return null;
-        e.Invoke();
+        e?.Invoke();
     }
 
     static IEnumerator WaitTime(float sec, Action e, bool ignoreTimeScale)
     {
         for (var f = 0f; f < sec; f += ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime)
             yield return null;
-        e.Invoke();
+        e?.Invoke();
     }
 
     static IEnumerator WaitUntil(Func<bool> predicate, Action e)
@@ -64,10 +73,25 @@ public class wait : MonoBehaviour
         while (!predicate.Invoke())
             yield return null;
         
-        e.Invoke();
+        e?.Invoke();
     }
-    
-    
+
+    static IEnumerator DoUntilTime(float duration, Action e)
+    {
+        for (float f = 0f; f < duration; f += Time.deltaTime)
+        {
+            e?.Invoke();
+            yield return null;
+        }
+    }
+    static IEnumerator DoUntilFrame(int frame, Action e)
+    {
+        for (int i = 0; i < frame; i++)
+        {
+            e?.Invoke();
+            yield return null;
+        }
+    }
     
         
 #if UNITY_EDITOR

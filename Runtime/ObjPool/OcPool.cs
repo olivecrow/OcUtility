@@ -14,17 +14,21 @@ namespace OcUtility
     public class OcPool<T> : IDisposable, IDisposableDebugTarget where T : MonoBehaviour, IPoolMember<T>
     {
         static Dictionary<IPoolMember<T>, OcPool<T>> GlobalPool;
+        static bool _initialized;
         
-        static OcPool()
+        static void Init()
         {
+            if(_initialized) return;
 #if UNITY_EDITOR
             Application.quitting += Release; 
 #endif
             GlobalPool = new Dictionary<IPoolMember<T>, OcPool<T>>();
+            _initialized = true;
         }
 #if UNITY_EDITOR
         static void Release()
         {
+            _initialized = false;
             GlobalPool = null;
             Application.quitting -= Release;
         }
@@ -32,6 +36,7 @@ namespace OcUtility
 
         public static OcPool<T> MakePool(T source, int count, Transform folder = null, Action<T> initializer = null)
         {
+            if(!_initialized) Init();
             OcPool<T> targetPool;
             if (GlobalPool.ContainsKey(source))
             {

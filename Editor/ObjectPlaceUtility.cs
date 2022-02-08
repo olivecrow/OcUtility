@@ -59,6 +59,8 @@ namespace OcUtility.Editor
 
         Vector3 CenterOfAll => Selection.count > 0 ? 
             Selection.transforms.Select(x => x.position).Sum() / Selection.count : Vector3.zero;
+
+        Shape _lastShape;
         
         [HideInInspector]public List<GameObject> targets;
         [MenuItem("Utility/오브젝트 배치 유틸리티")]
@@ -91,11 +93,12 @@ namespace OcUtility.Editor
         void OnDisable()
         {
             Tools.hidden = false;
+            SceneView.duringSceneGui -= DrawHandles;
         }
 
         void OnSelectionChange()
         {
-            targets = Selection.gameObjects.OrderBy(x => x.name).ToList();
+            targets = Selection.gameObjects.Where(x => x.gameObject.scene.IsValid()).OrderBy(x => x.name).ToList();
             _count = $"오브젝트 수 : {targets.Count}";
         }
 
@@ -121,6 +124,8 @@ namespace OcUtility.Editor
             {
                 case RotationType.Same:
                     rotation = Handles.DoRotationHandle(Quaternion.Euler(rotation), CenterOfAll).eulerAngles;
+                    
+                    Handles.ArrowHandleCap(0, CenterOfAll, Quaternion.Euler(rotation), 1f, EventType.Repaint);
                     break;
                 case RotationType.LookAt:
                     lookAtPoint = Handles.DoPositionHandle(lookAtPoint, Quaternion.identity);
@@ -135,9 +140,11 @@ namespace OcUtility.Editor
         {
             if(!isActive) return;
             if(targets == null || targets.Count < 2) return;
+            var isShapeChanged = shape != _lastShape;
             switch (shape)
             {
                 case Shape.Line:
+                    if (isShapeChanged) start = CenterOfAll;
                     for (int i = 0; i < targets.Count; i++)
                     {
                         targets[i].transform.position = Vector3.Lerp(start, end, (float) i / (targets.Count - 1));
@@ -145,6 +152,7 @@ namespace OcUtility.Editor
                     }
                     break;
                 case Shape.Circle:
+                    if (isShapeChanged) center = CenterOfAll;
                     for (int i = 0; i < targets.Count; i++)
                     {
                         var angle = (float)i / targets.Count * 360f;
@@ -158,6 +166,8 @@ namespace OcUtility.Editor
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            _lastShape = shape;
         }
         
         void SetRotation(Transform target)

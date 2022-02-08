@@ -293,6 +293,7 @@ namespace OcUtility
 
         public void Dispose()
         {
+            if(GlobalPool == null) return;
             GlobalPool.Remove(_source);
             PoolDisposer.UnRegisterPool(this);
             _source = null;

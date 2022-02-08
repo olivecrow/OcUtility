@@ -17,13 +17,21 @@ namespace OcUtility
         [RuntimeInitializeOnLoadMethod]
         static void Init()
         {
-#if UNITY_EDITOR
-            Application.quitting += () => _initialized = false;
-#endif
             if(_initialized) return;
+#if UNITY_EDITOR
+            Application.quitting += Release;
+#endif
             _CreatedPools = new List<IDisposableDebugTarget>();
             _initialized = true;
         }
+#if UNITY_EDITOR
+        static void Release()
+        {
+            _CreatedPools = null;
+            _initialized = false;
+            Application.quitting -= Release;
+        }
+#endif
 
         internal static void RegisterPool(IDisposableDebugTarget pool)
         {
@@ -38,13 +46,13 @@ namespace OcUtility
         
         internal static void DisposeAll()
         {
+            if(_CreatedPools == null) return;
             foreach (var ocPool in _CreatedPools)
             {
                 ocPool.Dispose();
             }
 
             _CreatedPools = new List<IDisposableDebugTarget>();
-            _initialized = false;
         }
 
 #if UNITY_EDITOR

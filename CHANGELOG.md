@@ -1,6 +1,16 @@
 ﻿# Changelog
 
-## [1.4.6] -2020-02-08
+## [1.4.7] -2022-02-23
+### Added
+- OcPool.Call 메서드에 WakeUp 직전에 초기화용으로 실행할 수 있는 beforeWakeUp 콜백 추가
+- MathExtension
+  - 벡터의 멤버를 수정하는 NewXZ, NewXY, NewYZ 메서드 추가
+  - float, int, double의 제곱을 반환하는 sqr메서드 추가
+
+### Fixed
+- SimpleEventTrigger에서 MultipleEvent 레이아웃 개선
+
+## [1.4.6] -2022-02-08
 ### Fixed
 - OcPool Dispose 관련 오류 해결
 - 오브젝트 배치 유틸리티 관련 수정
@@ -9,7 +19,7 @@
   - Shape가 변경됐을때, 오브젝트의 중심점에 start 지점과 center 지점이 위치하도록 변경함
   - 씬 오브젝트가 아니면 작동하지 않도록 변경함
 
-## [1.4.5] -2020-02-08
+## [1.4.5] -2022-02-08
 ### Added
 - Printer.DrawCross 기능 추가
 - Printer.DrawDonut에 duration 옵션 추가. 플레이모드에서만 적용됨.

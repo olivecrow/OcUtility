@@ -28,6 +28,25 @@ public static class MathExtension
         return source;
     }
     
+    public static Vector3 NewXY(this Vector3 source, float x, float y)
+    {
+        source.x = x;
+        source.y = y;
+        return source;
+    }
+    public static Vector3 NewXZ(this Vector3 source, float x, float z)
+    {
+        source.x = x;
+        source.z = z;
+        return source;
+    }
+    public static Vector3 NewYZ(this Vector3 source, float y, float z)
+    {
+        source.y = y;
+        source.z = z;
+        return source;
+    }
+    
     ///<summary> Vector2의 XY를 Vector3의 XZ로 바꿈.</summary>
     public static Vector3 ToXZ (this Vector2 source)
     {
@@ -91,6 +110,25 @@ public static class MathExtension
     public static Vector3Int NewZ(this Vector3Int source, int value)
     {
         source.z = value;
+        return source;
+    }
+    
+    public static Vector3Int NewXY(this Vector3Int source, int x, int y)
+    {
+        source.x = x;
+        source.y = y;
+        return source;
+    }
+    public static Vector3Int NewXZ(this Vector3Int source, int x, int z)
+    {
+        source.x = x;
+        source.z = z;
+        return source;
+    }
+    public static Vector3Int NewYZ(this Vector3Int source, int y, int z)
+    {
+        source.y = y;
+        source.z = z;
         return source;
     }
     
@@ -638,6 +676,10 @@ public static class MathExtension
     public static Vector2 abs(this Vector2 source) => new Vector2(source.x.abs(), source.y.abs());
     public static Vector3 abs(this Vector3 source) => new Vector3(source.x.abs(), source.y.abs(), source.z.abs());
     public static Vector4 abs(this Vector4 source) => new Vector4(source.x.abs(), source.y.abs(), source.z.abs(), source.w.abs());
+
+    public static float sqr(this float source) => source * source;
+    public static int sqr(this int source) => source * source;
+    public static double sqr(this double source) => source * source;
 
     #region EnumFlags
 

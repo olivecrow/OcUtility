@@ -55,21 +55,21 @@ namespace OcUtility
         }
 
         /// <summary> 글로벌 풀에서 해당 소스 기반의 풀에서 Call을 반환함. 해당 소스의 풀이 없을 경우 null을 반환함. </summary>
-        public static T Call(T source, in Vector3 position, in Quaternion rotation)
+        public static T Call(T source, in Vector3 position, in Quaternion rotation, Action<T> beforeWakeUp = null)
         {
             var targetPool = GetPoolInternal(source);
-            return targetPool?.Call(position, rotation);
+            return targetPool?.Call(position, rotation, beforeWakeUp);
         }
 
-        public static T Call(T source, in Vector3 position)
+        public static T Call(T source, in Vector3 position, Action<T> beforeWakeUp = null)
         {
-            return Call(source, in position, Quaternion.identity);
+            return Call(source, in position, Quaternion.identity, beforeWakeUp);
         }
 
-        public static T Call(T source)
+        public static T Call(T source, Action<T> beforeWakeUp = null)
         {
             var targetPool = GetPoolInternal(source);
-            return targetPool?.Call();
+            return targetPool?.Call(beforeWakeUp);
 
         }
 
@@ -164,29 +164,30 @@ namespace OcUtility
             if(!_isOverridenFolder) Folder.name = $"[{_source.GetType().Name}] {_source.name}_Pool [{TotalCount:###,###}]";
         }
 
-        public T Call(in Vector3 position, in Quaternion rotation)
+        public T Call(in Vector3 position, in Quaternion rotation, Action<T> beforeWakeUp = null)
         {
-            var member = CallInternal();
+            var member = CallInternal(beforeWakeUp);
             if (member == null) return null;
             member.transform.SetPositionAndRotation(position, rotation);
             return member;
         }
 
-        public T Call(in Vector3 position)
+        public T Call(in Vector3 position, Action<T> beforeWakeUp = null)
         {
-            return Call(in position, Quaternion.identity);
+            return Call(in position, Quaternion.identity, beforeWakeUp);
         }
 
-        public T Call()
+        public T Call(Action<T> beforeWakeUp = null)
         {
-            return CallInternal();
+            return CallInternal(beforeWakeUp);
         }
 
-        T CallInternal()
+        T CallInternal(Action<T> beforeWakeUp)
         {
             if(_sleepingMembers.Count == 0) AddMember(MaxInitialCount, true);
 
             var member = _sleepingMembers.Dequeue();
+            beforeWakeUp?.Invoke(member);
             member.WakeUp();
             _activeMembers.Add(member);
             return member;

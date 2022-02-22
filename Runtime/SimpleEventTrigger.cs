@@ -85,11 +85,12 @@ public class SimpleEventTrigger : MonoBehaviour
     [Serializable]
     public class EventKeyPair
     {
-        public EventTiming timing;
-        [TableColumnWidth(100, false)]public string key;
+        [TableColumnWidth(200, false)]
+        [VerticalGroup("Key")]public EventTiming timing;
+        [VerticalGroup("Key")]public string key;
         [VerticalGroup("E")]public UnityEvent e;
 
-        [VerticalGroup("E"), Button]
+        [VerticalGroup("Key"), Button]
         public void Invoke()
         {
             e.Invoke();

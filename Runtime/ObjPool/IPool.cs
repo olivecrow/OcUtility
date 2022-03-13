@@ -1,13 +1,22 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace OcUtility
 {
-    // public interface IPool<T> where T : MonoBehaviour, IPoolMember<T>
-    // {
-    //     int InitialCount { get; }
-    //     Transform Folder { get; }
-    //     T Call(in Vector3 position, in Quaternion rotation);
-    //     T Call(in Vector3 position);
-    //     void Return(T member);
-    // }
+    public interface IPool
+    {
+        int TotalCount { get; }
+        int ActiveCount { get; }
+        int SleepCount { get; }
+        object Source { get; }
+        string SourceName { get; }
+        Transform Folder { get; }
+        Type GetPoolMemberType();
+        IEnumerable<object> GetAllMembers();
+        IEnumerable<object> GetActiveMembers();
+        IEnumerable<object> GetSleepMembers();
+        void Dispose();
+    }
 }

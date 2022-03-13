@@ -1,5 +1,7 @@
-﻿using UnityEditor;
+﻿using System.Linq;
+using UnityEditor;
 using UnityEngine;
+using Application = UnityEngine.Application;
 
 namespace OcUtility.Editor
 {
@@ -8,13 +10,14 @@ namespace OcUtility.Editor
     {
         static HierarchyIconDrawer()
         {
-            Application.quitting += Init;
-            Init();
+            EditorApplication.hierarchyWindowItemOnGUI += DrawAllIcon;
+            EditorApplication.quitting += Release;
         }
 
-        static void Init()
+        static void Release()
         {
-            EditorApplication.hierarchyWindowItemOnGUI += DrawAllIcon;
+            EditorApplication.hierarchyWindowItemOnGUI -= DrawAllIcon;
+            EditorApplication.quitting -= Release;
         }
 
         static void DrawAllIcon(int instanceID, Rect rect)
@@ -24,12 +27,13 @@ namespace OcUtility.Editor
 
             // 한 게임 오브젝트에 여러개의 Drawer가 있을 수 있음.
             var drawers = gao.GetComponents<IHierarchyIconDrawable>();
+            var labelWidth = GUI.skin.label.CalcSize(new GUIContent(gao.name)).x;
+
             var inputColor = GUI.color;
-            var labelWidth = rect.x + 15 + (gao.name.Length) * 8.2f;
             for (int i = 0; i < drawers.Length; i++)
             {
                 var drawer = drawers[i];
-                var rectX = labelWidth + i * 15;
+                var rectX = rect.position.x + 30 + labelWidth + i * 15;
                 var iconDrawRect = new Rect(
                      rectX, rect.yMin,
                     15, 15);

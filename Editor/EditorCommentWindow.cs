@@ -4,17 +4,27 @@ using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEditor.Experimental;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace OcUtility.Editor
 {
     public class EditorCommentWindow : OdinMenuEditorWindow
     {
+        const string prefs_window_sizeX = "EditorCommentWindow Position.x";
+        const string prefs_window_sizeY = "EditorCommentWindow Position.y";
         [MenuItem("Utility/Editor Comment Window")]
         static void Open()
         {
             var wnd = GetWindow<EditorCommentWindow>(true);
-            wnd.minSize = new Vector2(700, 600);
-            wnd.position = new Rect(500, 500, 700, 600);
+            wnd.minSize = new Vector2(500, 500);
+            var size = new Vector2(700, 600);
+            if (EditorPrefs.HasKey(prefs_window_sizeX))
+            {
+                var x = EditorPrefs.GetFloat(prefs_window_sizeX);
+                var y = EditorPrefs.GetFloat(prefs_window_sizeY);
+                size = new Vector2(x, y);
+            }
+            wnd.position = new Rect(new Vector2(500, 300), size);
         }
 
         protected override OdinMenuTree BuildMenuTree()
@@ -35,6 +45,9 @@ namespace OcUtility.Editor
                 
             }
 
+            tree.Selection.SelectionConfirmed +=
+                selection => EditorGUIUtility.PingObject((Object)selection.SelectedValue);
+
             return tree;
         }
 
@@ -47,7 +60,7 @@ namespace OcUtility.Editor
                 var folderPath = selected == null ?
                     "Assets/Editor Default Resources/Editor Comments":
                     AssetDatabase.GetAssetPath(selected).Replace($"{selected.name}.asset", "");
-                var asset = EditorComment.CreateAsset(folderPath, "New Comment");
+                var asset = EditorCommentAsset.CreateAsset(folderPath, "New Comment");
                 ForceMenuTreeRebuild();
             }
 
@@ -64,6 +77,13 @@ namespace OcUtility.Editor
             GUI.enabled = true;
             SirenixEditorGUI.EndHorizontalToolbar();
             base.OnBeginDrawEditors();
+        }
+
+        protected override void OnGUI()
+        {
+            base.OnGUI();
+            EditorPrefs.SetFloat(prefs_window_sizeX, position.width);
+            EditorPrefs.SetFloat(prefs_window_sizeY, position.height);
         }
     }
 }

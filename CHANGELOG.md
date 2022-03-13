@@ -1,5 +1,36 @@
 ﻿# Changelog
 
+## [1.4.8] -2022-03-12
+### Added
+- EditorCommentWindow기능 추가
+  - 에셋 이름 변경 가능
+  - 마지막 사이즈로 열어짐
+  - 메뉴 더블클릭으로 에셋 선택
+- wait.doUntilTime/wait.doUntilFrame에 경과 시간(프레임)을 파라미터로 사용할 수 있는 메서드 추가
+- PhsycsExtension 추가
+  - RaycastHit[] 및 Collider[] 버퍼의 풀을 미리 만들었다 반환할 수 있는 메서드 추가
+    - GetRaycastHitBuffer/GetOverlapBuffer/ReturnBuffer
+  - 물체의 속도와 중력에 따른 궤적의 지점을 반환하는 GetTrajectoryPoints추가
+- 일반 클래스의 풀을 만들 수 있는 GenericPool<T> 추가
+  - var pool = new GenericPool(source, count, createAction, sleepAction, initializer)로 풀 생성
+  - var member = pool.Call();로 멤버 호출
+  - pool.Return(member)로 멤버 반환.
+  - 멤버는 스스로 반환되지 않으니 사용한 후 꼭 풀을 이용해 반환할것.
+
+### Fixed
+- HierarchyIconDrawer가 정확히 라벨의 텍스트 길이를 반영하도록 개선.
+- HierarchyIconDrawer에서 DrawIcon 메서드가 중복되어 실행되지 않도록 개선.
+- OcPool의 디버그 환경 개선
+  - <Utility/OcPool/디버그 윈도우>에서 디버그 윈도우 열 수 있음
+  - 각 씬에 만들어진 풀을 한 번에 볼 수 있음
+  - 타입명을 클릭하면 프리팹이 선택됨
+  - 소스 이름을 선택하면 폴더 게임오브젝트가 선택됨
+  - 폴더가 없으면 NULL로 표기됨
+  - 활성화된 수 표기됨
+- Printer의 빌드 오류 해결
+- Printer의 DrawDonut, DrawCross의 duration 파라미터 삭제
+
+
 ## [1.4.7] -2022-02-23
 ### Added
 - OcPool.Call 메서드에 WakeUp 직전에 초기화용으로 실행할 수 있는 beforeWakeUp 콜백 추가

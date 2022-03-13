@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -11,36 +12,15 @@ using Object = UnityEngine.Object;
 
 namespace OcUtility
 {
-    public class OcPool<T> : IDisposable, IDisposableDebugTarget where T : MonoBehaviour, IPoolMember<T>
+    public class OcPool<T> : IDisposable, IPool where T : MonoBehaviour, IPoolMember<T>
     {
-        static Dictionary<IPoolMember<T>, OcPool<T>> GlobalPool;
-        static bool _initialized;
-        
-        static void Init()
-        {
-            if(_initialized) return;
-#if UNITY_EDITOR
-            Application.quitting += Release; 
-#endif
-            GlobalPool = new Dictionary<IPoolMember<T>, OcPool<T>>();
-            _initialized = true;
-        }
-#if UNITY_EDITOR
-        static void Release()
-        {
-            _initialized = false;
-            GlobalPool = null;
-            Application.quitting -= Release;
-        }
-#endif
-
         public static OcPool<T> MakePool(T source, int count, Transform folder = null, Action<T> initializer = null)
         {
-            if(!_initialized) Init();
+            if(!PoolManager.Initialized) PoolManager.Init();
             OcPool<T> targetPool;
-            if (GlobalPool.ContainsKey(source))
+            if (PoolManager.HasPool(source.GetHashCode()))
             {
-                targetPool = GlobalPool[source];
+                targetPool = PoolManager.GetPool(source.GetHashCode()) as OcPool<T>;
                 targetPool.AddMember(count);
                 if (targetPool.MaxInitialCount < count) targetPool.MaxInitialCount = count;
                 targetPool._numberOfMakeRequest++;
@@ -75,15 +55,17 @@ namespace OcUtility
 
         static OcPool<T> GetPoolInternal(T source)
         {
-            if (!GlobalPool.ContainsKey(source)) return null;
-            
-            var targetPool = GlobalPool[source];
+            var key = source.GetHashCode();
+            if (!PoolManager.HasPool(key)) return null;
+
+            var targetPool = PoolManager.GetPool(key) as OcPool<T>;
                 
             // 씬이 변경되는 등의 이유로 참조가 Missing 상태일 경우 다시 풀을 재생성함.
             if (targetPool.Folder == null)
             {
-                GlobalPool[source] = MakePool(source, targetPool.MaxInitialCount);
-                targetPool = GlobalPool[source];
+                targetPool.Dispose();
+                targetPool = MakePool(source, targetPool.MaxInitialCount);
+                PoolManager.RegisterPool(key, targetPool);
             }
 
             return targetPool;
@@ -91,51 +73,28 @@ namespace OcUtility
 
         public static OcPool<T> FindPool(T source)
         {
-            if (GlobalPool.ContainsKey(source)) return GlobalPool[source];
+            var key = source.GetHashCode();
+            if (PoolManager.HasPool(key)) return PoolManager.GetPool(key) as OcPool<T>;
 
             return null;
         }
 
         public static void DisposeAll()
         {
-            PoolDisposer.DisposeAll();
-            GlobalPool = new Dictionary<IPoolMember<T>, OcPool<T>>();
+            PoolManager.DisposeAll();
         }
-        
-        public static void Print()
-        {
-            Debug.Log($"||=========  OcPool<{typeof(T).Name.Rich(Color.cyan)}> DEBUG  ==========".Rich(Color.magenta));
-            Debug.Log($"||{"Global Pool".Rich(Color.white)} | Count : {GlobalPool.Count}".Rich(Color.magenta));
-            foreach (var ocPool in GlobalPool)
-            {
-                Debug.Log($"||{($"Pool : {ocPool.Key.gameObject.name.Rich(Color.cyan)}".Rich(Color.white))} | Count : {ocPool.Value.TotalCount} | Folder : {ocPool.Value.Folder.name}".Rich(Color.magenta));    
-            }
-            Debug.Log("||=========================================".Rich(Color.magenta));
-        }
-        
-        
-        // Non-Static. =======
 
-        OcPool(T source, int count, Transform folder, Action<T> initializer)
-        {
-            _isOverridenFolder = folder != null;
-            Folder = folder == null ? new GameObject().transform : folder;
+        //======================================================
+        //=================== Non-Static. ======================
+        //======================================================
 
-            _source = source;
-            GlobalPool[source] = this;
-            _sleepingMembers = new Queue<T>();
-            _activeMembers = new List<T>();
-            MaxInitialCount = count;
-            _initializer = initializer;
-            _numberOfMakeRequest++;
-            AddMember(count, true);
-            
-            PoolDisposer.RegisterPool(this);
-        }
-        
         public Transform Folder { get; }
         public int TotalCount => _sleepingMembers.Count + _activeMembers.Count;
+        public int ActiveCount => _activeMembers.Count;
+        public int SleepCount => _sleepingMembers.Count;
         public int MaxInitialCount { get; private set; }
+        public object Source => _source;
+        public string SourceName => _source.name;
 
         readonly bool _isOverridenFolder;
         int _numberOfMakeRequest;
@@ -143,6 +102,24 @@ namespace OcUtility
         Queue<T> _sleepingMembers;
         List<T> _activeMembers;
         Action<T> _initializer;
+        
+        OcPool(T source, int count, Transform folder, Action<T> initializer)
+        {
+            _isOverridenFolder = folder != null;
+            Folder = folder == null ? new GameObject().transform : folder;
+
+            _source = source;
+            _sleepingMembers = new Queue<T>();
+            _activeMembers = new List<T>();
+            MaxInitialCount = count;
+            _initializer = initializer;
+            _numberOfMakeRequest++;
+            AddMember(count, true);
+            
+            PoolManager.RegisterPool(source.GetHashCode(), this);
+        }
+        
+        
         void AddMember(int count, bool forceAdd = false)
         {
             if (!forceAdd)
@@ -294,30 +271,32 @@ namespace OcUtility
 
         public void Dispose()
         {
-            if(GlobalPool == null) return;
-            GlobalPool.Remove(_source);
-            PoolDisposer.UnRegisterPool(this);
+            if(!PoolManager.Initialized) return;
+            PoolManager.UnRegisterPool(_source.GetHashCode());
             _source = null;
             _sleepingMembers = null;
             _activeMembers = null;
             if(!_isOverridenFolder && Folder != null) Object.Destroy(Folder.gameObject);
         }
 
-        public void DebugType()
-        {
-            Print();
-        }
-        public void DebugLog()
-        {
-            Printer.Print($"OcPool<{typeof(T).Name.Rich(Color.cyan)}> | [{_source.gameObject.name}] | Folder : {Folder.name} \n"
-                              .Rich(new Color(1f, 0.5f,1f)) +
-                          $"sleep : {_sleepingMembers.Count} | active : {_activeMembers.Count} | total : {_sleepingMembers.Count + _activeMembers.Count}"
-                              .Rich(new Color(1f, 0.5f,1f)));
-        }
-
-        public Type GetGenericType()
+        public Type GetPoolMemberType()
         {
             return typeof(T);
+        }
+
+        public IEnumerable<object> GetAllMembers()
+        {
+            var list = new List<T>(_sleepingMembers);
+            list.AddRange(_activeMembers);
+            return list;
+        }
+        public IEnumerable<object> GetSleepMembers()
+        {
+            return _sleepingMembers;
+        }
+        public IEnumerable<object> GetActiveMembers()
+        {
+            return _activeMembers;
         }
     }
 }

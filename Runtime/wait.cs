@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 
 #if UNITY_EDITOR
+using System.Reflection;
 using Unity.EditorCoroutines.Editor;
 #endif
 using UnityEngine;
@@ -46,6 +47,15 @@ public class wait : MonoBehaviour
     {
         return _instance.StartCoroutine(DoUntilFrame(frame, e));
     }
+    public static Coroutine doUntilTime(float duration, Action<float> e)
+    {
+        return _instance.StartCoroutine(DoUntilTime(duration, e));
+    }
+    public static Coroutine doUntilFrame(int frame, Action<int> e)
+    {
+        return _instance.StartCoroutine(DoUntilFrame(frame, e));
+    }
+    
     
     static IEnumerator WaitFixedFrame(int frame, Action e)
     {
@@ -89,6 +99,23 @@ public class wait : MonoBehaviour
         for (int i = 0; i < frame; i++)
         {
             e?.Invoke();
+            yield return null;
+        }
+    }
+    
+    static IEnumerator DoUntilTime(float duration, Action<float> e)
+    {
+        for (float f = 0f; f < duration; f += Time.deltaTime)
+        {
+            e?.Invoke(f);
+            yield return null;
+        }
+    }
+    static IEnumerator DoUntilFrame(int frame, Action<int> e)
+    {
+        for (int i = 0; i < frame; i++)
+        {
+            e?.Invoke(i);
             yield return null;
         }
     }

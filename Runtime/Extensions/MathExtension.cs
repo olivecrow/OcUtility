@@ -561,6 +561,24 @@ public static class MathExtension
         }
     }
 
+    public static bool Any<T>(this IEnumerable<T> enumerable, Predicate<T> predicate, int length)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            if (predicate.Invoke(enumerable.ElementAt(i))) return true;
+        }
+
+        return false;
+    }
+    public static bool All<T>(this IEnumerable<T> enumerable, Predicate<T> predicate, int length)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            if (!predicate.Invoke(enumerable.ElementAt(i))) return false;
+        }
+
+        return true;
+    }
 
     #endregion
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,22 +9,30 @@ namespace OcUtility
         static bool _initialized;
         static Queue<RaycastHit[]> _rayHitBuffer;
         static Queue<Collider[]> _overlapBuffer;
+        
+        static int raycastBudget;
+        static int overlapBudget;
         [RuntimeInitializeOnLoadMethod]
         static void Init()
         {
             if(_initialized) return;
             _initialized = true;
+            
+            raycastBudget = OcUtilitySettings.Instance == null ? 32 : OcUtilitySettings.Instance.RaycastBudget;
+            overlapBudget = OcUtilitySettings.Instance == null ? 32 : OcUtilitySettings.Instance.OverlapBudget;
 
             _rayHitBuffer = new Queue<RaycastHit[]>();
+
+            
             for (int i = 0; i < 20; i++)
             {
-                _rayHitBuffer.Enqueue(new RaycastHit[20]);
+                _rayHitBuffer.Enqueue(new RaycastHit[raycastBudget]);
             }
-
+            
             _overlapBuffer = new Queue<Collider[]>();
             for (int i = 0; i < 20; i++)
             {
-                _overlapBuffer.Enqueue(new Collider[20]);
+                _overlapBuffer.Enqueue(new Collider[overlapBudget]);
             }
 
 #if UNITY_EDITOR
@@ -42,19 +51,27 @@ namespace OcUtility
 
         public static RaycastHit[] GetRaycastHitBuffer()
         {
-            if (_rayHitBuffer.Count == 0) return new RaycastHit[20];
+            if (_rayHitBuffer.Count == 0) return new RaycastHit[raycastBudget];
 
             return _rayHitBuffer.Dequeue();
         }
         public static Collider[] GetOverlapBuffer()
         {
-            if (_overlapBuffer.Count == 0) return new Collider[20];
+            if (_overlapBuffer.Count == 0) return new Collider[overlapBudget];
 
             return _overlapBuffer.Dequeue();
         }
 
-        public static void ReturnBuffer(RaycastHit[] buffer) => _rayHitBuffer.Enqueue(buffer);
-        public static void ReturnBuffer(Collider[] buffer) => _overlapBuffer.Enqueue(buffer);
+        public static void ReturnBuffer(RaycastHit[] buffer)
+        {
+            if(buffer.Length < raycastBudget) Array.Resize(ref buffer, raycastBudget);
+            _rayHitBuffer.Enqueue(buffer);
+        }
+        public static void ReturnBuffer(Collider[] buffer)
+        {
+            if(buffer.Length < overlapBudget) Array.Resize(ref buffer, overlapBudget);
+            _overlapBuffer.Enqueue(buffer);
+        }
 
         public static Vector3[] CalcTrajectoryPoints(
             this Rigidbody body,

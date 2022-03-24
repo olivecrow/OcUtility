@@ -37,7 +37,8 @@ namespace OcUtility
         Action<T> _sleep;
         Action<T> _initializer;
         bool _sourceAssignedToMember;
-        public GenericPool(T source, int count, Func<T> create, Action<T> sleep,
+        
+        GenericPool(T source, int count, Func<T> create, Action<T> sleep,
             Action<T> initializer = null)
         {
             _source = source;

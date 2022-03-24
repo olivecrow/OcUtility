@@ -54,7 +54,7 @@ namespace OcUtility
         /// <summary> Debug Rich Text by seed value </summary>
         public static string DRT(this string source, int seed)
         {
-            return source.Rich(Random(seed, 0.5f));
+            return source.Rich(Random(seed, 0.4f));
         }
         
         /// <summary> Debug Rich Text </summary>

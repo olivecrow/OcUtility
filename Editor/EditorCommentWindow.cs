@@ -15,16 +15,8 @@ namespace OcUtility.Editor
         [MenuItem("Utility/Editor Comment Window")]
         static void Open()
         {
-            var wnd = GetWindow<EditorCommentWindow>(true);
-            wnd.minSize = new Vector2(500, 500);
-            var size = new Vector2(700, 600);
-            if (EditorPrefs.HasKey(prefs_window_sizeX))
-            {
-                var x = EditorPrefs.GetFloat(prefs_window_sizeX);
-                var y = EditorPrefs.GetFloat(prefs_window_sizeY);
-                size = new Vector2(x, y);
-            }
-            wnd.position = new Rect(new Vector2(500, 300), size);
+            var wnd = GetWindow<EditorCommentWindow>();
+            wnd.Show();
         }
 
         protected override OdinMenuTree BuildMenuTree()
@@ -77,13 +69,6 @@ namespace OcUtility.Editor
             GUI.enabled = true;
             SirenixEditorGUI.EndHorizontalToolbar();
             base.OnBeginDrawEditors();
-        }
-
-        protected override void OnGUI()
-        {
-            base.OnGUI();
-            EditorPrefs.SetFloat(prefs_window_sizeX, position.width);
-            EditorPrefs.SetFloat(prefs_window_sizeY, position.height);
         }
     }
 }

@@ -17,6 +17,15 @@ namespace OcUtility
             pairs = new List<OcKVPair<TKey, TValue>>();
         }
 
+        public OcDictionary(Dictionary<TKey, TValue> dict)
+        {
+            pairs = new List<OcKVPair<TKey, TValue>>();
+            foreach (var kv in dict)
+            {
+                pairs.Add(new OcKVPair<TKey, TValue>(kv));
+            }
+        }
+
         public TValue this[TKey key]
         {
             get => FindPair(key).Value;
@@ -136,6 +145,20 @@ namespace OcUtility
             }
             return dict;
         }
+        public bool TryFind(in TKey key, out TValue value)
+        {
+            for (var i = 0; i < pairs.Count; i++)
+            {
+                if (pairs[i].Key.Equals(key))
+                {
+                    value = pairs[i].Value;
+                    return true;
+                }
+            }
+
+            value = default;
+            return false;
+        }
     }
     
     [Serializable]
@@ -164,6 +187,13 @@ namespace OcUtility
 
         public OcKVPair(TKey key, TValue value)
         {
+            Key = key;
+            Value = value;
+        }
+
+        public OcKVPair(KeyValuePair<TKey, TValue> pair)
+        {
+            var (key, value) = pair;
             Key = key;
             Value = value;
         }

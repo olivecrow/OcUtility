@@ -190,29 +190,77 @@ namespace OcUtility.Editor
             }
         }
 
-        [MenuItem("GameObject/루트 오브젝트를 가운데로")]
+        [MenuItem("GameObject/루트 오브젝트 정렬")]
         static void RootToCenter()
         {
             if(Selection.activeGameObject == null) return;
+            var display = EditorUtility.DisplayDialogComplex(
+                "루트 오브젝트 정렬", "어느 위치를 기준으로 하시겠습니까?",
+                "position", "취소", "bounds");
+            if(display == 1) return;
+
+            var yOption = 0;
+            if (display == 2)
+            {
+                yOption = EditorUtility.DisplayDialogComplex(
+                    "Bounds 기준 정렬", "Y값의 위치는 어디로 하시겠습니까?"
+                    , "center", "취소", "bottom");
+                
+                if(yOption == 1) return;
+            }
+            
             var root = Selection.activeGameObject.transform;
             var undoIndex = Undo.GetCurrentGroup();
-            Undo.RecordObject(root, "루트 오브젝트를 가운데로");
-            var posSum = Vector3.zero;
-            var cachedPos = new List<Vector3>();
-            for (int i = 0; i < root.childCount; i++)
-            {
-                posSum += root.GetChild(i).position;
-                cachedPos.Add(root.GetChild(i).position);
-            }
+            Undo.RecordObject(root, "루트 오브젝트 정렬");
+            
 
-            var center = posSum / root.childCount;
-            root.transform.position = center;
-            for (int i = 0; i < root.childCount; i++)
+            var children = root.GetComponentsInChildren<Transform>().Where(x => x != root);
+            Vector3 center = Vector3.zero;
+            if (display == 0) center = GetPositionCenter(children);
+            else
             {
-                Undo.RecordObject(root.GetChild(i), "루트 오브젝트를 가운데로");
-                root.GetChild(i).position = cachedPos[i];
+                if (yOption == 0) center = GetTotalBounds(root).center;
+                else if(yOption == 2)
+                {
+                    var bounds = GetTotalBounds(root);
+                    center = bounds.center.NewY(bounds.min.y);
+                }
+            }
+            
+            var cachedPosition = new Dictionary<Transform, Vector3>();
+            foreach (var child in children)
+            {
+                cachedPosition[child] = child.position;
+            }
+            
+            
+            root.transform.position = center;
+            
+            foreach (var child in children)
+            {
+                Undo.RecordObject(child, "루트 오브젝트 정렬");
+                child.position = cachedPosition[child];
                 Undo.CollapseUndoOperations(undoIndex);
             }
+        }
+
+        static Vector3 GetPositionCenter(IEnumerable<Transform> children)
+        {
+            return children.Sum(x => x.position) / children.Count();
+        }
+
+        static Bounds GetTotalBounds(Transform root)
+        {
+            var children = root.GetComponentsInChildren<MeshRenderer>();
+            if (!children.Any()) return new Bounds(root.position, Vector3.zero);
+            var bounds = children[0].bounds;
+
+            foreach (var child in children)
+            {
+                bounds.Encapsulate(child.bounds);
+            }
+
+            return bounds;
         }
     }
 }

@@ -1,5 +1,27 @@
 ﻿# Changelog
 
+## [1.4.9] -2022-03-23
+
+- OcPool
+  - 디버그 윈도우에 스크롤뷰 추가 및 보기에 편하게 변경.
+  - 자동 재생성 코드 오류 해결.
+  - 여러 종류의 오브젝트를 하나의 풀로 만들 수 있는 생성자 추가
+- Extensions
+  - PhysicsExtension에 레이캐스트, 오버랩의 버퍼 크기를 지정할 수 있는 OcUtilitySettings에셋 추가. Resources에 자동으로 생김
+  - PhysicsExtension에 버퍼를 반환할때, 크기가 맞지 않으면 자동으로 늘리는 기능 추가.
+  - MathExtension에 열거형과 Vector2의 무작위 값을 반환하는 random 확장 추가.
+  - MathExtension에 Sum의 제네릭 확장 추가.
+  - 같은 enumFlag가 하나라도 있는지 검사하는 HasOneOf<T> 확장 추가.
+- EditorComment
+  - TextArea 줄 수를 5..50줄로 변경
+  - 에디터 윈도우를 도킹이 가능하도록 일반 윈도우로 변경.
+- OcDictionary
+  - 일반 딕셔너리를 파라미터로 하는 생성자 추가
+  - ContainsKey와 인덱스 접근을 한 번에 하는 TryFind메서드 추가.
+- ShortCutListener.cs의 using 구문에 ENABLE_INPUT_SYSTEM 전처리기 추가
+- ObjectPlacement의 "루트 오브젝트를 가운데로" 컨텍스트를 "루트 오브젝트 정렬"로 변경하고, 위치 기준, 바운드 기준으로 각각 정렬할 수 있도록 변경.
+- 숨겨진 오브젝트를 찾는 HiddenObjectFinder 추가
+
 ## [1.4.8] -2022-03-12
 ### Added
 - EditorCommentWindow기능 추가

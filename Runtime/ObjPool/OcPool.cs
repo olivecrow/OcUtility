@@ -34,6 +34,23 @@ namespace OcUtility
             return MakePool(source, count, null, initializer);
         }
 
+        public static OcPool<T> MakePool(IEnumerable<T> sources, int count, Action<T> initializer)
+        {
+            if(!PoolManager.Initialized) PoolManager.Init();
+            OcPool<T> targetPool;
+            var source = sources.ElementAt(0);
+            if (PoolManager.HasPool(source.GetHashCode()))
+            {
+                targetPool = PoolManager.GetPool(source.GetHashCode()) as OcPool<T>;
+                targetPool.AddMember(count);
+                if (targetPool.MaxInitialCount < count) targetPool.MaxInitialCount = count;
+                targetPool._numberOfMakeRequest++;
+            }
+            else targetPool = new OcPool<T>(sources, count, initializer);
+
+            return targetPool;
+        }
+
         /// <summary> 글로벌 풀에서 해당 소스 기반의 풀에서 Call을 반환함. 해당 소스의 풀이 없을 경우 null을 반환함. </summary>
         public static T Call(T source, in Vector3 position, in Quaternion rotation, Action<T> beforeWakeUp = null)
         {
@@ -59,15 +76,6 @@ namespace OcUtility
             if (!PoolManager.HasPool(key)) return null;
 
             var targetPool = PoolManager.GetPool(key) as OcPool<T>;
-                
-            // 씬이 변경되는 등의 이유로 참조가 Missing 상태일 경우 다시 풀을 재생성함.
-            if (targetPool.Folder == null)
-            {
-                targetPool.Dispose();
-                targetPool = MakePool(source, targetPool.MaxInitialCount);
-                PoolManager.RegisterPool(key, targetPool);
-            }
-
             return targetPool;
         }
 
@@ -88,7 +96,7 @@ namespace OcUtility
         //=================== Non-Static. ======================
         //======================================================
 
-        public Transform Folder { get; }
+        public Transform Folder { get; private set; }
         public int TotalCount => _sleepingMembers.Count + _activeMembers.Count;
         public int ActiveCount => _activeMembers.Count;
         public int SleepCount => _sleepingMembers.Count;
@@ -97,8 +105,10 @@ namespace OcUtility
         public string SourceName => _source.name;
 
         readonly bool _isOverridenFolder;
+        readonly bool _isMultipleSource;
         int _numberOfMakeRequest;
         T _source;
+        IEnumerable<T> _sources;
         Queue<T> _sleepingMembers;
         List<T> _activeMembers;
         Action<T> _initializer;
@@ -118,10 +128,34 @@ namespace OcUtility
             
             PoolManager.RegisterPool(source.GetHashCode(), this);
         }
+
+        OcPool(IEnumerable<T> sources, int count, Action<T> initializer)
+        {
+            _isMultipleSource = true;
+            _sources = sources;
+            _source = sources.ElementAt(0);
+            
+            _sleepingMembers = new Queue<T>();
+            _activeMembers = new List<T>();
+            MaxInitialCount = count;
+            _initializer = initializer;
+            _numberOfMakeRequest++;
+            AddMember(count, true);
+            
+            PoolManager.RegisterPool(_source.GetHashCode(), this);
+        }
+
+        void Reset()
+        {
+            if (!_isOverridenFolder) Folder = new GameObject().transform;
+            _sleepingMembers.Clear();
+            _activeMembers.Clear();
+        }
         
         
         void AddMember(int count, bool forceAdd = false)
         {
+            if(Folder == null) Reset();
             if (!forceAdd)
             {
                 if (_numberOfMakeRequest < 5) goto ADD;
@@ -131,7 +165,9 @@ namespace OcUtility
             ADD:
             for (int i = 0; i < count; i++)
             {
-                var gao = Object.Instantiate(_source, Folder, true);
+                T targetSource = _isMultipleSource ? _sources.random() : _source; 
+                
+                var gao = Object.Instantiate(targetSource, Folder, true);
                 gao.Pool = this;
                 _sleepingMembers.Enqueue(gao);
                 gao.gameObject.SetActive(false);
@@ -161,6 +197,7 @@ namespace OcUtility
 
         T CallInternal(Action<T> beforeWakeUp)
         {
+            if(Folder == null) Reset();
             if(_sleepingMembers.Count == 0) AddMember(MaxInitialCount, true);
 
             var member = _sleepingMembers.Dequeue();
@@ -274,6 +311,7 @@ namespace OcUtility
             if(!PoolManager.Initialized) return;
             PoolManager.UnRegisterPool(_source.GetHashCode());
             _source = null;
+            _sources = null;
             _sleepingMembers = null;
             _activeMembers = null;
             if(!_isOverridenFolder && Folder != null) Object.Destroy(Folder.gameObject);

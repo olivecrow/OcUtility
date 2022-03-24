@@ -80,7 +80,7 @@ namespace OcUtility
 
             [EnumToggleButtons, HideLabel] public ContextType Type;
 
-            [TextArea(minLines: 5, maxLines: 20), HideLabel, ShowIf("Type", ContextType.TextArea)]
+            [TextArea(5, 50), HideLabel, ShowIf("Type", ContextType.TextArea)]
             public string content;
 
             [HideLabel, ShowIf("Type", ContextType.CheckRow), TableList]

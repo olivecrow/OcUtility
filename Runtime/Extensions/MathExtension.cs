@@ -478,6 +478,52 @@ public static class MathExtension
         return result;
     }
     
+    public static Vector2 Sum<T>(this IEnumerable<T> enumerable, Func<T, Vector2> getter)
+    {
+        var count = enumerable.Count();
+        Vector2 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += getter.Invoke(enumerable.ElementAt(i));
+        }
+
+        return result;
+    }
+    public static Vector3 Sum<T>(this IEnumerable<T> enumerable, Func<T, Vector3> getter)
+    {
+        var count = enumerable.Count();
+        Vector3 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += getter.Invoke(enumerable.ElementAt(i));
+        }
+
+        return result;
+    }
+    public static Vector4 Sum<T>(this IEnumerable<T> enumerable, Func<T, Vector4> getter)
+    {
+        var count = enumerable.Count();
+        Vector4 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += getter.Invoke(enumerable.ElementAt(i));
+        }
+
+        return result;
+    }
+    
+    public static TResult Sum<TResult, TSource>(this IEnumerable<TSource> enumerable, Func<TSource, TResult> getter, Func<TResult, TResult, TResult> add)
+    {
+        var count = enumerable.Count();
+        TResult result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result = add(result, getter(enumerable.ElementAt(i)));
+        }
+
+        return result;
+    }
+
     public static float Sum<T>(this IEnumerable<T> enumerable, Func<T, float> getter)
     {
         var count = enumerable.Count();
@@ -595,23 +641,24 @@ public static class MathExtension
 
 
     /// <summary> 해당 숫자를 decimalCount번째 자리 소수로 반올림함. decimalCount = 2면 x.xx가 되는 식. </summary>
-    public static float Round(this float source, int decimalCount)
+    public static float Round(this float source, int decimalCount = 0)
     {
+        if (decimalCount == 0) return Mathf.Round(source);
         return Mathf.Round(source * Pow10(decimalCount)) / Pow10(decimalCount);
     }
 
     /// <summary> 벡터의 각 요소를 decimalCount번째 자리 소수로 반올림함. decimalCount = 2면 x.xx가 되는 식. </summary>
-    public static Vector2 Round(this Vector2 source, int decimalCount)
+    public static Vector2 Round(this Vector2 source, int decimalCount = 0)
     {
         return new Vector2(source.x.Round(decimalCount), source.y.Round(decimalCount));
     }
     /// <summary> 벡터의 각 요소를 decimalCount번째 자리 소수로 반올림함. decimalCount = 2면 x.xx가 되는 식. </summary>
-    public static Vector3 Round(this Vector3 source, int decimalCount)
+    public static Vector3 Round(this Vector3 source, int decimalCount = 0)
     {
         return new Vector3(source.x.Round(decimalCount), source.y.Round(decimalCount), source.z.Round(decimalCount));
     }
     /// <summary> 벡터의 각 요소를 decimalCount번째 자리 소수로 반올림함. decimalCount = 2면 x.xx가 되는 식. </summary>
-    public static Vector4 Round(this Vector4 source, int decimalCount)
+    public static Vector4 Round(this Vector4 source, int decimalCount = 0)
     {
         return new Vector4(source.x.Round(decimalCount), source.y.Round(decimalCount), 
             source.z.Round(decimalCount), source.w.Round(decimalCount));
@@ -710,6 +757,16 @@ public static class MathExtension
         }
     }
 
+    public static bool HasOneOf<T>(this Enum type, T value)
+    {
+        try {
+            return ((int)(object)type & (int)(object)value) != 0;
+        }
+        catch {
+            return false;
+        }
+    }
+
     public static bool Is<T>(this Enum type, T value) {
         try {
             return (int)(object)type == (int)(object)value;
@@ -769,6 +826,20 @@ public static class MathExtension
         return new Vector3(x, y, z);
     }
 
+    public static float random(this Vector2 range)
+    {
+        return Random.Range(range.x, range.y);
+    }
+    public static int random(this Vector2Int range)
+    {
+        return Random.Range(range.x, range.y);
+    }
+
+    public static T random<T>(this IEnumerable<T> enumerable)
+    {
+        var idx = Random.Range(0, enumerable.Count());
+        return enumerable.ElementAt(idx);
+    }
     #endregion
     
 

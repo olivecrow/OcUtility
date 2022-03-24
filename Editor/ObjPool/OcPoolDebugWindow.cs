@@ -11,9 +11,12 @@ namespace OcUtility.Editor
     public class OcPoolDebugWindow : EditorWindow
     {
         Dictionary<string, List<IPool>> byScene;
+        Dictionary<IPool, bool> _foldout;
+        Dictionary<IPool, Vector2> _foldoutScrollPosition;
         SerializedObject so;
         int _totalPoolCount;
         bool _initialized;
+        Vector2 _scrollViewPosition;
         [MenuItem("Utility/Oc Pool/디버그 윈도우")]
         private static void ShowWindow()
         {
@@ -57,6 +60,8 @@ namespace OcUtility.Editor
         {
             _totalPoolCount = 0;
             byScene = new Dictionary<string, List<IPool>>();
+            if (_foldout == null) _foldout = new Dictionary<IPool, bool>();
+            if (_foldoutScrollPosition == null) _foldoutScrollPosition = new Dictionary<IPool, Vector2>();
             foreach (var kv in PoolManager._GlobalPool.
                 OrderBy(x => x.Value.GetPoolMemberType().Name))
             {
@@ -94,37 +99,104 @@ namespace OcUtility.Editor
             labelStyle.normal.textColor = Color.white;
             var boxStyle = new GUIStyle(GUI.skin.box);
             boxStyle.onFocused.textColor = Color.cyan;
+            boxStyle.richText = true;
+            _scrollViewPosition = EditorGUILayout.BeginScrollView(_scrollViewPosition, false, true);
             foreach (var kv in byScene)
             {
                 GUILayout.Label($"Scene : {kv.Key} ---- 풀 개수 : {kv.Value.Count}", labelStyle);
-                GUI.backgroundColor = Color.black.SetA(0.2f);
+                GUI.backgroundColor = Color.black.SetA(0.5f);
                 EditorGUILayout.BeginHorizontal();
-                GUILayout.Box("Type", GUILayout.MaxWidth(100));
+                GUILayout.Box("Type", GUILayout.MaxWidth(Style.TypeWidth));
                 GUILayout.Box("Pool", GUILayout.ExpandWidth(true));
-                GUILayout.Box("활성화", GUILayout.MaxWidth(50));
-                GUILayout.Box("총 개수", GUILayout.MaxWidth(50));
+                GUILayout.Box("활성화", GUILayout.MaxWidth(Style.ActiveCountWidth));
+                GUILayout.Box("총 개수", GUILayout.MaxWidth(Style.TotalCountWidth));
                 EditorGUILayout.EndHorizontal();
                 foreach (var pool in kv.Value)
                 {
                     var typeName = pool.GetPoolMemberType().Name;
                     
-                    GUI.backgroundColor = ColorExtension.Random(Animator.StringToHash(typeName)).Brighten(0.5f);
+                    GUI.backgroundColor = ColorExtension.Random(Animator.StringToHash(typeName)) * 2;
                     EditorGUILayout.BeginHorizontal();
-                    if (GUILayout.Button(typeName, boxStyle, GUILayout.MaxWidth(100)))
+                    if (GUILayout.Button(typeName, boxStyle, GUILayout.MaxWidth(Style.TypeWidth)))
                         if(pool.Source is Object o)EditorGUIUtility.PingObject(o);
-                    GUI.backgroundColor = Color.clear;
+
+                    var poolName = pool.Folder == null ? $"{pool.SourceName} | {("Folder is NULL").Rich(Color.red)}" : pool.SourceName;
                     
-                    if(GUILayout.Button(pool.SourceName, boxStyle, GUILayout.ExpandWidth(true)))
-                        if(pool.Folder != null) EditorGUIUtility.PingObject(pool.Folder);
+                    if(!_foldout.ContainsKey(pool)) _foldout.Add(pool, false);
+                    GUI.backgroundColor = Color.white;
+                    var st = new GUIStyle(GUI.skin.label);
+                    st.fixedWidth = 50;
+                    st.normal.textColor = Color.white;
+                    _foldout[pool] = EditorGUILayout.Foldout(_foldout[pool], "", true, st);
+                    if(GUILayout.Button(poolName, boxStyle, GUILayout.ExpandWidth(true)))
+                        if (pool.Folder != null) EditorGUIUtility.PingObject(pool.Folder);
+
+                    GUILayout.Label($"{pool.ActiveCount:N0}", GUILayout.MaxWidth(Style.ActiveCountWidth));
+                    GUILayout.Label($"{pool.TotalCount:N0}", GUILayout.MaxWidth(Style.TotalCountWidth));
+                    EditorGUILayout.EndHorizontal();
                     
-                    GUILayout.Label($"{pool.ActiveCount:N0}", GUILayout.MaxWidth(50));
-                    GUILayout.Label($"{pool.TotalCount:N0}", GUILayout.MaxWidth(50));
-                    EditorGUILayout.EndHorizontal();   
+                    GUI.backgroundColor = Color.white;
+                    if (_foldout[pool])
+                    {
+                        EditorGUILayout.BeginHorizontal();
+                        if(!_foldoutScrollPosition.ContainsKey(pool)) _foldoutScrollPosition.Add(pool, Vector2.zero);
+                        _foldoutScrollPosition[pool] = 
+                            EditorGUILayout.BeginScrollView(
+                                _foldoutScrollPosition[pool], true, true, 
+                                GUILayout.ExpandHeight(false), GUILayout.MaxHeight(300), GUILayout.MinWidth(400));
+                        var memberIsComponent = pool.Source is MonoBehaviour;
+                        foreach (var member in pool.GetAllMembers())
+                        {
+                            EditorGUILayout.BeginHorizontal();
+                            if(memberIsComponent)
+                            {
+                                if(member == null)
+                                {
+                                    null_member();
+                                    continue;
+                                }
+                                var m = member as MonoBehaviour;
+                                if (m == null)
+                                {
+                                    null_member();
+                                    continue;
+                                }
+                                GUI.contentColor = m.isActiveAndEnabled ? Color.white : Color.white.SetA(0.5f);
+                                if (GUILayout.Button(m.name, GUI.skin.label))
+                                    EditorGUIUtility.PingObject(m);
+
+                                void null_member()
+                                {
+                                    GUI.color = Color.red;
+                                    GUILayout.Label("NULL");
+                                    GUI.color = Color.white;
+                                }
+                            }
+                            else
+                            {
+                                GUI.contentColor = pool.GetActiveMembers().Contains(member) ? Color.white : Color.white.SetA(0.5f);
+                                GUILayout.Label(member.ToString());
+                            }
+
+                            EditorGUILayout.EndHorizontal();
+                        }
+                        EditorGUILayout.EndScrollView();
+                        EditorGUILayout.EndHorizontal();
+                    }
                 }
             }
+            EditorGUILayout.EndScrollView();
             GUI.backgroundColor = Color.white;
             so.ApplyModifiedProperties();
         }
         
+    }
+
+    internal static class Style
+    {
+        public const int TypeWidth = 150;
+        public const int ActiveCountWidth = 50;
+        public const int TotalCountWidth = 50;
+        public static float NameWidth(float windowWidth) => windowWidth - TypeWidth - ActiveCountWidth - TotalCountWidth;
     }
 }

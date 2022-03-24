@@ -1,5 +1,10 @@
 ﻿# Changelog
 
+## [1.4.10] -2022-03-24
+
+- SimpleEventTrigger에 delayTime 변수 추가.
+- OcPool에 여러 소스를 기반으로 생성할때  생성방식 변경.
+
 ## [1.4.9] -2022-03-23
 
 - OcPool

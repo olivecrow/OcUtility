@@ -10,8 +10,19 @@ public class SimpleEventTrigger : MonoBehaviour
 {
     public bool useMultipleEvent;
     [HideIf("useMultipleEvent")] public EventTiming timing;
+    public float delayTime;
     [HideIf("useMultipleEvent")] public UnityEvent e;
     [ShowIf("useMultipleEvent"), TableList]public EventKeyPair[] events;
+
+    void OnValidate()
+    {
+        if (delayTime < 0) delayTime = 0;
+        if(events == null) return;
+        foreach (var eventKeyPair in events)
+        {
+            if (eventKeyPair.delayTime < 0) eventKeyPair.delayTime = 0;
+        }
+    }
 
     void Awake()
     {
@@ -56,7 +67,8 @@ public class SimpleEventTrigger : MonoBehaviour
     [HideIf("useMultipleEvent"), Button]
     public void Invoke()
     {
-        e.Invoke();
+        if (delayTime > 0) wait.time(delayTime, e.Invoke);
+        else e.Invoke();
     }
         
     public void InvokeByKey(string key)
@@ -88,12 +100,14 @@ public class SimpleEventTrigger : MonoBehaviour
         [TableColumnWidth(200, false)]
         [VerticalGroup("Key")]public EventTiming timing;
         [VerticalGroup("Key")]public string key;
+        [VerticalGroup("Key")] public float delayTime;
         [VerticalGroup("E")]public UnityEvent e;
 
         [VerticalGroup("Key"), Button]
         public void Invoke()
         {
-            e.Invoke();
+            if (delayTime > 0) wait.time(delayTime, e.Invoke);
+            else e.Invoke();
         }
     }
 

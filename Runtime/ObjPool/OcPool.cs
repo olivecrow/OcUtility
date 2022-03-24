@@ -9,6 +9,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace OcUtility
 {
@@ -34,7 +35,7 @@ namespace OcUtility
             return MakePool(source, count, null, initializer);
         }
 
-        public static OcPool<T> MakePool(IEnumerable<T> sources, int count, Action<T> initializer)
+        public static OcPool<T> MakePool(IEnumerable<T> sources, int countPerSource, Action<T> initializer)
         {
             if(!PoolManager.Initialized) PoolManager.Init();
             OcPool<T> targetPool;
@@ -42,11 +43,11 @@ namespace OcUtility
             if (PoolManager.HasPool(source.GetHashCode()))
             {
                 targetPool = PoolManager.GetPool(source.GetHashCode()) as OcPool<T>;
-                targetPool.AddMember(count);
-                if (targetPool.MaxInitialCount < count) targetPool.MaxInitialCount = count;
+                targetPool.AddMember(countPerSource);
+                if (targetPool.MaxInitialCount < countPerSource) targetPool.MaxInitialCount = countPerSource;
                 targetPool._numberOfMakeRequest++;
             }
-            else targetPool = new OcPool<T>(sources, count, initializer);
+            else targetPool = new OcPool<T>(sources, countPerSource, initializer);
 
             return targetPool;
         }
@@ -106,6 +107,7 @@ namespace OcUtility
 
         readonly bool _isOverridenFolder;
         readonly bool _isMultipleSource;
+        bool _initialized;
         int _numberOfMakeRequest;
         T _source;
         IEnumerable<T> _sources;
@@ -127,6 +129,7 @@ namespace OcUtility
             AddMember(count, true);
             
             PoolManager.RegisterPool(source.GetHashCode(), this);
+            _initialized = true;
         }
 
         OcPool(IEnumerable<T> sources, int count, Action<T> initializer)
@@ -141,7 +144,6 @@ namespace OcUtility
             _initializer = initializer;
             _numberOfMakeRequest++;
             AddMember(count, true);
-            
             PoolManager.RegisterPool(_source.GetHashCode(), this);
         }
 
@@ -163,11 +165,22 @@ namespace OcUtility
                 if(MaxInitialCount > count  * 5) return;
             }
             ADD:
-            for (int i = 0; i < count; i++)
+            if(_isMultipleSource)
             {
-                T targetSource = _isMultipleSource ? _sources.random() : _source; 
-                
-                var gao = Object.Instantiate(targetSource, Folder, true);
+                // 여러 소스를 가진 풀에 최초로 멤버를 추가하는 경우엔 모든소스를 count만큼 한 번씩 넣어줌.
+                if(!_initialized)
+                    for (int i = 0; i < count; i++)
+                        foreach (var s in _sources.OrderBy(x => Random.value)) add(s);
+                else add(_sources.random());
+            }
+            else
+            {
+                add(_source);
+            }
+
+            void add(T source)
+            {
+                var gao = Object.Instantiate(source, Folder, true);
                 gao.Pool = this;
                 _sleepingMembers.Enqueue(gao);
                 gao.gameObject.SetActive(false);

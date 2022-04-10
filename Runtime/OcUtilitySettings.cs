@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 namespace OcUtility
@@ -17,13 +18,20 @@ namespace OcUtility
                     if (_instance == null)
                     {
                         _instance = CreateInstance<OcUtilitySettings>();
-                        AssetDatabase.CreateAsset(_instance, "Assets/Resources/OcUtility Settings.asset");
+                        
+                        if(!AssetDatabase.IsValidFolder(Default_Folder_Path))
+                        {
+                            Directory.CreateDirectory(Default_Folder_Path);
+                        }
+                        AssetDatabase.CreateAsset(_instance, $"{Default_Folder_Path}/OcUtility Settings.asset");
                     }
 #endif
                 }
                 return _instance;
             }
         }
+
+        const string Default_Folder_Path = "Assets/Resources";
         static OcUtilitySettings _instance;
         public int RaycastBudget = 32;
         public int OverlapBudget = 32;

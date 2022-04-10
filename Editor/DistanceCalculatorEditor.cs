@@ -14,7 +14,7 @@ namespace OcUtility.Editor
     {
         static DistanceCalculator _target;
         List<float> distances;
-        [MenuItem("GameObject/거리 계산")]
+        [MenuItem("GameObject/거리 계산", priority = 50)]
         static void Initialize()
         {
             var point = new GameObject("DistanceCalculator_point 0", typeof(DistanceCalculator));

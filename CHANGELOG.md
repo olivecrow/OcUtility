@@ -1,5 +1,26 @@
 ﻿# Changelog
 
+## [1.4.11] -2022-04-09
+- Printer 디버그 코드에 전처리기 대신 Conditional 애트리뷰트로 변경
+  - CreativePrimitive는 전처리기로 남김.
+- ColorExtension
+  - 채도값을 수정하는 AddSaturation 추가. -1이면 무채색, 0이면 변화 없음. 값이 커질수록 채도가 높아짐.
+  - ColorExtension.Range의 방식을 좀 더 다양한 색상이 출력되도록 개선
+  - DRT의 채도값 약간 상승
+  - bool 값을 초록, 빨간색의 true, false로 반환하는 DRT 추가.
+- OcDictionary의 각 함수에 대해서 null 오류에 대한 대응 및 경고 로그 추가.
+- string 비교문을 string.CompareOrdinal()로 변경.
+- HierarchyIconDraw에서 null경고 대응.
+- 게임오브젝트의 hideFlags를 DontSaveInBuild로 설정해주는 간단한 MonoBehaviour인 EditorOnlyGameObject 추가
+- EditorCommentWindow의 오류 발생 부분에 대한 예외처리 작성.
+- 루트 오브젝트 정렬을 에디터 윈도우로 바꾸고 기능 확장.
+- MathExtension
+  - CapsuleCollider관련 코드를 PhysicsExtension으로 옮김
+  - float, Vector의 스냅된 값을 구할 수 있는 Snapped확장 추가.
+    - 복셀의 센터값을 구하는 용도로도 쓸 수 있음.
+  - 스냅된 지점의 Bounds를 반환하는 GetVoxelBounds 추가.
+  - 벡터의 각 요소들 중에서 최소, 최댓값을 반환하는 min, max 메서드 추가.
+
 ## [1.4.10] -2022-03-24
 
 - SimpleEventTrigger에 delayTime 변수 추가.

@@ -90,7 +90,83 @@ public static class MathExtension
     public static float Avg(this Vector2 a) => a.Sum() / 2f;
     public static float Avg(this Vector3 a) => a.Sum() / 3f;
     public static float Avg(this Vector4 a) => a.Sum() / 4f;
+
+    public static float min(this Vector2 a)
+    {
+        return a.x < a.y ? a.x : a.y;
+    }
+    public static float min(this Vector3 a)
+    {
+        var min = a.x;
+        if (a.y < min) min = a.y;
+        if (a.z < min) min = a.z;
+        return min;
+    }
+    public static float min(this Vector4 a)
+    {
+        var min = a.x;
+        if (a.y < min) min = a.y;
+        if (a.z < min) min = a.z;
+        if (a.w < min) min = a.w;
+        return min;
+    }
     
+    public static float minXY(this Vector3 a)
+    {
+        var min = a.x;
+        if (a.y < min) min = a.y;
+        return min;
+    }
+    public static float minXZ(this Vector3 a)
+    {
+        var min = a.x;
+        if (a.z < min) min = a.z;
+        return min;
+    }
+    public static float minYZ(this Vector3 a)
+    {
+        var min = a.y;
+        if (a.z < min) min = a.z;
+        return min;
+    }
+    
+    public static float max(this Vector2 a)
+    {
+        return a.x > a.y ? a.x : a.y;
+    }
+    public static float max(this Vector3 a)
+    {
+        var max = a.x;
+        if (a.y > max) max = a.y;
+        if (a.z > max) max = a.z;
+        return max;
+    }
+    public static float max(this Vector4 a)
+    {
+        var max = a.x;
+        if (a.y > max) max = a.y;
+        if (a.z > max) max = a.z;
+        if (a.w > max) max = a.w;
+        return max;
+    }
+    public static float maxXY(this Vector3 a)
+    {
+        var max = a.x;
+        if (a.y > max) max = a.y;
+        return max;
+    }
+    public static float maxXZ(this Vector3 a)
+    {
+        var max = a.x;
+        if (a.z > max) max = a.z;
+        return max;
+    }
+    public static float maxYZ(this Vector3 a)
+    {
+        var max = a.y;
+        if (a.z > max) max = a.z;
+        return max;
+    }
     #endregion
 
     #region VectorInt
@@ -164,7 +240,65 @@ public static class MathExtension
     
     public static float Avg(this Vector2Int a) => a.Sum() / 2f;
     public static float Avg(this Vector3Int a) => a.Sum() / 3f;
-
+    
+    public static int min(this Vector2Int a)
+    {
+        return a.x < a.y ? a.x : a.y;
+    }
+    public static int min(this Vector3Int a)
+    {
+        var min = a.x;
+        if (a.y < min) min = a.y;
+        if (a.z < min) min = a.z;
+        return min;
+    }
+    public static int minXY(this Vector3Int a)
+    {
+        var min = a.x;
+        if (a.y < min) min = a.y;
+        return min;
+    }
+    public static int minXZ(this Vector3Int a)
+    {
+        var min = a.x;
+        if (a.z < min) min = a.z;
+        return min;
+    }
+    public static int minYZ(this Vector3Int a)
+    {
+        var min = a.y;
+        if (a.z < min) min = a.z;
+        return min;
+    }
+    public static int max(this Vector2Int a)
+    {
+        return a.x > a.y ? a.x : a.y;
+    }
+    public static int max(this Vector3Int a)
+    {
+        var max = a.x;
+        if (a.y > max) max = a.y;
+        if (a.z > max) max = a.z;
+        return max;
+    }
+    public static int maxXY(this Vector3Int a)
+    {
+        var max = a.x;
+        if (a.y > max) max = a.y;
+        return max;
+    }
+    public static int maxXZ(this Vector3Int a)
+    {
+        var max = a.x;
+        if (a.z > max) max = a.z;
+        return max;
+    }
+    public static int maxYZ(this Vector3Int a)
+    {
+        var max = a.y;
+        if (a.z > max) max = a.z;
+        return max;
+    }
     #endregion
 
 
@@ -842,96 +976,28 @@ public static class MathExtension
     }
     #endregion
     
-
-    #region Physics
-
-    static float ScaledCapsuleRadius(CapsuleCollider capsule)
-    {
-        var scale = capsule.transform.lossyScale;
-        float max;
-        switch (capsule.direction)
-        {
-            case 0: // X-Axis.
-                max = scale.y > scale.z ? scale.y : scale.z;
-                break;
-            case 1: // Y-Axis.
-                max = scale.x > scale.z ? scale.x : scale.z;
-                break;
-            case 2: // Z-Axis.
-                max = scale.x > scale.y ? scale.x : scale.y;
-                break;
-            default: goto case 1;
-        }
-
-        return max * capsule.radius;
-    }
-    static float ScaledCapsuleHeight(CapsuleCollider capsule)
-    {
-        var scale = capsule.transform.lossyScale;
-        float height;
-        switch (capsule.direction)
-        {
-            case 0: // X-Axis.
-                height = capsule.height * scale.x;
-                break;
-            case 1: // Y-Axis.
-                height =  capsule.height * scale.y;
-                break;
-            case 2: // Z-Axis.
-                height =  capsule.height * scale.z;
-                break;
-            default: goto case 1;
-        }
-
-        var scaledRadius = ScaledCapsuleRadius(capsule);
-        if (height < scaledRadius * 2f) height = scaledRadius * 2f;
-        return height;
-    }
-
-    public static void ToWorldSpaceCapsule(this CapsuleCollider capsule, out Vector3 point0, out Vector3 point1, out float radius)
-    {
-        var center = capsule.transform.TransformPoint(capsule.center);
-        radius = 0f;
-        float height = 0f;
-        Vector3 lossyScale = capsule.transform.lossyScale.abs();
-        Vector3 dir = Vector3.zero;
-
-        switch (capsule.direction) {
-            case 0: // x
-                radius = Mathf.Max(lossyScale.y, lossyScale.z) * capsule.radius;
-                height = lossyScale.x * capsule.height;
-                dir = capsule.transform.TransformDirection(Vector3.right);
-                break;
-            case 1: // y
-                radius = Mathf.Max(lossyScale.x, lossyScale.z) * capsule.radius;
-                height = lossyScale.y * capsule.height;
-                dir = capsule.transform.TransformDirection(Vector3.up);
-                break;
-            case 2: // z
-                radius = Mathf.Max(lossyScale.x, lossyScale.y) * capsule.radius;
-                height = lossyScale.z * capsule.height;
-                dir = capsule.transform.TransformDirection(Vector3.forward);
-                break;
-        }
-
-        if (height < radius*2f) {
-            dir = Vector3.zero;
-        }
-
-        point0 = center + dir * (height * 0.5f - radius);
-        point1 = center - dir * (height * 0.5f - radius);
-    }
     
-    public static Vector3 DirectionAxis(this CapsuleCollider capsule)
+    public static Bounds GetVoxelBounds(Vector3 position, Vector3 size)
     {
-        return capsule.direction switch
-        {
-            0 => Vector3.right,
-            1 => Vector3.up,
-            2 => Vector3.forward,
-            _ => Vector3.up
-        };
+        return new Bounds(position.Snapped(size), size);
     }
+    public static Vector2 Snapped(this Vector2 v, Vector2 unit)
+    {
+        return new Vector2(v.x.Snapped(unit.x), v.y.Snapped(unit.y));
+    }
+    public static Vector3 Snapped(this Vector3 v, Vector3 unit)
+    {
+        return new Vector3(v.x.Snapped(unit.x), v.y.Snapped(unit.y), v.z.Snapped(unit.z));
+    }
+    public static Vector4 Snapped(this Vector4 v, Vector4 unit)
+    {
+        return new Vector4(v.x.Snapped(unit.x), v.y.Snapped(unit.y), v.z.Snapped(unit.z), v.w.Snapped(unit.w));
+    }
+    public static float Snapped(this float f, float unit)
+    {
+        var absUnit = unit.abs();
+        var count = Mathf.RoundToInt(f / absUnit);
 
-    #endregion
+        return unit * count;
+    }
 }

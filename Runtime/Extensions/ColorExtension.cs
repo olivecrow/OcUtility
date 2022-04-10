@@ -1,11 +1,22 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using Sirenix.Utilities;
 using UnityEngine;
 
 namespace OcUtility
 {
+    [Flags]
+    public enum ColorChannel
+    {
+        None = 0,
+        R    = 1 << 0,
+        G    = 1 << 1,
+        B    = 1 << 2,
+        A    = 1 << 3,
+        All  = 1
+    }
     public static class ColorExtension
     {
         public static Color SetR(this Color source, float value)
@@ -54,13 +65,18 @@ namespace OcUtility
         /// <summary> Debug Rich Text by seed value </summary>
         public static string DRT(this string source, int seed)
         {
-            return source.Rich(Random(seed, 0.4f));
+            return source.Rich(Random(seed, 0.4f).AddSaturation(0.6f));
         }
         
         /// <summary> Debug Rich Text </summary>
         public static string DRT(this string source, object seed)
         {
             return DRT(source, seed.GetHashCode());
+        }
+
+        public static string DRT(this bool source)
+        {
+            return source == true ? "true".Rich(Color.green) : "false".Rich(Color.red);
         }
 
         public static float SumRGB(this Color source)
@@ -94,6 +110,24 @@ namespace OcUtility
 
             return source;
         }
+        
+        /// <summary>색상의 채도를 조정함. sat이 -1이면 무채색으로 나오고, 0이면 변화가 없음. 값이 커질수록 채도가 높아짐.</summary>
+        public static Color AddSaturation(this Color source, float sat)
+        {
+            var max = source.r;
+            if (source.g > max) max = source.g;
+            if (source.b > max) max = source.b;
+
+            var rMargin = source.r - max;
+            var gMargin = source.g - max;
+            var bMargin = source.b - max;
+
+            source.r += rMargin * sat;
+            source.g += gMargin * sat;
+            source.b += bMargin * sat;
+
+            return source;
+        }
 
         public static Color Gray(float rgb, float a = 1f)
         {
@@ -101,7 +135,7 @@ namespace OcUtility
         }
 
         /// <summary> 무작위의 한 색깔을 출력함. </summary>
-        public static Color Random() => new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
+        public static Color Random() => Random(UnityEngine.Random.Range(int.MinValue, int.MaxValue));
         /// <summary> 무작위의 한 색깔을 출력함. </summary>
         public static Color SystemRandom()
         {

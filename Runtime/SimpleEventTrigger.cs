@@ -73,7 +73,7 @@ public class SimpleEventTrigger : MonoBehaviour
         
     public void InvokeByKey(string key)
     {
-        var pair = events.FirstOrDefault(x => x.key == key);
+        var pair = events.FirstOrDefault(x => string.CompareOrdinal(x.key, key) == 0);
         if (pair == null)
         {
             Debug.Log($"해당 Key값의 이벤트가 없음 | key : {key}");

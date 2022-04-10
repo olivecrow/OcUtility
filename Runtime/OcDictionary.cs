@@ -51,6 +51,12 @@ namespace OcUtility
         {
             for (int i = 0; i < pairs.Count; i++)
             {
+                if (pairs[i].Value == null)
+                {
+                    if (value == null) return true;
+                    Debug.LogWarning($"딕셔너리의 값이 비어있음 | index : {i} | Key : {pairs[i].Key}");
+                    continue;
+                }
                 if (pairs[i].Value.Equals(value)) return true;
             }
 
@@ -61,6 +67,16 @@ namespace OcUtility
         {
             for (int i = 0; i < pairs.Count; i++)
             {
+                if (pairs[i].Key == null)
+                {
+                    if(key == null)
+                    {
+                        pairs.RemoveAt(i);
+                        return true;
+                    }
+                    Debug.LogWarning($"딕셔너리의 키가 비어있음 | index : {i} | Value : {pairs[i].Value}");
+                    continue;
+                }
                 if (pairs[i].Key.Equals(key))
                 {
                     pairs.RemoveAt(i);
@@ -76,6 +92,16 @@ namespace OcUtility
             var count = 0;
             for (int i = pairs.Count - 1; i > 0 ; i--)
             {
+                if (pairs[i].Key == null)
+                {
+                    if(key == null)
+                    {
+                        pairs.RemoveAt(i);
+                        continue;
+                    }
+                    Debug.LogWarning($"딕셔너리의 키가 비어있음 | index : {i} | Value : {pairs[i].Value}");
+                    continue;
+                }
                 if (pairs[i].Key.Equals(key))
                 {
                     pairs.RemoveAt(i);
@@ -91,6 +117,16 @@ namespace OcUtility
             var count = 0;
             for (int i = pairs.Count - 1; i > 0 ; i--)
             {
+                if (pairs[i].Value == null)
+                {
+                    if(value == null)
+                    {
+                        pairs.RemoveAt(i);
+                        continue;
+                    }
+                    Debug.LogWarning($"딕셔너리의 값이 비어있음 | index : {i} | Key : {pairs[i].Key}");
+                    continue;
+                }
                 if (pairs[i].Value.Equals(value))
                 {
                     pairs.RemoveAt(i);
@@ -120,6 +156,12 @@ namespace OcUtility
         {
             for (int i = 0; i < pairs.Count; i++)
             {
+                if (pairs[i].Key == null)
+                {
+                    if(key == null) return pairs[i];
+                    Debug.LogWarning($"딕셔너리의 키가 비어있음 | index : {i} | Value : {pairs[i].Value}");
+                    continue;
+                }
                 if (pairs[i].Key.Equals(key)) return pairs[i];
             }
 
@@ -149,6 +191,17 @@ namespace OcUtility
         {
             for (var i = 0; i < pairs.Count; i++)
             {
+                if (pairs[i].Key == null)
+                {
+                    if(key == null)
+                    {
+                        value = pairs[i].Value;
+                        return true;
+                    }
+                    Debug.LogWarning($"딕셔너리의 키가 비어있음 | index : {i} | Value : {pairs[i].Value}");
+                    continue;
+                }
+                
                 if (pairs[i].Key.Equals(key))
                 {
                     value = pairs[i].Value;

@@ -33,21 +33,23 @@ namespace OcUtility.Editor
             for (int i = 0; i < drawers.Length; i++)
             {
                 var drawer = drawers[i];
+#if UNITY_2021_1_OR_NEWER
+                var icon = 
+                drawer.OverrideIcon == null ? EditorGUIUtility.GetIconForObject(drawer.IconTarget) : drawer.OverrideIcon;
+#else
+                var icon =
+                drawer.OverrideIcon == null ? 
+                    EditorGUIUtility.ObjectContent(drawer.IconTarget, drawer.IconTarget.GetType()).image : 
+                    drawer.OverrideIcon;
+#endif
+                if(icon == null) continue;
                 var rectX = rect.position.x + 30 + labelWidth + i * 15;
                 var iconDrawRect = new Rect(
                      rectX, rect.yMin,
                     15, 15);
                 GUI.color = drawer.IconTint.a == 0 ? inputColor : drawer.IconTint;
-                GUI.DrawTexture(
-                    iconDrawRect,
-#if UNITY_2021_1_OR_NEWER
-                    drawer.OverrideIcon == null ? EditorGUIUtility.GetIconForObject(drawer.IconTarget) : drawer.OverrideIcon);
-#else
-                    drawer.OverrideIcon == null ? 
-                        EditorGUIUtility.ObjectContent(drawer.IconTarget, drawer.IconTarget.GetType()).image : 
-                        drawer.OverrideIcon);
-#endif
-                    
+
+                GUI.DrawTexture(iconDrawRect, icon);
                 GUI.color = inputColor;
                 
             }

@@ -45,7 +45,23 @@ namespace OcUtility.Editor
 
         protected override void OnBeginDrawEditors()
         {
-            var selected = MenuTree.Selection.SelectedValue as EditorCommentAsset;
+            EditorCommentAsset selected = null;
+
+            try
+            {
+                getSelection(ref selected);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"exception : {e} \n" +
+                                 $"MenuTree 구성항목이 없음 | => selected == null");
+            }
+
+            void getSelection(ref EditorCommentAsset asset)
+            {
+                asset = MenuTree.Selection.SelectedValue as EditorCommentAsset;
+            }
+            
             SirenixEditorGUI.BeginHorizontalToolbar();
             if (SirenixEditorGUI.ToolbarButton("에셋 생성"))
             {

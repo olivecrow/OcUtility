@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -226,49 +227,62 @@ namespace OcUtility
         [MenuItem("CONTEXT/BoxCollider/바운드에 맞게 확장")]
         static void ExtendBox(MenuCommand command)
         {
-            var box = command.context as BoxCollider;
-            var childRenderer = box.GetComponentsInChildren<Renderer>();
+            var c = command.context as BoxCollider;
+            Undo.RecordObject(c, "바운드에 맞게 확장");
+            var childRenderer = c.GetComponentsInChildren<Renderer>();
 
-            var bounds = box.bounds;
+            var bounds = new Bounds(c.transform.position, Vector3.zero);
             foreach (var renderer in childRenderer)
             {
                 bounds.Encapsulate(renderer.bounds);
             }
 
-            box.center = bounds.center;
-            box.size = bounds.size;
+            c.center = bounds.center - c.transform.position;
+            c.size = bounds.size;
         }
         [MenuItem("CONTEXT/CapsuleCollider/바운드에 맞게 확장")]
         static void ExtendCapsule(MenuCommand command)
         {
             var c = command.context as CapsuleCollider;
+            Undo.RecordObject(c, "바운드에 맞게 확장");
             var childRenderer = c.GetComponentsInChildren<Renderer>();
 
-            var bounds = c.bounds;
+            var bounds = new Bounds(c.transform.position, Vector3.zero);
             foreach (var renderer in childRenderer)
             {
                 bounds.Encapsulate(renderer.bounds);
             }
+            
+            c.center = bounds.center - c.transform.position;
+            var xyz = new float[]{ bounds.extents.x, bounds.extents.y, bounds.extents.z };
+            xyz = xyz.OrderByDescending(x=> x).ToArray();
 
-            c.center = bounds.center;
-            c.radius = bounds.extents.maxXZ();
-            c.height = bounds.size.y;
+            c.radius = MathExtension.CalcHypotenuseOfRightAngledTriangle(xyz[0], xyz[1]);
+            c.height = bounds.size.y + c.radius;
+
+            Debug.LogWarning($"캡슐 콜라이더 및 구체 콜라이더의 확장은 부정확할 수 있음");
         }
         
         [MenuItem("CONTEXT/SphereCollider/바운드에 맞게 확장")]
         static void ExtendSphere(MenuCommand command)
         {
             var c = command.context as SphereCollider;
+            Undo.RecordObject(c, "바운드에 맞게 확장");
             var childRenderer = c.GetComponentsInChildren<Renderer>();
 
-            var bounds = c.bounds;
+            var bounds = new Bounds(c.transform.position, Vector3.zero);
             foreach (var renderer in childRenderer)
             {
                 bounds.Encapsulate(renderer.bounds);
             }
 
-            c.center = bounds.center;
-            c.radius = bounds.extents.max();
+            c.center = bounds.center - c.transform.position;
+
+            var xyz = new float[]{ bounds.extents.x, bounds.extents.y, bounds.extents.z };
+            xyz = xyz.OrderByDescending(x=> x).ToArray();
+
+            c.radius = MathExtension.CalcHypotenuseOfRightAngledTriangle(xyz[0], xyz[1]);
+            Debug.LogWarning($"캡슐 콜라이더 및 구체 콜라이더의 확장은 부정확할 수 있음");
         }
 #endif
     }

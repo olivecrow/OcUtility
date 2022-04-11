@@ -5,12 +5,17 @@ using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
+using Object = UnityEngine.Object;
 
-public class SimpleEventTrigger : MonoBehaviour
+public class SimpleEventTrigger : MonoBehaviour, IHierarchyIconDrawable
 {
+    public Object IconTarget => this;
+    public Texture2D OverrideIcon { get; }
+    public Color IconTint => Color.white;
+    
     public bool useMultipleEvent;
     [HideIf("useMultipleEvent")] public EventTiming timing;
-    public float delayTime;
+    [HideIf("useMultipleEvent")] public float delayTime;
     [HideIf("useMultipleEvent")] public UnityEvent e;
     [ShowIf("useMultipleEvent"), TableList]public EventKeyPair[] events;
 

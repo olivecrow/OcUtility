@@ -1000,4 +1000,9 @@ public static class MathExtension
 
         return unit * count;
     }
+
+    public static float CalcHypotenuseOfRightAngledTriangle(float x, float y)
+    {
+        return Mathf.Sqrt(x.sqr() + y.sqr());
+    }
 }

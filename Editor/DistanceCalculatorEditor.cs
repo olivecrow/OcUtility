@@ -17,8 +17,8 @@ namespace OcUtility.Editor
         [MenuItem("GameObject/거리 계산", priority = 50)]
         static void Initialize()
         {
-            var point = new GameObject("DistanceCalculator_point 0", typeof(DistanceCalculator));
-            point.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSave;
+            var point = new GameObject("거리계산", typeof(DistanceCalculator));
+            point.hideFlags = HideFlags.DontSave;
             
             if(Selection.activeGameObject != null)
             {
@@ -78,6 +78,7 @@ namespace OcUtility.Editor
 
         void OnSceneGUI()
         {
+            if(_target.points == null || _target.points.Count == 0) return;
             Handles.BeginGUI();
             var camDistance = SceneViewController.DistanceFromSceneViewCam(_target.points[0].position);
             var sceneViewSize = SceneView.lastActiveSceneView.position.size;
@@ -95,12 +96,13 @@ namespace OcUtility.Editor
             Handles.EndGUI();
             
             bool isControlDown = Application.platform == RuntimePlatform.OSXEditor ? Event.current.command : Event.current.control;
-            
+
+            var sceneViewCam = SceneViewController.CamTransform;
             if (Event.current.alt && Event.current.OnLeftClick(SceneView.lastActiveSceneView.position))
             {
                 var result = SceneViewController.RaycastSceneViewAll(out var hits);
                 if(result == 0) return;
-                var highest = hits.GetMaxElement(x => x.point.y);
+                var highest = hits.GetMinElement(x => Vector3.SqrMagnitude(x.point - sceneViewCam.position), result);
 
                 var newPoint = new GameObject($"p_{_target.points.Count}");
                 newPoint.hideFlags = HideFlags.HideAndDontSave;
@@ -113,7 +115,8 @@ namespace OcUtility.Editor
             {
                 var result = SceneViewController.RaycastSceneViewAll(out var hits);
                 if(result == 0) return;
-                var highest = hits.GetMaxElement(x => x.point.y);
+
+                var highest = hits.GetMinElement(x => Vector3.SqrMagnitude(x.point - sceneViewCam.position), result);
                 
                 _target.points[_target.points.Count - 1].position = highest.point;
                 
@@ -124,10 +127,17 @@ namespace OcUtility.Editor
                 }
             }
             
-            if(_target.points == null || _target.points.Count == 0) return;
-            Handles.color = Color.red;
+            
+        }
+
+        [DrawGizmo(GizmoType.Selected)]
+        static void DrawGizmo(DistanceCalculator component, GizmoType gizmoType)
+        {
             for (int i = 0; i < _target.points.Count; i++)
             {
+                Gizmos.color = Color.cyan.SetA(0.5f);
+                Gizmos.DrawCube(_target.points[i].position, Vector3.one * 0.2f);
+                Handles.color = Color.red;
                 Handles.DrawWireCube(_target.points[i].position, Vector3.one * (SceneViewController.DistanceFromSceneViewCam(_target.points[i].position) * 0.05f));
                 if(i < _target.points.Count - 1)
                 {

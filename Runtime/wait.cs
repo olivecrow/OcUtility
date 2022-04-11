@@ -12,6 +12,7 @@ public class wait : MonoBehaviour
     public static wait Instance => _instance;
     static wait _instance;
     static readonly WaitForFixedUpdate WAIT_FOR_FIXEDUPDATE = new WaitForFixedUpdate();
+    static readonly WaitForEndOfFrame WAIT_FOR_ENDOFFRAME = new WaitForEndOfFrame();
     [RuntimeInitializeOnLoadMethod]
     static void Init()
     {
@@ -23,6 +24,10 @@ public class wait : MonoBehaviour
     public static Coroutine frame(int frame, Action e)
     {
         return _instance.StartCoroutine(WaitFrame(frame, e));
+    }
+    public static Coroutine endOfFrame(int frame, Action e)
+    {
+        return _instance.StartCoroutine(WaitEndOfFrame(frame, e));
     }
 
     public static Coroutine fixedFrame(int frame, Action e)
@@ -68,6 +73,12 @@ public class wait : MonoBehaviour
     {
         for (int i = 0; i < frame; i++)
             yield return null;
+        e?.Invoke();
+    }
+    static IEnumerator WaitEndOfFrame(int frame, Action e)
+    {
+        for (int i = 0; i < frame; i++)
+            yield return WAIT_FOR_ENDOFFRAME;
         e?.Invoke();
     }
 

@@ -192,9 +192,9 @@ namespace OcUtility
 
         public T Call(in Vector3 position, in Quaternion rotation, Action<T> beforeWakeUp = null)
         {
-            var member = CallInternal(beforeWakeUp);
+            var member = CallInternal(true, in position, in rotation, beforeWakeUp);
             if (member == null) return null;
-            member.transform.SetPositionAndRotation(position, rotation);
+            
             return member;
         }
 
@@ -205,15 +205,21 @@ namespace OcUtility
 
         public T Call(Action<T> beforeWakeUp = null)
         {
-            return CallInternal(beforeWakeUp);
+            return CallInternal(false, Vector3.zero, Quaternion.identity, beforeWakeUp);
         }
 
-        T CallInternal(Action<T> beforeWakeUp)
+        T CallInternal(bool initTransform, in Vector3 position, in Quaternion rotation, Action<T> beforeWakeUp)
         {
             if(Folder == null) Reset();
             if(_sleepingMembers.Count == 0) AddMember(MaxInitialCount, true);
 
             var member = _sleepingMembers.Dequeue();
+
+            if (initTransform)
+            {
+                member.transform.SetPositionAndRotation(position, rotation);
+            }
+            
             beforeWakeUp?.Invoke(member);
             member.WakeUp();
             _activeMembers.Add(member);

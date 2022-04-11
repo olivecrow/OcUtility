@@ -1,18 +1,15 @@
 #if UNITY_EDITOR
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace OcUtility
 {
-    [ExecuteInEditMode]
     public class DistanceCalculator : MonoBehaviour
     {
         public List<Transform> points;
 
-        void Awake()
+        void Reset()
         {
             points = new List<Transform>();
             points.Add(transform);
@@ -35,7 +32,6 @@ namespace OcUtility
 
             points = null;
         }
-        
     }
 }
 #endif

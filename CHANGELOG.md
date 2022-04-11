@@ -1,6 +1,6 @@
 ﻿# Changelog
 
-## [1.4.11] -2022-04-09
+## [1.5.0] -2022-04-09
 - Printer 디버그 코드에 전처리기 대신 Conditional 애트리뷰트로 변경
   - CreativePrimitive는 전처리기로 남김.
 - ColorExtension
@@ -20,6 +20,22 @@
     - 복셀의 센터값을 구하는 용도로도 쓸 수 있음.
   - 스냅된 지점의 Bounds를 반환하는 GetVoxelBounds 추가.
   - 벡터의 각 요소들 중에서 최소, 최댓값을 반환하는 min, max 메서드 추가.
+  - 직각삼각형의 빗변을 구하는 CalcHypotenuseOfRightAngledTriangle추가.
+- PhysicsExtension
+  - 각 콜라이더를 렌더러의 바운드에 맞게 확장하는 컨텍스트 메뉴 추가
+    - 제한사항 : 캡슐 콜라이더 및 구체 콜라이더는 부정확할 수 있음.
+- 거리계산
+  - 간혹 무시되던 레이캐스트 개선
+  - 기즈모 개선
+- wait
+  - forEndOfFrame 추가.
+- SimpleEventTrigger
+  - GUI개선
+  - 아이콘 추가 및 IHierarchyIcon상속
+- HierarchyIconDrawer
+  - 텍스쳐가 null일때 발생하는 경고 로그 처리
+- OcPool
+  - 위치 및 회전 설정을 WakeUp 이전에 하는 것으로 변경.
 
 ## [1.4.10] -2022-03-24
 

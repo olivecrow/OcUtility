@@ -1,6 +1,9 @@
 ﻿# Changelog
 
-## [1.5.0] -2022-04-09
+## [1.5.1] -2022-04-13
+- Printer에 관한 빌드 오류 해결.
+
+## [1.5.0] -2022-04-11
 - Printer 디버그 코드에 전처리기 대신 Conditional 애트리뷰트로 변경
   - CreativePrimitive는 전처리기로 남김.
 - ColorExtension

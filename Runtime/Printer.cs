@@ -52,72 +52,73 @@ namespace OcUtility
             }
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void Ray(Vector3 start, Vector3 dir, bool depthTest = false)
         {
             Debug.DrawRay(start, dir, Color.white, 0, depthTest);
         }
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void Ray(Vector3 start, Vector3 dir, float duration, bool depthTest)
         {
             Debug.DrawRay(start, dir, Color.white, duration, depthTest);
         }
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void Ray(Vector3 start, Vector3 dir, Color color, bool depthTest = false)
         {
             Debug.DrawRay(start, dir, color, 0, depthTest);
         }
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void Ray(Vector3 start, Vector3 dir, Color color, float duration, bool depthTest = false)
         {
             Debug.DrawRay(start, dir, color, duration, depthTest);
         }
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void Ray(Ray ray, bool depthTest = false)
         {
             Debug.DrawRay(ray.origin, ray.direction, Color.white, 0, depthTest);
         }
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void Ray(Ray ray, Color color, bool depthTest = false)
         {
             Debug.DrawRay(ray.origin, ray.direction, color, 0, depthTest);
         }
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void Ray(Ray ray, float duration, bool depthTest = false)
         {
             Debug.DrawRay(ray.origin, ray.direction, Color.white, duration, depthTest);
         }
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void Ray(Ray ray, Color color, float duration, bool depthTest = false)
         {
             Debug.DrawRay(ray.origin, ray.direction, color, duration, depthTest);
         }
         
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void Line(Vector3 start, Vector3 end, bool depthTest = false)
         {
             Debug.DrawLine(start, end, Color.white, 0, depthTest);
         }
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void Line(Vector3 start, Vector3 end, float duration, bool depthTest)
         {
             Debug.DrawLine(start, end, Color.white, duration, depthTest);
         }
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void Line(Vector3 start, Vector3 end, Color color, bool depthTest = false)
         {
             Debug.DrawLine(start, end, color, 0, depthTest);
         }
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void Line(Vector3 start, Vector3 end, Color color, float duration, bool depthTest = false)
         {
             Debug.DrawLine(start, end, color, duration, depthTest);
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void DrawDonut(Vector3 center, Vector3 normal, Vector3 from, 
             float angle, float minRadius, float maxRadius, Color color)
         {
+#if UNITY_EDITOR
             CreateGizmoMaterial();
             giz_Mat.SetPass(0);
             giz_GLVert_1.Clear();
@@ -155,23 +156,24 @@ namespace OcUtility
             }
             GL.End();
             GL.PopMatrix();
+#endif
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void DrawDonut(Vector3 center, Vector3 normal, Vector3 from, 
             float angle, Vector2 range, Color color)
         {
             DrawDonut(center, normal, from, angle, range.x, range.y, color);
         }
         
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void DrawDonut(Vector3 center, Vector3 from, 
             float angle, Vector2 range, Color color)
         {
             DrawDonut(center, Vector3.up, from, angle, range.x, range.y, color);
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void DrawDonut(Vector3 center, Vector3 normal, 
             float centerAngle, float angle, float minRadius, float maxRadius, Color color)
         {
@@ -179,14 +181,14 @@ namespace OcUtility
             DrawDonut(center, normal, from, angle, minRadius, maxRadius, color);
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void DrawDonut(Vector3 center, Vector3 normal, 
             float centerAngle, float angle, Vector2 range, Color color)
         {
             var from = Quaternion.AngleAxis(centerAngle, normal) * Vector3.forward;
             DrawDonut(center, normal, from, angle, range, color);
         }
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void DrawDonut(Vector3 center, float centerAngle, 
             float angle, Vector2 range, Color color)
         {
@@ -194,9 +196,11 @@ namespace OcUtility
             DrawDonut(center, Vector3.up, from, angle, range, color);
         }
 
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR")]
         public static void DrawCross(Vector3 position, float size, Color color)
         {
+#if UNITY_EDITOR
+            
             CreateGizmoMaterial();
             giz_Mat.SetPass(0);
             
@@ -214,9 +218,11 @@ namespace OcUtility
             
             GL.End();
             GL.PopMatrix();
+#endif
         }
-        
-        
+
+
+#if UNITY_EDITOR
         static void CreateGizmoMaterial()
         {
             if (giz_Mat) return;
@@ -230,7 +236,8 @@ namespace OcUtility
         {
             if (primitive_Mat) return;
             primitive_Mat = Resources.Load<Material>("e_mat_transparent");
-        }
+        }  
+#endif
 
 
 #if UNITY_EDITOR

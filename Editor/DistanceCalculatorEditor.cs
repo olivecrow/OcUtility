@@ -133,6 +133,7 @@ namespace OcUtility.Editor
         [DrawGizmo(GizmoType.Selected)]
         static void DrawGizmo(DistanceCalculator component, GizmoType gizmoType)
         {
+            if(_target.points == null) return;
             for (int i = 0; i < _target.points.Count; i++)
             {
                 Gizmos.color = Color.cyan.SetA(0.5f);

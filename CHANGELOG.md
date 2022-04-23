@@ -1,5 +1,11 @@
 ﻿# Changelog
 
+## [1.5.2] -2022-04-23
+- 부착된 게임 오브젝트를 DevelopmentBuild에서는 빌드에 포함하고, 릴리즈 빌드에서는 제외시킬 수 있는 DebugOnlyGameObject 추가
+  - DebugOnlyGameObjectProcessor에서 IProcessSceneWithReport를 구현해서 작동함.
+- EditorOnlyGameObject에서 컴포넌트의 HideFlag까지 다루도록 추가함.
+- EditorCommentAsset이 설정된 EditorComment가 빌드에 포함될 경우, 빌드 오류가 발생하던 문제 해결.
+
 ## [1.5.1] -2022-04-13
 - Printer에 관한 빌드 오류 해결.
 

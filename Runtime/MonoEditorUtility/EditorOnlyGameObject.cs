@@ -11,15 +11,16 @@ namespace OcUtility
     {
         [BoxGroup("This GameObject")]public bool hideThisGameObject;
         [BoxGroup("This GameObject")][ShowInInspector][GUIColor("labelColor")]
-        public HideFlags HideFlags => hideFlags;
+        public HideFlags GameObjectFlags => gameObject.hideFlags;
 
         [BoxGroup("This GameObject")][ReadOnly]public HideFlags OriginalFlags;
 
         public EditorOnlyComponent[] Others;
-        Color labelColor => HideFlags == HideFlags.DontSaveInBuild ? Color.cyan : Color.white;
+        Color labelColor => GameObjectFlags == HideFlags.DontSaveInBuild ? Color.cyan : Color.white;
         void Reset()
         {
             OriginalFlags = gameObject.hideFlags;
+            hideFlags = HideFlags.DontSaveInBuild;
         }
 
         void OnDestroy()

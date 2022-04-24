@@ -16,11 +16,18 @@ namespace OcUtility.Editor
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {
+            var isDevelopmentBuild = (report.summary.options & BuildOptions.Development) != 0;
+            Debug.Log($"A | scene : {scene.name} | is Development build ? {isDevelopmentBuild}");
             if(report == null) return;
-            
+            Debug.Log($"B | scene : {scene.name} | is Development build ? {isDevelopmentBuild}");
             HideEditorComment();
-            if (!report.summary.options.Has(BuildOptions.Development)) return;
-            SetFlagsDontSave();
+            Debug.Log($"C | scene : {scene.name} | is Development build ? {isDevelopmentBuild}");
+            if (!isDevelopmentBuild)
+            {
+                Debug.Log($"D | scene : {scene.name} | is Development build ? {isDevelopmentBuild}");
+                HideDebugOnlyGameObjects();
+            }
+            
         }
 
         void HideEditorComment()
@@ -34,7 +41,7 @@ namespace OcUtility.Editor
             }
         }
 
-        void SetFlagsDontSave()
+        void HideDebugOnlyGameObjects()
         {
             var objs = Object.FindObjectsOfType<DebugOnlyGameObject>();
             foreach (var obj in objs)

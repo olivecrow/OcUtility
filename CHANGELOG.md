@@ -1,5 +1,9 @@
 ﻿# Changelog
 
+## [1.5.3] -2022-04-24
+- EditorOnlyGameObject 오류 메세지가 출력되지 않도록 수정
+- DebugOnlyGameObject가 제대로 작동하지 않던 문제 해결.
+
 ## [1.5.2] -2022-04-23
 - 부착된 게임 오브젝트를 DevelopmentBuild에서는 빌드에 포함하고, 릴리즈 빌드에서는 제외시킬 수 있는 DebugOnlyGameObject 추가
   - DebugOnlyGameObjectProcessor에서 IProcessSceneWithReport를 구현해서 작동함.

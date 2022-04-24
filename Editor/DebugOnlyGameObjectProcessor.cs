@@ -16,15 +16,17 @@ namespace OcUtility.Editor
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {
+            if(report == null)
+            {
+                Debug.Log($"[Debug Only GameObject Processor] | scene : {scene.name} | report is null | => 아무것도 하지 않음");
+                return;
+            }
             var isDevelopmentBuild = (report.summary.options & BuildOptions.Development) != 0;
-            Debug.Log($"A | scene : {scene.name} | is Development build ? {isDevelopmentBuild}");
-            if(report == null) return;
-            Debug.Log($"B | scene : {scene.name} | is Development build ? {isDevelopmentBuild}");
+            Debug.Log($"[Debug Only GameObject Processor] | scene : {scene.name} | is Development build ? {isDevelopmentBuild}");
+           
             HideEditorComment();
-            Debug.Log($"C | scene : {scene.name} | is Development build ? {isDevelopmentBuild}");
             if (!isDevelopmentBuild)
             {
-                Debug.Log($"D | scene : {scene.name} | is Development build ? {isDevelopmentBuild}");
                 HideDebugOnlyGameObjects();
             }
             

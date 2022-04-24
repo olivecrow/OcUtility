@@ -1,5 +1,8 @@
 ﻿# Changelog
 
+## [1.5.4] -2022-04-24
+- DebugOnlyGameObject에서 null 필터링이 잘못된 위치에 있던 문제 해결.
+
 ## [1.5.3] -2022-04-24
 - EditorOnlyGameObject 오류 메세지가 출력되지 않도록 수정
 - DebugOnlyGameObject가 제대로 작동하지 않던 문제 해결.

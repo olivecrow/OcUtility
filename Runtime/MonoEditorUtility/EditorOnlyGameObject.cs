@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace OcUtility
 {
-    [ExecuteInEditMode]
+    [ExecuteInEditMode][Obsolete("이 스크립트 대신 HideFlagControl을 사용할 것")]
     public class EditorOnlyGameObject : MonoBehaviour
     {
         [BoxGroup("This GameObject")]public bool hideThisGameObject;

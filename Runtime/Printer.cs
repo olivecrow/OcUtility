@@ -291,6 +291,5 @@ namespace OcUtility
             var clearMethod = logEntries?.GetMethod("Clear", BindingFlags.Static | BindingFlags.Public);
             clearMethod?.Invoke(null, null);
         }
-
     }
 }

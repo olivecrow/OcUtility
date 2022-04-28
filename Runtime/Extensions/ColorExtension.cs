@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using Sirenix.Utilities;
 using UnityEngine;
 
@@ -77,6 +76,11 @@ namespace OcUtility
         public static string DRT(this bool source)
         {
             return source == true ? "true".Rich(Color.green) : "false".Rich(Color.red);
+        }
+        
+        public static string DRT(this UnityEngine.Object o)
+        {
+            return $"[{o.GetType().Name}] {o.name} |".DRT(o);
         }
 
         public static float SumRGB(this Color source)

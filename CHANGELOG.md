@@ -1,5 +1,14 @@
 ﻿# Changelog
 
+## [1.5.5] -2022-04-28
+- EditorOnlyGameObject와 DebugOnlyGameObject를 합친 HideFlagControl 추가
+- DebugOnlyGameObjectProcessor를 HideFlagProcessor로 변경
+  - !! 현재 isDevelopment빌드에서 IProcessSceneWithReport가 콜백을 받지 못하는 제한사항이 있음. 버그인지는 아직 모름.
+- StringExtensions추가
+  - CompareOrdinal로 간단히 값이 같은지 반환하는 equal확장 추가
+- UnityEngine.Object의 간단한 디버그 헤더 문구를 출력해주는 DRT확장 추가
+  - this.DRT()를 쓰면 => [TestClass] testObject | 와 같은식으로 출력됨.
+
 ## [1.5.4] -2022-04-24
 - DebugOnlyGameObject에서 null 필터링이 잘못된 위치에 있던 문제 해결.
 

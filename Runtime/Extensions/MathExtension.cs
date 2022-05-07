@@ -1005,4 +1005,114 @@ public static class MathExtension
     {
         return Mathf.Sqrt(x.sqr() + y.sqr());
     }
+
+    static string[] GetSplitVectorElements(this string sVector)
+    {
+        // Remove the parentheses
+        if (sVector.StartsWith ("(") && sVector.EndsWith (")")) {
+            sVector = sVector.Substring(1, sVector.Length-2);
+        }
+ 
+        // split the items
+        return sVector.Split(',');
+    }
+    public static Vector2 ToVector2(this string sVector)
+    {
+        var sArray = GetSplitVectorElements(sVector);
+ 
+        // store as a Vector3
+        return new Vector2(
+            float.Parse(sArray[0]),
+            float.Parse(sArray[1]));
+    }
+    public static Vector3 ToVector3(this string sVector)
+    {
+        var sArray = GetSplitVectorElements(sVector);
+ 
+        // store as a Vector3
+        return new Vector3(
+            float.Parse(sArray[0]),
+            float.Parse(sArray[1]),
+            float.Parse(sArray[2]));
+    }
+    public static Vector4 ToVector4(this string sVector)
+    {
+        var sArray = GetSplitVectorElements(sVector);
+ 
+        // store as a Vector3
+        return new Vector4(
+            float.Parse(sArray[0]),
+            float.Parse(sArray[1]),
+            float.Parse(sArray[2]),
+            float.Parse(sArray[3]));
+    }
+
+    public static bool TryParseToVector2(this string sVector, out Vector2 v)
+    {
+        v = Vector2.zero;
+        var sArray = GetSplitVectorElements(sVector);
+
+        float
+            x = 0,
+            y = 0;
+
+        var xValid = float.TryParse(sArray[0], out x);
+        if (!xValid) return false;
+        
+        var yValid = sArray.Length >= 2 && float.TryParse(sArray[1], out y);
+        if (!yValid) return false;
+        
+        v = new Vector2(x, y);
+
+        return true;
+    }
+    public static bool TryParseToVector3(this string sVector, out Vector3 v)
+    {
+        v = Vector3.zero;
+        var sArray = GetSplitVectorElements(sVector);
+        float
+            x = 0,
+            y = 0,
+            z = 0;
+
+        var xValid = float.TryParse(sArray[0], out x);
+        if (!xValid) return false;
+        
+        var yValid = sArray.Length >= 2 && float.TryParse(sArray[1], out y);
+        if (!yValid) return false;
+        
+        var zValid = sArray.Length >= 3 && float.TryParse(sArray[2], out z);
+        if (!zValid) return false;
+        
+        v = new Vector3(x, y, z);
+
+        return true;
+    }
+    
+    public static bool TryParseToVector4(this string sVector, out Vector4 v)
+    {
+        v = Vector3.zero;
+        var sArray = GetSplitVectorElements(sVector);
+        float
+            x = 0,
+            y = 0,
+            z = 0,
+            w = 0;
+
+        var xValid = float.TryParse(sArray[0], out x);
+        if (!xValid) return false;
+        
+        var yValid = sArray.Length >= 2 && float.TryParse(sArray[1], out y);
+        if (!yValid) return false;
+        
+        var zValid = sArray.Length >= 3 && float.TryParse(sArray[2], out z);
+        if (!zValid) return false;
+        
+        var wValid = sArray.Length >= 4 && float.TryParse(sArray[3], out w);
+        if (!wValid) return false;
+        
+        v = new Vector4(x, y, z, w);
+
+        return true;
+    }
 }

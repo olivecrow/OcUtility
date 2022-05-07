@@ -64,7 +64,7 @@ namespace OcUtility
         /// <summary> Debug Rich Text by seed value </summary>
         public static string DRT(this string source, int seed)
         {
-            return source.Rich(Random(seed, 0.4f).AddSaturation(0.6f));
+            return source.Rich(DRTColor(seed));
         }
         
         /// <summary> Debug Rich Text </summary>
@@ -78,9 +78,16 @@ namespace OcUtility
             return source == true ? "true".Rich(Color.green) : "false".Rich(Color.red);
         }
         
-        public static string DRT(this UnityEngine.Object o)
+        public static string DRT(this UnityEngine.Object o, bool useName = false)
         {
-            return $"[{o.GetType().Name}] {o.name} |".DRT(o);
+            return useName ? 
+                $"[{o.GetType().Name}] {o.name.Rich(DRTColor(o.GetHashCode()).Brighten(0.25f))} |".DRT(o) :
+                $"[{o.GetType().Name}]".DRT(o);
+        }
+
+        public static Color DRTColor(int seed)
+        {
+            return Random(seed, 0.4f).AddSaturation(0.6f);
         }
 
         public static float SumRGB(this Color source)

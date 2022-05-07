@@ -81,13 +81,6 @@ namespace OcUtility
             _overlapBuffer.Enqueue(buffer);
         }
 
-        public static Vector3[] CalcTrajectoryPoints(
-            this Rigidbody body,
-            Vector3 force, float yLimit, int resolution)
-        {
-            return CalcTrajectoryPoints(body.position, force, Physics.gravity.y, yLimit, resolution);
-        }
-
         /// <summary>
         /// 중력과 속도에 따른 물체의 이동 궤적을 그림
         /// </summary>
@@ -129,7 +122,12 @@ namespace OcUtility
                 return t;
             }
         }
-
+        public static Vector3[] CalcTrajectoryPoints(
+            this Rigidbody body,
+            Vector3 force, float yLimit, int resolution)
+        {
+            return CalcTrajectoryPoints(body.position, force, Physics.gravity.y, yLimit, resolution);
+        }
 
         static float ScaledCapsuleRadius(CapsuleCollider capsule)
         {
@@ -175,6 +173,13 @@ namespace OcUtility
             return height;
         }
 
+        /// <summary>
+        /// 주어진 캡슐콜라이더를 기준으로 오버랩을 실시하기 위한 파라미터를 구하는 함수
+        /// </summary>
+        /// <param name="capsule"></param>
+        /// <param name="point0"></param>
+        /// <param name="point1"></param>
+        /// <param name="radius"></param>
         public static void ToWorldSpaceCapsule(this CapsuleCollider capsule, out Vector3 point0, out Vector3 point1,
             out float radius)
         {
@@ -212,6 +217,14 @@ namespace OcUtility
             point1 = center - dir * (height * 0.5f - radius);
         }
 
+        /// <summary>
+        /// 캡슐콜라이더의 int형으로 지정된 direction을 원점기준 방향으로 반환함.
+        /// 0 => Vector3.right,
+        /// 1 => Vector3.up,
+        /// 2 => Vector3.forward
+        /// </summary>
+        /// <param name="capsule"></param>
+        /// <returns></returns>
         public static Vector3 DirectionAxis(this CapsuleCollider capsule)
         {
             return capsule.direction switch
@@ -221,6 +234,41 @@ namespace OcUtility
                 2 => Vector3.forward,
                 _ => Vector3.up
             };
+        }
+        
+        /// <summary>
+        /// 캡슐콜라이더의 int형으로 지정된 direction을 콜라이더의 트랜스폼 기준 방향으로 반환함.
+        /// 0 => capsule.transform.right,
+        /// 1 => capsule.transform.up,
+        /// 2 => capsule.transform.forward
+        /// </summary>
+        /// <param name="capsule"></param>
+        /// <returns></returns>
+        public static Vector3 DirectionAxisAlignRotation(this CapsuleCollider capsule)
+        {
+            return capsule.direction switch
+            {
+                0 => capsule.transform.right,
+                1 => capsule.transform.up,
+                2 => capsule.transform.forward,
+                _ => capsule.transform.up
+            };
+        }
+
+        /// <summary>
+        /// 특정 지점이 박스 콜라이더의 범위 내에 있는지 확인함.
+        /// 콜라이더는 직육면체 모양으로만 작동하기때문에, 회전이 90도로 떨어지지 않는 상태에서 스케일을 변경할 경우의 정확성은 보장되지 않음.
+        /// 스케일 변경 없이 회전만 하거나 회전 변경 없이 스케일 변경만 하는 것은 상관 없음
+        /// 쉽게 말해서, 단순한 큐브를 만들고 회전과 스케일을 변형했을때, 실제 콜라이더가 아닌 큐브의 범위에서 측정됨.
+        /// </summary>
+        /// <param name="box"></param>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public static bool Contains(this BoxCollider box, Vector3 point)
+        {
+            var localPoint = box.transform.InverseTransformPoint(point);
+            var b = new Bounds(box.center, box.size);
+            return b.Contains(localPoint);
         }
 
 #if UNITY_EDITOR

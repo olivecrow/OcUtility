@@ -1,5 +1,11 @@
 ﻿# Changelog
 
+## [1.5.6] -2022-05-07
+- DRT에 오브젝트 이름을 포함할지 여부를 결정하는 bool 파라미터 추가
+- DRT에서 클래스 타입과 오브젝트 이름의 색상이 조금 다르게 출력되도록 변경
+- BoxCollider내부에 특정 위치가 포함되어있는지 여부를 반환하는 Contains 확장 추가
+- 캡슐 콜라이더의 회전에 맞는 축을 반환하는 DirectionAxisAlignRotation 확장 추가
+
 ## [1.5.5] -2022-04-28
 - EditorOnlyGameObject와 DebugOnlyGameObject를 합친 HideFlagControl 추가
 - DebugOnlyGameObjectProcessor를 HideFlagProcessor로 변경

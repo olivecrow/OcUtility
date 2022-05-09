@@ -1,5 +1,8 @@
 ﻿# Changelog
 
+## [1.5.8] - 2022-05-09
+- HideFlagControl에서 발생하던 빌드 오류 수정.
+
 ## [1.5.7] - 2022-05-07
 - MathExtension에 Vector2,3,4에 대한 Parse및 TryParse 확장 추가
 

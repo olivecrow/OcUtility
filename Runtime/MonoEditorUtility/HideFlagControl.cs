@@ -18,6 +18,7 @@ namespace OcUtility
         [InfoBox("@infoMessage")]
         [OnValueChanged("OnValueChanged")]public MyHideFlags myHideFlags;
         public ComponentTarget[] Others;
+#if UNITY_EDITOR
         string infoMessage
         {
             get
@@ -37,7 +38,8 @@ namespace OcUtility
                         return "";
                 }
             }
-        }
+        }  
+#endif
         Color guiColor => gameObjectHideFlags == HideFlags.None ? 
             myHideFlags == MyHideFlags.DEBUG ? Color.yellow : Color.white : 
             Color.cyan;

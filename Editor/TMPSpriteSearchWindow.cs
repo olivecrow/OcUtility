@@ -1,7 +1,6 @@
 ﻿#if ENABLE_TEXT_MESH_PRO
 using System;
 using System.Linq;
-using System.Windows.Forms;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -41,7 +40,8 @@ namespace OcUtility.Editor
             GUI.enabled = false;
             EditorGUILayout.TextField("Result", _result);
             GUI.enabled = true;
-            if(GUILayout.Button(_clipboardIcon, GUILayout.Width(32))) if(!string.IsNullOrWhiteSpace(_result))Clipboard.SetText(_result);
+            if(GUILayout.Button(_clipboardIcon, GUILayout.Width(32))) 
+                if(!string.IsNullOrWhiteSpace(_result)) GUIUtility.systemCopyBuffer = _result;
             EditorGUILayout.EndHorizontal();
             _spriteAsset = EditorGUILayout.ObjectField(_spriteAsset, typeof(TMP_SpriteAsset), false) as TMP_SpriteAsset;
             if (_spriteAsset != null)

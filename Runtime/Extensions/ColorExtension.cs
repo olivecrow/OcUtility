@@ -85,6 +85,13 @@ namespace OcUtility
                 $"[{o.GetType().Name}]".DRT(o);
         }
 
+        public static string DRT(this IDRT o, bool useName = false)
+        {
+            return useName ? 
+                $"[{o.GetType().Name}] {o.name.Rich(DRTColor(o.GetHashCode()).Brighten(0.25f))} |".DRT(o) :
+                $"[{o.GetType().Name}]".DRT(o);
+        }
+
         public static Color DRTColor(int seed)
         {
             return Random(seed, 0.4f).AddSaturation(0.6f);

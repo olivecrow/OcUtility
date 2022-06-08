@@ -118,9 +118,10 @@ namespace OcUtility.Editor
             Calculate();
             _positionCache = new Dictionary<Transform, Vector3>();
 
-            foreach (var child in _children)
+            for (int i = 0; i < selected.childCount; i++)
             {
-                _positionCache[child] = child.position;
+                var child = selected.GetChild(i);
+                _positionCache[child] = child.transform.position;
             }
 
             var allObj = new List<Object>();

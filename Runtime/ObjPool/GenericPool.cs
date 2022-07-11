@@ -92,7 +92,12 @@ namespace OcUtility
                 _sleep?.Invoke(member);
                 _sleepMembers.Enqueue(member);
             }
-            else Debug.LogWarning($"[GenericPool<{typeof(T).Name}>] 멤버가 아닌 인스턴스는 반환 할 수 없음"); 
+            else
+            {
+                Debug.LogWarning(_sleepMembers.Contains(member)
+                    ? $"[GenericPool<{typeof(T).Name}>] 이미 비활성화된 인스턴스라 무시됨 | hash : {member.GetHashCode()}"
+                    : $"[GenericPool<{typeof(T).Name}>] 멤버가 아닌 인스턴스는 반환 할 수 없음 | hash : {member.GetHashCode()}");
+            } 
         }
         
         public Type GetPoolMemberType()

@@ -1,5 +1,9 @@
 ﻿# Changelog
 
+## [1.5.10] - 2022-07-11
+- GenericPool.Return에서 경고 메세지 구체화
+- 오브젝트를 일정 범위에 다수 생성할 수 있는 오브젝트 생성기 추가.
+
 ## [1.5.9] - 2022-06-09
 - TMPSpriteSearchWindow에서 System.Windows.Forms Clipboard사용을 GUIUtility.systemCopyBuffer로 변경
 - 루트 오브젝트 정렬의 위치 변경을 루트 오브젝트의 첫 번째 오브젝트에 한해서만 실행하도록 변경.

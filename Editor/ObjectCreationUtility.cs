@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
@@ -69,8 +70,15 @@ namespace OcUtility.Editor
         [Button]
         void Create()
         {
-            var folder = new GameObject($"objects [{count}]").transform;
+            var undoID = Undo.GetCurrentGroup();
+            var folderName = prefabAssetOnly ? 
+                string.Join(" | ", prefabs.Select(x => x.name)) : 
+                string.Join(" | ", targets.Select(x => x.name));
+            var folder = new GameObject($"{folderName} [{count}]").transform;
 
+            Undo.RegisterCreatedObjectUndo(folder.gameObject, "Create Objects");
+            Undo.RecordObject(folder, "instanced folder");
+            
             for (int i = 0; i < count; i++)
             {
                 var original = prefabAssetOnly ? prefabs[Random.Range(0, prefabs.Length)] : targets[Random.Range(0, targets.Length)];
@@ -78,14 +86,19 @@ namespace OcUtility.Editor
                 if (prefabAssetOnly)
                 {
                     var gao = PrefabUtility.InstantiatePrefab(original, folder) as GameObject;
+                    Undo.RegisterCreatedObjectUndo(gao, "Create Objects");
+                    Undo.RecordObject(gao.transform, "Update Transform");
                     UpdateTransform(gao.transform);
                 }
                 else
                 {
                     var gao = Instantiate(original, folder);
+                    Undo.RegisterCreatedObjectUndo(gao, "Create Objects");
+                    Undo.RecordObject(gao.transform, "Update Transform");
                     UpdateTransform(gao.transform);
                 }
             }
+            Undo.CollapseUndoOperations(undoID);
         }
 
         void DrawGizmos(SceneView sceneView)
@@ -123,7 +136,7 @@ namespace OcUtility.Editor
                     var x = Random.Range(bounds.min.x, bounds.max.x);
                     var y = Random.Range(bounds.min.y, bounds.max.y);
                     var z = Random.Range(bounds.min.z, bounds.max.z);
-                    t.position = new Vector3(x, y, z) + bounds.center;
+                    t.position = new Vector3(x, y, z);
                     break;
                 case BoundStyle.Sphere:
                     t.position = Random.insideUnitSphere * boundingSphere.radius + boundingSphere.position;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -28,7 +29,9 @@ namespace OcUtility
         public object Source => _source;
         public string SourceName => _source.ToString();
         public Transform Folder => null;
-        
+        public IEnumerable<T> AllMembers => SleepingMembers.Concat(ActiveMembers);
+        public List<T> ActiveMembers => _activeMembers;
+        public Queue<T> SleepingMembers => _sleepMembers;
         T _source;
         int _initialCount;
         Queue<T> _sleepMembers;
@@ -104,7 +107,7 @@ namespace OcUtility
         {
             return typeof(T);
         }
-
+        [Obsolete("Use AllMembers")]
         public IEnumerable<object> GetAllMembers()
         {
             var list = new List<T>(_sleepMembers);
@@ -112,11 +115,12 @@ namespace OcUtility
             return list;
         }
 
+        [Obsolete("Use ActiveMembers")]
         public IEnumerable<object> GetActiveMembers()
         {
             return _activeMembers;
         }
-
+        [Obsolete("Use SleepingMembers")]
         public IEnumerable<object> GetSleepMembers()
         {
             return _sleepMembers;

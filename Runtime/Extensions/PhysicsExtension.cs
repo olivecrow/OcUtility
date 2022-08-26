@@ -87,6 +87,7 @@ namespace OcUtility
         /// <param name="start">물체의 위치</param>
         /// <param name="force">물체에 가해지는 힘</param>
         /// <param name="gravity">중력(일반적으로 -9.8f)</param>
+        /// <param name="drag">속도 저항</param>
         /// <param name="yLimit">궤적의 마지막 지점의 y값의 근사치. 0일 경우, 시작지점의 높이와 비슷한 지점까지 궤적이 그려짐.</param>
         /// <param name="resolution">궤적의 해상도</param>
         /// <returns></returns>
@@ -107,7 +108,7 @@ namespace OcUtility
                 var x = force.x * t;
                 var y = (force.y * t) - (g * t.sqr() * 0.5f);
                 var z = force.z * t;
-
+                
                 points[i] = start + new Vector3(x, y, z);
             }
 

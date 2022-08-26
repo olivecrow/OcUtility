@@ -80,16 +80,19 @@ namespace OcUtility
         
         public static string DRT(this UnityEngine.Object o, bool useName = false)
         {
+            var typeColor = Random(o.GetType().GetHashCode());
+            var typeHeader = $"[{o.GetType().Name}]".DRT(typeColor);
             return useName ? 
-                $"[{o.GetType().Name}] {o.name.Rich(DRTColor(o.GetHashCode()).Brighten(0.25f))} |".DRT(o) :
-                $"[{o.GetType().Name}]".DRT(o);
+                $"{typeHeader} {o.name.Rich(DRTColor(o.GetHashCode()).Brighten(0.25f))} |".DRT(o) :
+                typeHeader;
         }
 
         public static string DRT(this IDRT o, bool useName = false)
         {
+            var typeColor = Random(o.GetType().GetHashCode());
             return useName ? 
-                $"[{o.GetType().Name}] {o.name.Rich(DRTColor(o.GetHashCode()).Brighten(0.25f))} |".DRT(o) :
-                $"[{o.GetType().Name}]".DRT(o);
+                $"[{o.GetType().Name.DRT(typeColor)}] {o.name.Rich(DRTColor(o.GetHashCode()).Brighten(0.25f))} |".DRT(o) :
+                $"[{o.GetType().Name.DRT(typeColor)}]".DRT(o);
         }
 
         public static Color DRTColor(int seed)

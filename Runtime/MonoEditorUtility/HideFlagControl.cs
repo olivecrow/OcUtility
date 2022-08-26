@@ -1,6 +1,9 @@
 using System;
 using Sirenix.OdinInspector;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace OcUtility
@@ -39,7 +42,7 @@ namespace OcUtility
                 }
             }
         }  
-#endif
+
         Color guiColor => gameObjectHideFlags == HideFlags.None ? 
             myHideFlags == MyHideFlags.DEBUG ? Color.yellow : Color.white : 
             Color.cyan;
@@ -51,6 +54,7 @@ namespace OcUtility
 
         void OnValueChanged()
         {
+            Undo.RecordObject(gameObject, "change hide flag");
             switch (myHideFlags)
             {
                 case MyHideFlags.None:
@@ -64,7 +68,7 @@ namespace OcUtility
                     break;
             }
         }
-        
+
         void OnDestroy()
         {
             if(Application.isPlaying) return;
@@ -74,7 +78,8 @@ namespace OcUtility
         [Button][HorizontalGroup()]
         void ToDefault()
         {
-            
+            var id = Undo.GetCurrentGroup();
+            Undo.RecordObject(this, "change hide flag");
             myHideFlags = MyHideFlags.None;
             OnValueChanged();
             foreach (var other in Others)
@@ -82,11 +87,14 @@ namespace OcUtility
                 other.myHideFlags = MyHideFlags.None;
                 other.OnValueChanged();
             }
+            Undo.CollapseUndoOperations(id);
         }
         
         [Button][HorizontalGroup()]
         void ToDebugOnly()
         {
+            var id = Undo.GetCurrentGroup();
+            Undo.RecordObject(this, "change hide flag");
             myHideFlags = MyHideFlags.DEBUG;
             OnValueChanged();
             foreach (var other in Others)
@@ -94,11 +102,14 @@ namespace OcUtility
                 other.myHideFlags = MyHideFlags.DEBUG;
                 other.OnValueChanged();
             }
+            Undo.CollapseUndoOperations(id);
         }
 
         [Button][HorizontalGroup()]
         void ToEditorOnly()
         {
+            var id = Undo.GetCurrentGroup();
+            Undo.RecordObject(this, "change hide flag");
             myHideFlags = MyHideFlags.UNITY_EDITOR;
             OnValueChanged();
             foreach (var other in Others)
@@ -106,8 +117,9 @@ namespace OcUtility
                 other.myHideFlags = MyHideFlags.UNITY_EDITOR;
                 other.OnValueChanged();
             }
+            Undo.CollapseUndoOperations(id);
         }
-        
+#endif
 
 
 

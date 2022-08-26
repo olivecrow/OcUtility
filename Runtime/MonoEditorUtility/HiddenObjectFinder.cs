@@ -27,7 +27,7 @@ namespace OcUtility
         
         [ShowIf(nameof(searchRange), SearchRange.Specific)]public Transform[] specificSearchRoots;
         
-        public List<SearchResult> SearchResults;
+        public List<SearchResult> SearchResults = new List<SearchResult>();
         [ShowInInspector] public bool isDirty => SearchResults.Any(x => x.isDirty);
 
         void Reset()
@@ -89,7 +89,7 @@ namespace OcUtility
         }
         void SearchThisGameObject()
         {
-            IEnumerable<GameObject> result = GetComponents<GameObject>().Where(x => x.hideFlags.HasOneOf(searchFlags));
+            IEnumerable<GameObject> result = GetComponents<Transform>().Where(x => x.hideFlags.HasOneOf(searchFlags)).Select(x => x.gameObject);
             foreach (var o in result)
             {
                 SearchResults.Add(new SearchResult(o));

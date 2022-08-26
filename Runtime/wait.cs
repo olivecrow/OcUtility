@@ -25,18 +25,37 @@ public class wait : MonoBehaviour
     {
         return _instance.StartCoroutine(WaitFrame(frame, e));
     }
+    /// <summary> 지정된 시간 이전에 shouldExit == true가 될 경우, 이벤트를 호출하지 않고 종료함 </summary>
+    public static Coroutine frame(int frame, Action e, Func<bool> shouldExit)
+    {
+        return _instance.StartCoroutine(WaitFrameOrExit(frame, e, shouldExit));
+    }
     public static Coroutine endOfFrame(int frame, Action e)
     {
         return _instance.StartCoroutine(WaitEndOfFrame(frame, e));
     }
-
+    /// <summary> 지정된 시간 이전에 shouldExit == true가 될 경우, 이벤트를 호출하지 않고 종료함 </summary>
+    public static Coroutine endOfFrame(int frame, Action e, Func<bool> shouldExit)
+    {
+        return _instance.StartCoroutine(WaitEndOfFrameOrExit(frame, e, shouldExit));
+    }
     public static Coroutine fixedFrame(int frame, Action e)
     {
         return _instance.StartCoroutine(WaitFixedFrame(frame, e));
     }
+    /// <summary> 지정된 시간 이전에 shouldExit == true가 될 경우, 이벤트를 호출하지 않고 종료함 </summary>
+    public static Coroutine fixedFrame(int frame, Action e, Func<bool> shouldExit)
+    {
+        return _instance.StartCoroutine(WaitFixedFrameOrExit(frame, e, shouldExit));
+    }
     public static Coroutine time(float sec, Action e, bool ignoreTimescale = false)
     {
         return _instance.StartCoroutine(WaitTime(sec, e, ignoreTimescale));
+    }
+    /// <summary> 지정된 시간 이전에 shouldExit == true가 될 경우, 이벤트를 호출하지 않고 종료함 </summary>
+    public static Coroutine time(float sec, Action e, Func<bool> shouldExit, bool ignoreTimescale = false)
+    {
+        return _instance.StartCoroutine(WaitTimeOrExit(sec, e, shouldExit, ignoreTimescale));
     }
     /// <summary> predicate가 true 가 되면 실행 </summary>
     public static Coroutine until(Func<bool> predicate, Action e)
@@ -62,10 +81,23 @@ public class wait : MonoBehaviour
     }
     
     
+    
+    
+    
     static IEnumerator WaitFixedFrame(int frame, Action e)
     {
         for (int i = 0; i < frame; i++)
             yield return WAIT_FOR_FIXEDUPDATE;
+        e?.Invoke();
+    }
+    
+    static IEnumerator WaitFixedFrameOrExit(int frame, Action e, Func<bool> shouldExit)
+    {
+        for (int i = 0; i < frame; i++)
+        {
+            if(shouldExit.Invoke()) yield break;
+            yield return WAIT_FOR_FIXEDUPDATE;
+        }
         e?.Invoke();
     }
     
@@ -75,10 +107,28 @@ public class wait : MonoBehaviour
             yield return null;
         e?.Invoke();
     }
+    static IEnumerator WaitFrameOrExit(int frame, Action e, Func<bool> shouldExit)
+    {
+        for (int i = 0; i < frame; i++)
+        {
+            if(shouldExit.Invoke()) yield break;
+            yield return null;
+        }
+        e?.Invoke();
+    }
     static IEnumerator WaitEndOfFrame(int frame, Action e)
     {
         for (int i = 0; i < frame; i++)
             yield return WAIT_FOR_ENDOFFRAME;
+        e?.Invoke();
+    }
+    static IEnumerator WaitEndOfFrameOrExit(int frame, Action e, Func<bool> shouldExit)
+    {
+        for (int i = 0; i < frame; i++)
+        {
+            if(shouldExit.Invoke()) yield break;
+            yield return WAIT_FOR_ENDOFFRAME;
+        }
         e?.Invoke();
     }
 
@@ -86,6 +136,15 @@ public class wait : MonoBehaviour
     {
         for (var f = 0f; f < sec; f += ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime)
             yield return null;
+        e?.Invoke();
+    }
+    static IEnumerator WaitTimeOrExit(float sec, Action e, Func<bool> shouldExit, bool ignoreTimeScale)
+    {
+        for (var f = 0f; f < sec; f += ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime)
+        {
+            if(shouldExit.Invoke()) yield break;
+            yield return null;
+        }
         e?.Invoke();
     }
 

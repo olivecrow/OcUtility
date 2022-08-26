@@ -17,7 +17,7 @@ namespace OcUtility.Editor
         int _totalPoolCount;
         bool _initialized;
         Vector2 _scrollViewPosition;
-        [MenuItem("Utility/Oc Pool/디버그 윈도우")]
+        [MenuItem("Utility/Oc Pool 디버그 윈도우")]
         private static void ShowWindow()
         {
             var window = GetWindow<OcPoolDebugWindow>();

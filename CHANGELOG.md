@@ -1,5 +1,14 @@
 ﻿# Changelog
 
+## [1.5.11] - 2022-08-27
+- 오브젝트 생성기에 Undo 기능 추가
+- 오브젝트 생성기가 Bounds 범위에서 중심 위치가 어긋나던 문제 해결
+- HiddenObjectFinder 오류 해결
+- DRT에서 클래스 타입별로 색상을 구분해서 더 읽기 쉽게 변경
+- OcPool에서 AddMember가 제대로 되지 않던 문제 해결
+- OcPool 디버그 윈도우의 메뉴 네비게이션 간소화 (Utility/Oc Pool/디버그 윈도우 -> Utility/Oc Pool 디버그 윈도우)
+- wait클래스에서 true 반환시 이벤트를 완료하지 않고 종료하는 shouldExit 파라미터 추가.
+
 ## [1.5.10] - 2022-07-11
 - GenericPool.Return에서 경고 메세지 구체화
 - 오브젝트를 일정 범위에 다수 생성할 수 있는 오브젝트 생성기 추가.

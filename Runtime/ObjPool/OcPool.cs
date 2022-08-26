@@ -104,6 +104,9 @@ namespace OcUtility
         public int MaxInitialCount { get; private set; }
         public object Source => _source;
         public string SourceName => _source.name;
+        public IEnumerable<T> AllMembers => SleepingMembers.Concat(ActiveMembers);
+        public List<T> ActiveMembers => _activeMembers;
+        public Queue<T> SleepingMembers => _sleepingMembers;
 
         readonly bool _isOverridenFolder;
         readonly bool _isMultipleSource;
@@ -171,11 +174,14 @@ namespace OcUtility
                 if(!_initialized)
                     for (int i = 0; i < count; i++)
                         foreach (var s in _sources.OrderBy(x => Random.value)) add(s);
-                else add(_sources.random());
+                else
+                    for (int i = 0; i < count; i++)
+                        add(_sources.random());
             }
             else
             {
-                add(_source);
+                for (int i = 0; i < count; i++)
+                    add(_source);
             }
 
             void add(T source)
@@ -341,16 +347,19 @@ namespace OcUtility
             return typeof(T);
         }
 
+        [Obsolete("Use AllMembers")]
         public IEnumerable<object> GetAllMembers()
         {
             var list = new List<T>(_sleepingMembers);
             list.AddRange(_activeMembers);
             return list;
         }
+        [Obsolete("Use SleepingMembers")]
         public IEnumerable<object> GetSleepMembers()
         {
             return _sleepingMembers;
         }
+        [Obsolete("Use ActiveMembers")]
         public IEnumerable<object> GetActiveMembers()
         {
             return _activeMembers;

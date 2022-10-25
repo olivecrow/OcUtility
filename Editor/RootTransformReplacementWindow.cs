@@ -26,13 +26,24 @@ namespace OcUtility.Editor
             OnlyFirstChildren = 1 << 1,
             
         }
+
+        public enum RotationOption
+        {
+            None,
+            Manual,
+            Average
+        }
         [EnumToggleButtons]public Method method;
         [EnumToggleButtons]public Options options;
+        [EnumToggleButtons] public RotationOption rotation;
         [Range(1, 10)]public float gizmoSize = 5;
         [ReadOnly]public Transform selected;
         [ReadOnly]public Vector3 result;
+        [ReadOnly] public Quaternion rotationResult = Quaternion.identity;
+        [ShowIf(nameof(rotation), RotationOption.Manual)] public Vector3 manualRotation;
 
         Dictionary<Transform, Vector3> _positionCache;
+        Dictionary<Transform, Quaternion> _rotationCache;
         IEnumerable<Transform> _children;
 
         [MenuItem("GameObject/루트 오브젝트 정렬", true, 50)]
@@ -63,13 +74,23 @@ namespace OcUtility.Editor
             SceneView.duringSceneGui -= DrawGizmo;
         }
 
+        void OnValidate()
+        {
+            if(rotation == RotationOption.Manual) CalcRotation();
+        }
+
         void DrawGizmo(SceneView sceneView)
         {
             var dist = Vector3.Distance(sceneView.camera.transform.position, result);
             var size = dist * 0.01f * gizmoSize;
             Handles.color = ColorExtension.Rainbow(10);
             Handles.DrawWireCube(result, Vector3.one * size);   
-            Handles.DrawDottedLine(selected.position, result, 4f);   
+            Handles.DrawDottedLine(selected.position, result, 4f);
+
+            var mat = Handles.matrix;
+            Handles.matrix = Matrix4x4.TRS(result, Quaternion.identity, Vector3.one * 0.5f);
+            Handles.PositionHandle(Vector3.zero, rotationResult);
+            Handles.matrix = mat;
         }
 
         [Button]
@@ -110,6 +131,32 @@ namespace OcUtility.Editor
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            CalcRotation();
+        }
+
+        void CalcRotation()
+        {
+            switch (rotation)
+            {
+                case RotationOption.None:
+                    rotationResult = Quaternion.identity;
+                    break;
+                case RotationOption.Manual:
+                    rotationResult = Quaternion.Euler(manualRotation);
+                    break;
+                case RotationOption.Average:
+                    Quaternion rot = selected.childCount == 0 ? selected.rotation : selected.GetChild(0).rotation;
+                    for (int i = 0; i < selected.childCount; i++)
+                    {
+                        var child = selected.GetChild(i);
+                        rot = Quaternion.Lerp(rot, child.transform.rotation, 0.5f);
+                    }
+
+                    rotationResult = rot;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         [Button(ButtonSizes.Medium), GUIColor(2,2,0)]
@@ -117,11 +164,13 @@ namespace OcUtility.Editor
         {
             Calculate();
             _positionCache = new Dictionary<Transform, Vector3>();
+            _rotationCache = new Dictionary<Transform, Quaternion>();
 
             for (int i = 0; i < selected.childCount; i++)
             {
                 var child = selected.GetChild(i);
                 _positionCache[child] = child.transform.position;
+                _rotationCache[child] = child.transform.rotation;
             }
 
             var allObj = new List<Object>();
@@ -129,10 +178,16 @@ namespace OcUtility.Editor
             allObj.AddRange(_children);
             Undo.RecordObjects(allObj.ToArray(), "루트 오브젝트 정렬");
             selected.position = result;
+            selected.rotation = rotationResult;
 
             foreach (var pos in _positionCache)
             {
                 pos.Key.position = pos.Value;
+            }
+
+            foreach (var rot in _rotationCache)
+            {
+                rot.Key.rotation = rot.Value;
             }
         }
 

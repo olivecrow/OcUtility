@@ -41,6 +41,11 @@ namespace OcUtility
 
             }
         }
+
+        public OcKVPair<TKey, TValue> Get(int index)
+        {
+            return pairs[index];
+        }
         public bool ContainsKey(TKey key)
         {
             var exist = FindPair(key);

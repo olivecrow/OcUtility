@@ -77,7 +77,25 @@ namespace OcUtility
         {
             return source == true ? "true".Rich(Color.green) : "false".Rich(Color.red);
         }
-        
+
+        public static string DRT(this float source, float min = 0, float max = 1)
+        {
+            if(source <= min)
+                return $"{source}".Rich(Color.red);
+
+            if (min < source && source < max)
+            {
+                var ratio = (source - min) / (max - min);
+                var color = Color.Lerp(new Color(1, 0.5f, 0), new Color(0.66f, 1f, 0), ratio);
+                return $"{source}".Rich(color);
+            }
+            
+            if (source >= max)
+                return $"{source}".Rich(Color.green);
+
+            return source.ToString();
+        }
+
         public static string DRT(this UnityEngine.Object o, bool useName = false)
         {
             var typeColor = Random(o.GetType().GetHashCode());

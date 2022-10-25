@@ -1,5 +1,15 @@
 ﻿# Changelog
 
+## [1.6.0] -2022-10-26
+- float에 대한 DRT 추가
+- Value, Min, Max로 Lerp의 비율을 구하는 LerpPoint 메서드 추가
+- Get Min / Max Element류의 메서드에 대한 최적화 및 double 타입 추가
+- 벡터의 각 요소를 반전할 수 있는 inversX/Y/Z 메서드 추가
+- 평균값을 구할 수 있는 Avg 메서드 추가
+- 거리 계산시, SceneView GUI에서 각 포인트마다 월드 위치를 표시하도록 변경
+- 루트 오브젝트 정렬에 회전 정렬 기능 추가
+- OcDictionary에서 인덱스로 값을 읽을 수 있는 Get(int index) 메서드 추가
+
 ## [1.5.11] - 2022-08-27
 - 오브젝트 생성기에 Undo 기능 추가
 - 오브젝트 생성기가 Bounds 범위에서 중심 위치가 어긋나던 문제 해결

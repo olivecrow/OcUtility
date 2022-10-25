@@ -136,15 +136,17 @@ namespace OcUtility.Editor
             if(_target.points == null) return;
             for (int i = 0; i < _target.points.Count; i++)
             {
+                var p = _target.points[i];
                 Gizmos.color = Color.cyan.SetA(0.5f);
-                Gizmos.DrawCube(_target.points[i].position, Vector3.one * 0.2f);
+                Gizmos.DrawCube(p.position, Vector3.one * 0.2f);
                 Handles.color = Color.red;
-                Handles.DrawWireCube(_target.points[i].position, Vector3.one * (SceneViewController.DistanceFromSceneViewCam(_target.points[i].position) * 0.05f));
+                Handles.DrawWireCube(p.position, Vector3.one * (SceneViewController.DistanceFromSceneViewCam(p.position) * 0.05f));
+                Handles.Label(p.position, p.position.ToString());
                 if(i < _target.points.Count - 1)
                 {
-                    var center = Vector3.Lerp(_target.points[i].position, _target.points[i + 1].position, 0.5f);
-                    Handles.Label(center, $"{Vector3.Distance(_target.points[i].position, _target.points[i + 1].position) : 0.00}m");
-                    Handles.DrawDottedLine(_target.points[i].position, _target.points[i + 1].position, 10);
+                    var center = Vector3.Lerp(p.position, _target.points[i + 1].position, 0.5f);
+                    Handles.Label(center, $"{Vector3.Distance(p.position, _target.points[i + 1].position) : 0.00}m");
+                    Handles.DrawDottedLine(p.position, _target.points[i + 1].position, 10);
                 }
             }
         }

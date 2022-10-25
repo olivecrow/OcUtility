@@ -167,6 +167,58 @@ public static class MathExtension
         if (a.z > max) max = a.z;
         return max;
     }
+
+    public static Vector2 inverseX(this Vector2 a)
+    {
+        return new Vector2(-a.x, a.y);
+    }
+    public static Vector3 inverseX(this Vector3 a)
+    {
+        return new Vector3(-a.x, a.y, a.z);
+    }
+    public static Vector4 inverseX(this Vector4 a)
+    {
+        return new Vector4(-a.x, a.y, a.z, a.w);
+    }
+    
+    public static Vector2 inverseY(this Vector2 a)
+    {
+        return new Vector2(a.x, -a.y);
+    }
+    public static Vector3 inverseY(this Vector3 a)
+    {
+        return new Vector3(a.x, -a.y, a.z);
+    }
+    public static Vector4 inverseY(this Vector4 a)
+    {
+        return new Vector4(a.x, -a.y, a.z, a.w);
+    }
+    public static Vector3 inverseZ(this Vector3 a)
+    {
+        return new Vector3(a.x, a.y, -a.z);
+    }
+    public static Vector4 inverseZ(this Vector4 a)
+    {
+        return new Vector4(a.x, a.y, -a.z, a.w);
+    }
+    public static Vector4 inverseW(this Vector4 a)
+    {
+        return new Vector4(a.x, a.y, a.z, -a.w);
+    }
+
+    public static Vector3 inverseXY(this Vector3 a)
+    {
+        return new Vector3(-a.x, -a.y, a.z);
+    }
+    public static Vector3 inverseXZ(this Vector3 a)
+    {
+        return new Vector3(-a.x, a.y, -a.z);
+    }
+    public static Vector3 inverseYZ(this Vector3 a)
+    {
+        return new Vector3(a.x, -a.y, -a.z);
+    }
+    
     #endregion
 
     #region VectorInt
@@ -495,19 +547,7 @@ public static class MathExtension
     }
     public static T GetMinElement<T>(this IEnumerable<T> enumerable, Func<T, float> calculate, int length)
     {
-        var min = float.MaxValue;
-        var idx = -1;
-        for (var i = 0; i < length; i++)
-        {
-            var value = calculate.Invoke(enumerable.ElementAt(i));
-            if (value < min)
-            {
-                min = value;
-                idx = i;
-            }
-        }
-
-        return enumerable.ElementAt(idx);
+        return enumerable.ElementAt(GetMinElementIndex(enumerable, calculate, length));
     }
 
     /// <summary>
@@ -552,20 +592,8 @@ public static class MathExtension
         return GetMaxElement(enumerable, calculate, enumerable.Count());
     }
     public static T GetMaxElement<T>(this IEnumerable<T> enumerable, Func<T, float> calculate, int length)
-    { ;
-        var max = float.MinValue;
-        var idx = -1;
-        for (var i = 0; i < length; i++)
-        {
-            var value = calculate.Invoke(enumerable.ElementAt(i));
-            if (value > max)
-            {
-                max = value;
-                idx = i;
-            }
-        }
-
-        return enumerable.ElementAt(idx);
+    {
+        return enumerable.ElementAt(GetMaxElementIndex(enumerable, calculate, length));
     }
 
     /// <summary>
@@ -578,6 +606,194 @@ public static class MathExtension
 
         return value1 > value2 ? t1 : t2;
     }
+
+    // Optimized Min / Max Element
+    
+    // for array
+    public static int GetMinElementIndex<T>(this T[] array, Func<T, float> calculate)
+    {
+        return GetMinElementIndex(array, calculate, array.Length);
+    }
+    public static int GetMinElementIndex<T>(this T[] array, Func<T, float> calculate, int length)
+    {
+        var min = float.MaxValue;
+        var idx = -1;
+        for (var i = 0; i < length; i++)
+        {
+            var value = calculate.Invoke(array[i]);
+            if (value < min)
+            {
+                min = value;
+                idx = i;
+            }
+        }
+
+        return idx;
+    }
+    public static T GetMinElement<T>(this T[] array, Func<T, float> calculate)
+    {
+        return GetMinElement(array, calculate, array.Length);
+    }
+    public static T GetMinElement<T>(this T[] array, Func<T, float> calculate, int length)
+    {
+        return array[GetMinElementIndex(array, calculate, length)];
+    }
+    
+    public static int GetMaxElementIndex<T>(this T[] array, Func<T, float> calculate)
+    {
+        return GetMaxElementIndex(array, calculate, array.Length);
+    }
+    public static int GetMaxElementIndex<T>(this T[] array, Func<T, float> calculate, int length)
+    {
+        var max = float.MinValue;
+        var idx = -1;
+        for (var i = 0; i < length; i++)
+        {
+            var value = calculate.Invoke(array[i]);
+            if (value > max)
+            {
+                max = value;
+                idx = i;
+            }
+        }
+
+        return idx;
+    }
+    public static T GetMaxElement<T>(this T[] array, Func<T, float> calculate)
+    {
+        return GetMaxElement(array, calculate, array.Length);
+    }
+    public static T GetMaxElement<T>(this T[] array, Func<T, float> calculate, int length)
+    {
+        return array[GetMaxElementIndex(array, calculate, length)];
+    }
+
+    
+    // for list
+    
+    public static int GetMinElementIndex<T>(this List<T> list, Func<T, float> calculate)
+    {
+        return GetMinElementIndex(list, calculate, list.Count);
+    }
+    public static int GetMinElementIndex<T>(this List<T> list, Func<T, float> calculate, int length)
+    {
+        var min = float.MaxValue;
+        var idx = -1;
+        for (var i = 0; i < length; i++)
+        {
+            var value = calculate.Invoke(list[i]);
+            if (value < min)
+            {
+                min = value;
+                idx = i;
+            }
+        }
+
+        return idx;
+    }
+    public static T GetMinElement<T>(this List<T> list, Func<T, float> calculate)
+    {
+        return GetMinElement(list, calculate, list.Count);
+    }
+    public static T GetMinElement<T>(this List<T> list, Func<T, float> calculate, int length)
+    {
+        return list[GetMinElementIndex(list, calculate, length)];
+    }
+    
+    public static int GetMaxElementIndex<T>(this List<T> list, Func<T, float> calculate)
+    {
+        return GetMaxElementIndex(list, calculate, list.Count);
+    }
+    public static int GetMaxElementIndex<T>(this List<T> list, Func<T, float> calculate, int length)
+    {
+        var max = float.MinValue;
+        var idx = -1;
+        for (var i = 0; i < length; i++)
+        {
+            var value = calculate.Invoke(list[i]);
+            if (value > max)
+            {
+                max = value;
+                idx = i;
+            }
+        }
+
+        return idx;
+    }
+    public static T GetMaxElement<T>(this List<T> list, Func<T, float> calculate)
+    {
+        return GetMaxElement(list, calculate, list.Count);
+    }
+    public static T GetMaxElement<T>(this List<T> list, Func<T, float> calculate, int length)
+    {
+        return list[GetMaxElementIndex(list, calculate, length)];
+    }
+    
+    
+    
+    // with double
+    
+    public static int GetMinElementIndex<T>(this List<T> list, Func<T, double> calculate)
+    {
+        return GetMinElementIndex(list, calculate, list.Count);
+    }
+    public static int GetMinElementIndex<T>(this List<T> list, Func<T, double> calculate, int length)
+    {
+        var min = double.MaxValue;
+        var idx = -1;
+        for (var i = 0; i < length; i++)
+        {
+            var value = calculate.Invoke(list[i]);
+            if (value < min)
+            {
+                min = value;
+                idx = i;
+            }
+        }
+
+        return idx;
+    }
+    public static T GetMinElement<T>(this List<T> list, Func<T, double> calculate)
+    {
+        return GetMinElement(list, calculate, list.Count);
+    }
+    public static T GetMinElement<T>(this List<T> list, Func<T, double> calculate, int length)
+    {
+        return list[GetMinElementIndex(list, calculate, length)];
+    }
+    
+    public static int GetMaxElementIndex<T>(this List<T> list, Func<T, double> calculate)
+    {
+        return GetMaxElementIndex(list, calculate, list.Count);
+    }
+    public static int GetMaxElementIndex<T>(this List<T> list, Func<T, double> calculate, int length)
+    {
+        var max = double.MinValue;
+        var idx = -1;
+        for (var i = 0; i < length; i++)
+        {
+            var value = calculate.Invoke(list[i]);
+            if (value > max)
+            {
+                max = value;
+                idx = i;
+            }
+        }
+
+        return idx;
+    }
+    public static T GetMaxElement<T>(this List<T> list, Func<T, double> calculate)
+    {
+        return GetMaxElement(list, calculate, list.Count);
+    }
+    public static T GetMaxElement<T>(this List<T> list, Func<T, double> calculate, int length)
+    {
+        return list[GetMaxElementIndex(list, calculate, length)];
+    }
+    
+    // =======================
+
+    
     public static Vector2 Sum(this IEnumerable<Vector2> enumerable)
     {
         var count = enumerable.Count();
@@ -1114,5 +1330,104 @@ public static class MathExtension
         v = new Vector4(x, y, z, w);
 
         return true;
+    }
+
+    public static float LerpPoint(float value, float min, float max)
+    {
+        return (value - min) / (max - min);
+    }
+
+    public static float LerpPoint(Vector2 value, Vector2 min, Vector2 max)
+    {
+        return Avg(
+            LerpPoint(value.x, min.x, max.x),
+            LerpPoint(value.y, min.y, max.y)
+            );
+    }
+    public static float LerpPoint(Vector3 value, Vector3 min, Vector3 max)
+    {
+        return Avg(
+            LerpPoint(value.x, min.x, max.x),
+            LerpPoint(value.y, min.y, max.y),
+            LerpPoint(value.z, min.z, max.z)
+        );
+    }
+    public static float LerpPoint(Vector4 value, Vector4 min, Vector4 max)
+    {
+        return Avg(
+            LerpPoint(value.x, min.x, max.x),
+            LerpPoint(value.y, min.y, max.y),
+            LerpPoint(value.z, min.z, max.z),
+            LerpPoint(value.w, min.w, max.w)
+        );
+    }
+
+    public static float Avg(float f1, float f2)
+    {
+        return (f1 + f2) / 2;
+    }
+    public static float Avg(float f1, float f2, float f3)
+    {
+        return (f1 + f2 + f3) / 3;
+    }
+    public static float Avg(float f1, float f2, float f3, float f4)
+    {
+        return (f1 + f2 + f3 + f4) / 4;
+    }
+
+    public static float Avg(params float[] f)
+    {
+        return f.Sum() / f.Length;
+    }
+    
+    public static float Avg(int i1, int i2)
+    {
+        return (float)(i2 + i2) / 2;
+    }
+    public static float Avg(int i1, int i2, int i3)
+    {
+        return (float)(i1 + i2 + i3) / 3;
+    }
+    public static float Avg(int i1, int i2, int i3, int i4)
+    {
+        return (float)(i1 + i2 + i3 + i4) / 4;
+    }
+    public static float Avg(params int[] i)
+    {
+        return (float)i.Sum() / i.Length;
+    }
+
+    public static Vector2 Avg(Vector2 a, Vector2 b)
+    {
+        return (a + b) / 2;
+    }
+    public static Vector2 Avg(Vector2 a, Vector2 b, Vector2 c)
+    {
+        return (a + b + c) / 3;
+    }
+    public static Vector2 Avg(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
+    {
+        return (a + b + c + d) / 4;
+    }
+
+    public static Vector2 Avg(params Vector2[] v)
+    {
+        return v.Sum() / v.Length;
+    }
+    public static Vector3 Avg(Vector3 a, Vector3 b)
+    {
+        return (a + b) / 2;
+    }
+    public static Vector3 Avg(Vector3 a, Vector3 b, Vector3 c)
+    {
+        return (a + b + c) / 3;
+    }
+    public static Vector3 Avg(Vector3 a, Vector3 b, Vector3 c, Vector3 d)
+    {
+        return (a + b + c + d) / 4;
+    }
+    public static Vector3 Avg(params Vector3[] v)
+    {
+        return v.Sum() / v.Length;
     }
 }

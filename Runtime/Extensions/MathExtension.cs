@@ -87,6 +87,20 @@ public static class MathExtension
         return new Vector4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
     }
     
+    public static Vector2 Divide(this Vector2 a, Vector2 b)
+    {
+        return new Vector2(a.x / b.x, a.y / b.y);
+    }
+    public static Vector3 Divide(this Vector3 a, Vector3 b)
+    {
+        return new Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
+    }
+    public static Vector4 Divide(this Vector4 a, Vector4 b)
+    {
+        return new Vector4(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w);
+    }
+
+    
     public static float Avg(this Vector2 a) => a.Sum() / 2f;
     public static float Avg(this Vector3 a) => a.Sum() / 3f;
     public static float Avg(this Vector4 a) => a.Sum() / 4f;
@@ -288,6 +302,22 @@ public static class MathExtension
     public static Vector3Int Multiply(this Vector3Int a, Vector3Int b)
     {
         return new Vector3Int(a.x * b.x, a.y * b.y, a.z * b.z);
+    }
+    public static Vector2 Divide(this Vector2Int a, Vector2Int b)
+    {
+        return new Vector2((float)a.x / b.x, (float)a.y / b.y);
+    }
+    public static Vector3 Divide(this Vector3Int a, Vector3Int b)
+    {
+        return new Vector3((float)a.x / b.x, (float)a.y / b.y, (float)a.z / b.z);
+    }
+    public static Vector2 Divide(this Vector2Int a, Vector2 b)
+    {
+        return new Vector2((float)a.x / b.x, (float)a.y / b.y);
+    }
+    public static Vector3 Divide(this Vector3Int a, Vector3 b)
+    {
+        return new Vector3((float)a.x / b.x, (float)a.y / b.y, (float)a.z / b.z);
     }
     
     public static float Avg(this Vector2Int a) => a.Sum() / 2f;
@@ -794,6 +824,7 @@ public static class MathExtension
     // =======================
 
     
+    // IEnumerable
     public static Vector2 Sum(this IEnumerable<Vector2> enumerable)
     {
         var count = enumerable.Count();
@@ -922,6 +953,274 @@ public static class MathExtension
         return result;
     }
 
+    // Array
+    public static Vector2 Sum(this Vector2[] enumerable)
+    {
+        var count = enumerable.Length;
+        Vector2 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += enumerable[i];
+        }
+
+        return result;
+    }
+
+    public static Vector3 Sum(this Vector3[] enumerable)
+    {
+        var count = enumerable.Length;
+        Vector3 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += enumerable[i];
+        }
+
+        return result;
+    }
+
+    public static Vector4 Sum(this Vector4[] enumerable)
+    {
+        var count = enumerable.Length;
+        Vector4 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += enumerable[i];
+        }
+
+        return result;
+    }
+
+    public static Vector2 Sum<T>(this T[] enumerable, Func<T, Vector2> getter)
+    {
+        var count = enumerable.Length;
+        Vector2 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += getter.Invoke(enumerable[i]);
+        }
+
+        return result;
+    }
+
+    public static Vector3 Sum<T>(this T[] enumerable, Func<T, Vector3> getter)
+    {
+        var count = enumerable.Length;
+        Vector3 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += getter.Invoke(enumerable[i]);
+        }
+
+        return result;
+    }
+
+    public static Vector4 Sum<T>(this T[] enumerable, Func<T, Vector4> getter)
+    {
+        var count = enumerable.Length;
+        Vector4 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += getter.Invoke(enumerable[i]);
+        }
+
+        return result;
+    }
+
+    public static TResult Sum<TResult, TSource>(this TSource[] enumerable, Func<TSource, TResult> getter, Func<TResult, TResult, TResult> add)
+    {
+        var count = enumerable.Length;
+        TResult result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result = add(result, getter(enumerable[i]));
+        }
+
+        return result;
+    }
+
+    public static float Sum<T>(this T[] enumerable, Func<T, float> getter)
+    {
+        var count = enumerable.Length;
+        var result = 0f;
+        for (int i = 0; i < count; i++)
+        {
+            result += getter.Invoke(enumerable[i]);
+        }
+
+        return result;
+    }
+
+    public static int Sum<T>(this T[] enumerable, Func<T, int> getter)
+    {
+        var count = enumerable.Length;
+        var result = 0;
+        for (int i = 0; i < count; i++)
+        {
+            result += getter.Invoke(enumerable[i]);
+        }
+
+        return result;
+    }
+
+    public static float Multiply<T>(this T[] enumerable, Func<T, float> getter)
+    {
+        var count = enumerable.Length;
+        var result = 0f;
+        for (int i = 0; i < count; i++)
+        {
+            result *= getter.Invoke(enumerable[i]);
+        }
+
+        return result;
+    }
+
+    public static int Multiply<T>(this T[] enumerable, Func<T, int> getter)
+    {
+        var count = enumerable.Length;
+        var result = 0;
+        for (int i = 0; i < count; i++)
+        {
+            result *= getter.Invoke(enumerable[i]);
+        }
+
+        return result;
+    }
+    
+    // List
+    public static Vector2 Sum(this List<Vector2> enumerable)
+    {
+        var count = enumerable.Count;
+        Vector2 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += enumerable[i];
+        }
+
+        return result;
+    }
+
+    public static Vector3 Sum(this List<Vector3> enumerable)
+    {
+        var count = enumerable.Count;
+        Vector3 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += enumerable[i];
+        }
+
+        return result;
+    }
+
+    public static Vector4 Sum(this List<Vector4> enumerable)
+    {
+        var count = enumerable.Count;
+        Vector4 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += enumerable[i];
+        }
+
+        return result;
+    }
+
+    public static Vector2 Sum<T>(this List<T> enumerable, Func<T, Vector2> getter)
+    {
+        var count = enumerable.Count;
+        Vector2 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += getter.Invoke(enumerable[i]);
+        }
+
+        return result;
+    }
+
+    public static Vector3 Sum<T>(this List<T> enumerable, Func<T, Vector3> getter)
+    {
+        var count = enumerable.Count;
+        Vector3 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += getter.Invoke(enumerable[i]);
+        }
+
+        return result;
+    }
+
+    public static Vector4 Sum<T>(this List<T> enumerable, Func<T, Vector4> getter)
+    {
+        var count = enumerable.Count;
+        Vector4 result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result += getter.Invoke(enumerable[i]);
+        }
+
+        return result;
+    }
+
+    public static TResult Sum<TResult, TSource>(this List<TSource> enumerable, Func<TSource, TResult> getter, Func<TResult, TResult, TResult> add)
+    {
+        var count = enumerable.Count;
+        TResult result = default;
+        for (int i = 0; i < count; i++)
+        {
+            result = add(result, getter(enumerable[i]));
+        }
+
+        return result;
+    }
+
+    public static float Sum<T>(this List<T> enumerable, Func<T, float> getter)
+    {
+        var count = enumerable.Count;
+        var result = 0f;
+        for (int i = 0; i < count; i++)
+        {
+            result += getter.Invoke(enumerable[i]);
+        }
+
+        return result;
+    }
+
+    public static int Sum<T>(this List<T> enumerable, Func<T, int> getter)
+    {
+        var count = enumerable.Count;
+        var result = 0;
+        for (int i = 0; i < count; i++)
+        {
+            result += getter.Invoke(enumerable[i]);
+        }
+
+        return result;
+    }
+
+    public static float Multiply<T>(this List<T> enumerable, Func<T, float> getter)
+    {
+        var count = enumerable.Count;
+        var result = 0f;
+        for (int i = 0; i < count; i++)
+        {
+            result *= getter.Invoke(enumerable[i]);
+        }
+
+        return result;
+    }
+
+    public static int Multiply<T>(this List<T> enumerable, Func<T, int> getter)
+    {
+        var count = enumerable.Count;
+        var result = 0;
+        for (int i = 0; i < count; i++)
+        {
+            result *= getter.Invoke(enumerable[i]);
+        }
+
+        return result;
+    }
+    
+
+    // IEnumerable
     public static int IndexOf<T>(this IEnumerable<T> enumerable, T member)
     {
         return IndexOf(enumerable, member, enumerable.Count());
@@ -948,7 +1247,64 @@ public static class MathExtension
 
         return -1;
     }
+    
+    // Array
+    public static int IndexOf<T>(this T[] enumerable, T member)
+    {
+        return IndexOf(enumerable, member, enumerable.Length);
+    }
+    public static int IndexOf<T>(this T[] enumerable, T member, int length)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            if (enumerable[i].Equals(member)) return i;
+        }
 
+        return -1;
+    }
+    public static int IndexOf<T>(this T[] enumerable, Predicate<T> predicate)
+    {
+        return IndexOf(enumerable, predicate, enumerable.Length);
+    }
+    public static int IndexOf<T>(this T[] enumerable, Predicate<T> predicate, int length)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            if (predicate.Invoke(enumerable[i])) return i;
+        }
+
+        return -1;
+    }
+    
+    // List
+    public static int IndexOf<T>(this List<T> enumerable, T member)
+    {
+        return IndexOf(enumerable, member, enumerable.Count);
+    }
+    public static int IndexOf<T>(this List<T> enumerable, T member, int length)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            if (enumerable[i].Equals(member)) return i;
+        }
+
+        return -1;
+    }
+    public static int IndexOf<T>(this List<T> enumerable, Predicate<T> predicate)
+    {
+        return IndexOf(enumerable, predicate, enumerable.Count);
+    }
+    public static int IndexOf<T>(this List<T> enumerable, Predicate<T> predicate, int length)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            if (predicate.Invoke(enumerable[i])) return i;
+        }
+
+        return -1;
+    }
+
+    // IEnumerable
     public static void Foreach<T>(this IEnumerable<T> enumerable, Action<T> action, int length)
     {
         for (int i = 0; i < length; i++)
@@ -971,6 +1327,62 @@ public static class MathExtension
         for (int i = 0; i < length; i++)
         {
             if (!predicate.Invoke(enumerable.ElementAt(i))) return false;
+        }
+
+        return true;
+    }
+    
+    // Array
+    public static void Foreach<T>(this T[] enumerable, Action<T> action, int length)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            action?.Invoke(enumerable[i]);
+        }
+    }
+
+    public static bool Any<T>(this T[] enumerable, Predicate<T> predicate, int length)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            if (predicate.Invoke(enumerable[i])) return true;
+        }
+
+        return false;
+    }
+    public static bool All<T>(this T[] enumerable, Predicate<T> predicate, int length)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            if (!predicate.Invoke(enumerable[i])) return false;
+        }
+
+        return true;
+    }
+    
+    // List
+    public static void Foreach<T>(this List<T> enumerable, Action<T> action, int length)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            action?.Invoke(enumerable[i]);
+        }
+    }
+
+    public static bool Any<T>(this List<T> enumerable, Predicate<T> predicate, int length)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            if (predicate.Invoke(enumerable[i])) return true;
+        }
+
+        return false;
+    }
+    public static bool All<T>(this List<T> enumerable, Predicate<T> predicate, int length)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            if (!predicate.Invoke(enumerable[i])) return false;
         }
 
         return true;
@@ -1012,6 +1424,39 @@ public static class MathExtension
     {
         return new Vector4(source.x.Round(decimalCount), source.y.Round(decimalCount), 
             source.z.Round(decimalCount), source.w.Round(decimalCount));
+    }
+
+    public static float power(this int source, int pow)
+    {
+        return Mathf.Pow(source, pow);
+    }
+    public static float power(this float source, float pow)
+    {
+        return Mathf.Pow(source, pow);
+    }
+    public static Vector2 power(this Vector2 source, float pow)
+    {
+        return new Vector2(
+            Mathf.Pow(source.x, pow),
+            Mathf.Pow(source.y, pow)
+        );
+    }
+    public static Vector3 power(this Vector3 source, float pow)
+    {
+        return new Vector3(
+            Mathf.Pow(source.x, pow),
+            Mathf.Pow(source.y, pow),
+            Mathf.Pow(source.z, pow)
+        );
+    }
+    public static Vector4 power(this Vector4 source, float pow)
+    {
+        return new Vector4(
+            Mathf.Pow(source.x, pow),
+            Mathf.Pow(source.y, pow),
+            Mathf.Pow(source.z, pow),
+            Mathf.Pow(source.w, pow)
+        );
     }
     
     /// <summary> 매개 변수값에 따른 10의 거듭제곱을 반환함. Mathf.Pow(10, pow)를 더욱 빨리 쓰도록 한 것.
@@ -1190,6 +1635,16 @@ public static class MathExtension
         var idx = Random.Range(0, enumerable.Count());
         return enumerable.ElementAt(idx);
     }
+    public static T random<T>(this T[] enumerable)
+    {
+        var idx = Random.Range(0, enumerable.Length);
+        return enumerable[idx];
+    }
+    public static T random<T>(this List<T> enumerable)
+    {
+        var idx = Random.Range(0, enumerable.Count);
+        return enumerable[idx];
+    }
     #endregion
     
     
@@ -1215,6 +1670,19 @@ public static class MathExtension
         var count = Mathf.RoundToInt(f / absUnit);
 
         return unit * count;
+    }
+
+    public static Vector2 SetLength(this Vector2 source, float mag)
+    {
+        return source.normalized * mag;
+    }
+    public static Vector3 SetLength(this Vector3 source, float mag)
+    {
+        return source.normalized * mag;
+    }
+    public static Vector4 SetLength(this Vector4 source, float mag)
+    {
+        return source.normalized * mag;
     }
 
     public static float CalcHypotenuseOfRightAngledTriangle(float x, float y)
@@ -1375,11 +1843,19 @@ public static class MathExtension
         return (f1 + f2 + f3 + f4) / 4;
     }
 
-    public static float Avg(params float[] f)
+    public static float Avg(this float[] f)
     {
         return f.Sum() / f.Length;
     }
-    
+    public static float Avg(this IEnumerable<float> source)
+    {
+        return source.Sum() / source.Count();
+    }
+    public static float Avg(this List<float> source)
+    {
+        return source.Sum() / source.Count;
+    }
+
     public static float Avg(int i1, int i2)
     {
         return (float)(i2 + i2) / 2;
@@ -1392,11 +1868,20 @@ public static class MathExtension
     {
         return (float)(i1 + i2 + i3 + i4) / 4;
     }
-    public static float Avg(params int[] i)
+    public static float Avg(this int[] i)
     {
         return (float)i.Sum() / i.Length;
     }
-
+    public static float Avg(this IEnumerable<int> source)
+    {
+        return source.Sum() / source.Count();
+    }
+    public static float Avg(this List<int> source)
+    {
+        return (float)source.Sum() / source.Count;
+    }
+    
+    
     public static Vector2 Avg(Vector2 a, Vector2 b)
     {
         return (a + b) / 2;
@@ -1410,10 +1895,21 @@ public static class MathExtension
         return (a + b + c + d) / 4;
     }
 
-    public static Vector2 Avg(params Vector2[] v)
+    public static Vector2 Avg(this Vector2[] v)
     {
         return v.Sum() / v.Length;
     }
+    
+    public static Vector2 Avg(this IEnumerable<Vector2> source)
+    {
+        return source.Sum() / source.Count();
+    }
+    public static Vector2 Avg(this List<Vector2> source)
+    {
+        return source.Sum() / source.Count;
+    }
+    
+    
     public static Vector3 Avg(Vector3 a, Vector3 b)
     {
         return (a + b) / 2;
@@ -1426,8 +1922,57 @@ public static class MathExtension
     {
         return (a + b + c + d) / 4;
     }
-    public static Vector3 Avg(params Vector3[] v)
+    public static Vector3 Avg(this Vector3[] v)
     {
         return v.Sum() / v.Length;
+    }
+    
+    public static Vector3 Avg(this IEnumerable<Vector3> source)
+    {
+        return source.Sum() / source.Count();
+    }
+    public static Vector3 Avg(this List<Vector3> source)
+    {
+        return source.Sum() / source.Count;
+    }
+    
+    
+    public static float Avg<T>(this IEnumerable<T> source, Func<T, float> getter)
+    {
+        return source.Sum(getter) / source.Count();
+    }
+    public static Vector2 Avg<T>(this IEnumerable<T> source, Func<T, Vector2> getter)
+    {
+        return source.Sum(getter) / source.Count();
+    }
+    public static Vector3 Avg<T>(this IEnumerable<T> source, Func<T, Vector3> getter)
+    {
+        return source.Sum(getter) / source.Count();
+    }
+    
+    public static float Avg<T>(this T[] source, Func<T, float> getter)
+    {
+        return source.Sum(getter) / source.Length;
+    }
+    public static Vector2 Avg<T>(this T[] source, Func<T, Vector2> getter)
+    {
+        return source.Sum(getter) / source.Length;
+    }
+    public static Vector3 Avg<T>(this T[] source, Func<T, Vector3> getter)
+    {
+        return source.Sum(getter) / source.Length;
+    }
+    
+    public static float Avg<T>(this List<T> source, Func<T, float> getter)
+    {
+        return source.Sum(getter) / source.Count;
+    }
+    public static Vector2 Avg<T>(this List<T> source, Func<T, Vector2> getter)
+    {
+        return source.Sum(getter) / source.Count;
+    }
+    public static Vector3 Avg<T>(this List<T> source, Func<T, Vector3> getter)
+    {
+        return source.Sum(getter) / source.Count;
     }
 }

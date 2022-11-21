@@ -272,21 +272,30 @@ namespace OcUtility
             return b.Contains(localPoint);
         }
 
+        public static Bounds CalcColliderBounds<T>(this T collider) where T : Collider
+        {
+            var bounds = collider.bounds;
+
+            foreach (var col in collider.GetComponentsInChildren<Collider>())
+            {
+                if(col == collider) continue;
+                var childBound = col.bounds;
+                bounds.Encapsulate(childBound);
+            }
+
+            return bounds;
+        }
+
 #if UNITY_EDITOR
         [MenuItem("CONTEXT/BoxCollider/바운드에 맞게 확장")]
         static void ExtendBox(MenuCommand command)
         {
             var c = command.context as BoxCollider;
             Undo.RecordObject(c, "바운드에 맞게 확장");
-            var childRenderer = c.GetComponentsInChildren<Renderer>();
+            
+            var bounds = c.gameObject.CalcLocalRendererBounds();
 
-            var bounds = new Bounds(c.transform.position, Vector3.zero);
-            foreach (var renderer in childRenderer)
-            {
-                bounds.Encapsulate(renderer.bounds);
-            }
-
-            c.center = bounds.center - c.transform.position;
+            c.center = bounds.center;
             c.size = bounds.size;
         }
         [MenuItem("CONTEXT/CapsuleCollider/바운드에 맞게 확장")]
@@ -294,13 +303,8 @@ namespace OcUtility
         {
             var c = command.context as CapsuleCollider;
             Undo.RecordObject(c, "바운드에 맞게 확장");
-            var childRenderer = c.GetComponentsInChildren<Renderer>();
-
-            var bounds = new Bounds(c.transform.position, Vector3.zero);
-            foreach (var renderer in childRenderer)
-            {
-                bounds.Encapsulate(renderer.bounds);
-            }
+            
+            var bounds = c.gameObject.CalcLocalRendererBounds();
             
             c.center = bounds.center - c.transform.position;
             var xyz = new float[]{ bounds.extents.x, bounds.extents.y, bounds.extents.z };
@@ -317,13 +321,7 @@ namespace OcUtility
         {
             var c = command.context as SphereCollider;
             Undo.RecordObject(c, "바운드에 맞게 확장");
-            var childRenderer = c.GetComponentsInChildren<Renderer>();
-
-            var bounds = new Bounds(c.transform.position, Vector3.zero);
-            foreach (var renderer in childRenderer)
-            {
-                bounds.Encapsulate(renderer.bounds);
-            }
+            var bounds = c.gameObject.CalcLocalRendererBounds();
 
             c.center = bounds.center - c.transform.position;
 

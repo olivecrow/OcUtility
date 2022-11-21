@@ -32,7 +32,8 @@ namespace OcUtility
                         return "None => 아무것도 안함";
                     case MyHideFlags.DEBUG:
                         return "DEBUG => 개발 빌드에서는 포함되고, 릴리즈 빌드에서는 제외됨\nn" +
-                               "!!! 무슨 원인인지, 작동이 안됨. 이 옵션으로 사용하지 말것.";
+                               "씬에 변경사항이 없다면 IProcessSceneWithReport가 호출되지 않음\n" +
+                               "이 플래그를 사용할 일이 있다면, 빌드 전에 씬을 변경한 후 저장해야함.";
                     case MyHideFlags.UNITY_EDITOR:
                         return PrefabUtility.IsPartOfAnyPrefab(gameObject) ?
                             "프리팹의 일부인 경우, HideFlag가 적용되지 않음!!!!!":

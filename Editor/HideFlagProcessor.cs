@@ -14,14 +14,14 @@ namespace OcUtility.Editor
          * EditorComment는 DevelopmentBuild가 아니어도 제외하는데, EditorCommentAsset이 포함된 채로 빌드할 경우, 오류가 나기 때문.
          */
         public int callbackOrder => 0;
-        
-        
+
         public void OnProcessScene(Scene scene, BuildReport report)
         {
+            Debug.Log($"on process scene | scene : {scene} | report : {report}");
             if(report == null) return;
             
             var isDevelopmentBuild = report.summary.options.HasFlag(BuildOptions.Development);
-            Debug.Log($"[Debug Only GameObject Processor] | scene : {scene.name} | is Development build ? {isDevelopmentBuild}");
+            Debug.Log($"[HideFlagProcessor] | scene : {scene.name} | is Development build ? {isDevelopmentBuild}");
            
             HideEditorComment();
             HideDebugOnlyGameObjects(isDevelopmentBuild);
@@ -42,6 +42,7 @@ namespace OcUtility.Editor
         {
             if(isDevelopment) return;
             var objs = Object.FindObjectsOfType<HideFlagControl>();
+            Debug.Log($"[HideFlagProcessor] 현재 씬에 존재하는 HideFlagControl 개수 : {objs.Length}");
             foreach (var obj in objs)
             {
                 if (obj.myHideFlags == HideFlagControl.MyHideFlags.DEBUG)

@@ -57,6 +57,8 @@ namespace OcUtility.Editor
         [LabelWidth(100)][ShowIf(nameof(rotationType), RotationType.LookAt)]
         public Vector3 lookAtAxis = new Vector3(0,1,0);
 
+        public Vector3 rotationOffset;
+
         Vector3 CenterOfAll => Selection.count > 0 ? 
             Selection.transforms.Select(x => x.position).Sum() / Selection.count : Vector3.zero;
 
@@ -124,7 +126,6 @@ namespace OcUtility.Editor
             {
                 case RotationType.Same:
                     rotation = Handles.DoRotationHandle(Quaternion.Euler(rotation), CenterOfAll).eulerAngles;
-                    
                     Handles.ArrowHandleCap(0, CenterOfAll, Quaternion.Euler(rotation), 1f, EventType.Repaint);
                     break;
                 case RotationType.LookAt:
@@ -176,13 +177,14 @@ namespace OcUtility.Editor
             {
                 case RotationType.Same:
                 {
-                    target.rotation = Quaternion.Euler(rotation);
+                    target.rotation = Quaternion.Euler(rotation) * Quaternion.Euler(rotationOffset);
                     break;
                 }
                 case RotationType.LookAt:
                 {
                     target.LookAt(lookAtPoint, lookAtAxis);
                     if(invertRotation) target.Rotate(lookAtAxis, 180);
+                    target.rotation *=Quaternion.Euler(rotationOffset);
                     break;
                 }
                 default:

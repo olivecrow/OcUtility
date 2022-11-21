@@ -1,5 +1,13 @@
 ﻿# Changelog
 
+## [1.6.1] - 2022-11-22
+- 벡터끼리의 나눗셈 추가
+- 벡터의 길이를 지정하는 SetLength 확장 추가
+- 렌더러 및 LODGroup의 바운드를 계산할 수 있는 CalcRendererBounds확장 추가
+- Avg 메서드를 확장 방식으로 쓸 수 있도록 추가 및 변경
+- 오브젝트 배치 유틸리티에 회전 오프셋 추가
+- IEnumerable<T>를 사용하는 MathExtensions 메서드들에 대해서 배열 및 리스트에 대한 최적화된 메서드 추가
+
 ## [1.6.0] -2022-10-26
 - float에 대한 DRT 추가
 - Value, Min, Max로 Lerp의 비율을 구하는 LerpPoint 메서드 추가

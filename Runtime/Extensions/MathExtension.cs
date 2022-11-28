@@ -1685,6 +1685,9 @@ public static class MathExtension
         return source.normalized * mag;
     }
 
+    /// <summary>
+    /// 피타고라스의 정리를 이용해서 직각삼각형의 빗변의 길이를 구함.
+    /// </summary>
     public static float CalcHypotenuseOfRightAngledTriangle(float x, float y)
     {
         return Mathf.Sqrt(x.sqr() + y.sqr());

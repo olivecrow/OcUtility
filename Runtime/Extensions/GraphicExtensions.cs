@@ -7,7 +7,12 @@ namespace OcUtility
 {
     public static class GraphicExtensions
     {
-        public static Bounds CalcLocalRendererBounds(this GameObject source)
+        /// <summary>
+        /// 위치, 회전, 스케일이 적용되지 않은 렌더러 바운드. 콜라이더 확장 등을 할때처럼 로컬 바운드의 크기가 필요할때 사용.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static Bounds LocalRendererBounds(this GameObject source)
         {
             var bounds = new Bounds();
             var boundsAssigned = false;
@@ -30,13 +35,13 @@ namespace OcUtility
 
             return bounds;
         }
-        public static Bounds CalcRendererBounds(this Renderer[] renderers)
+        public static Bounds RendererBounds(this Renderer[] renderers)
         {
             var bounds = new Bounds();
             var boundsAssigned = false;
-            
-            foreach (var renderer in renderers)
+            for (int i = 0; i < renderers.Length; i++)
             {
+                var renderer = renderers[i];
                 if (boundsAssigned)
                 {
                     bounds.Encapsulate(renderer.bounds);
@@ -45,18 +50,18 @@ namespace OcUtility
                 {
                     bounds = renderer.bounds;
                     boundsAssigned = true;
-                }
+                }   
             }
 
             return bounds;
         }
-        public static Bounds CalcRendererBounds(this List<Renderer> renderers)
+        public static Bounds RendererBounds(this List<Renderer> renderers)
         {
             var bounds = new Bounds();
             var boundsAssigned = false;
-            
-            foreach (var renderer in renderers)
+            for (int i = 0; i < renderers.Count; i++)
             {
+                var renderer = renderers[i];
                 if (boundsAssigned)
                 {
                     bounds.Encapsulate(renderer.bounds);
@@ -65,20 +70,23 @@ namespace OcUtility
                 {
                     bounds = renderer.bounds;
                     boundsAssigned = true;
-                }
+                }   
             }
 
             return bounds;
         }
-        public static Bounds CalcRendererBounds(this LODGroup source)
+        public static Bounds RendererBounds(this LODGroup source)
         {
             var bounds = new Bounds();
             var boundsAssigned = false;
 
-            foreach (var lod in source.GetLODs())
+            var lods = source.GetLODs();
+            for (int i = 0; i < lods.Length; i++)
             {
-                foreach (var renderer in lod.renderers)
+                var lod = lods[i];
+                for (int j = 0; j < lod.renderers.Length; j++)
                 {
+                    var renderer = lod.renderers[i];
                     if (boundsAssigned)
                     {
                         bounds.Encapsulate(renderer.bounds);
@@ -88,10 +96,15 @@ namespace OcUtility
                         bounds = renderer.bounds;
                         boundsAssigned = true;
                     }
-                }    
+                }
             }
 
             return bounds;
+        }
+
+        public static Bounds RendererBounds(this GameObject GO)
+        {
+            return RendererBounds(GO.GetComponentsInChildren<Renderer>());
         }
 
 

@@ -24,7 +24,7 @@ namespace OcUtility
 
         const string FolderPath = "Assets/Editor Default Resources/Editor Comments";
 
-        [DisableInPrefabs][ShowIf("@asset == null")][Button]
+        [DisableIn(PrefabKind.PrefabAsset)][ShowIf("@asset == null")][Button]
         void CreateAsset()
         {
             asset = EditorCommentAsset.CreateAsset($"{FolderPath}/{gameObject.scene.name}", name);

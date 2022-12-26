@@ -17,11 +17,9 @@ namespace OcUtility.Editor
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {
-            Debug.Log($"on process scene | scene : {scene} | report : {report}");
             if(report == null) return;
             
             var isDevelopmentBuild = report.summary.options.HasFlag(BuildOptions.Development);
-            Debug.Log($"[HideFlagProcessor] | scene : {scene.name} | is Development build ? {isDevelopmentBuild}");
            
             HideEditorComment();
             HideDebugOnlyGameObjects(isDevelopmentBuild);

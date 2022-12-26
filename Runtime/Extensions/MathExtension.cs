@@ -1645,6 +1645,15 @@ public static class MathExtension
         var idx = Random.Range(0, enumerable.Count);
         return enumerable[idx];
     }
+
+    public static T random<T>() where T : struct, Enum
+    {
+        var names = Enum.GetNames(typeof(T));
+        var idx = Random.Range(0, names.Length);
+        if (Enum.TryParse<T>(names[idx], out var result)) return result;
+
+        return default;
+    }
     #endregion
     
     

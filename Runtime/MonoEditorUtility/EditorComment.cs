@@ -21,6 +21,7 @@ namespace OcUtility
         [InlineEditor(InlineEditorModes.FullEditor, Expanded = true, DrawHeader = false)]
         
         public EditorCommentAsset asset;
+        [ShowIf("@asset == null")]public EditorCommentAsset.Context[] Contexts;
 
         const string FolderPath = "Assets/Editor Default Resources/Editor Comments";
 
@@ -28,6 +29,7 @@ namespace OcUtility
         void CreateAsset()
         {
             asset = EditorCommentAsset.CreateAsset($"{FolderPath}/{gameObject.scene.name}", name);
+            asset.Contexts = Contexts;
         }
         
         void OnDrawGizmos()

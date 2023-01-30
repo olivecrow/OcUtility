@@ -577,7 +577,22 @@ public static class MathExtension
     }
     public static T GetMinElement<T>(this IEnumerable<T> enumerable, Func<T, float> calculate, int length)
     {
-        return enumerable.ElementAt(GetMinElementIndex(enumerable, calculate, length));
+        if (length == 0) return default;
+
+        var min = float.MaxValue;
+        var idx = -1;
+        for (var i = 0; i < length; i++)
+        {
+            var value = calculate.Invoke(enumerable.ElementAt(i));
+            if (value < min)
+            {
+                min = value;
+                idx = i;
+            }
+        }
+
+        if (idx == -1) return default;
+        return enumerable.ElementAt(idx);
     }
 
     /// <summary>
@@ -623,7 +638,20 @@ public static class MathExtension
     }
     public static T GetMaxElement<T>(this IEnumerable<T> enumerable, Func<T, float> calculate, int length)
     {
-        return enumerable.ElementAt(GetMaxElementIndex(enumerable, calculate, length));
+        var max = float.MinValue;
+        var idx = -1;
+        for (var i = 0; i < length; i++)
+        {
+            var value = calculate.Invoke(enumerable.ElementAt(i));
+            if (value > max)
+            {
+                max = value;
+                idx = i;
+            }
+        }
+
+        if (idx == -1) return default;
+        return enumerable.ElementAt(idx);
     }
 
     /// <summary>
@@ -666,6 +694,7 @@ public static class MathExtension
     }
     public static T GetMinElement<T>(this T[] array, Func<T, float> calculate, int length)
     {
+        if (array.Length == 0 || length == 0) return default;
         return array[GetMinElementIndex(array, calculate, length)];
     }
     
@@ -695,6 +724,7 @@ public static class MathExtension
     }
     public static T GetMaxElement<T>(this T[] array, Func<T, float> calculate, int length)
     {
+        if (array.Length == 0 || length == 0) return default;
         return array[GetMaxElementIndex(array, calculate, length)];
     }
 
@@ -727,6 +757,7 @@ public static class MathExtension
     }
     public static T GetMinElement<T>(this List<T> list, Func<T, float> calculate, int length)
     {
+        if (list.Count == 0 || length == 0) return default;
         return list[GetMinElementIndex(list, calculate, length)];
     }
     
@@ -756,6 +787,7 @@ public static class MathExtension
     }
     public static T GetMaxElement<T>(this List<T> list, Func<T, float> calculate, int length)
     {
+        if (list.Count == 0 || length == 0) return default;
         return list[GetMaxElementIndex(list, calculate, length)];
     }
     
@@ -789,6 +821,7 @@ public static class MathExtension
     }
     public static T GetMinElement<T>(this List<T> list, Func<T, double> calculate, int length)
     {
+        if (list.Count == 0 || length == 0) return default;
         return list[GetMinElementIndex(list, calculate, length)];
     }
     
@@ -818,6 +851,7 @@ public static class MathExtension
     }
     public static T GetMaxElement<T>(this List<T> list, Func<T, double> calculate, int length)
     {
+        if (list.Count == 0 || length == 0) return default;
         return list[GetMaxElementIndex(list, calculate, length)];
     }
     
@@ -1653,6 +1687,33 @@ public static class MathExtension
         if (Enum.TryParse<T>(names[idx], out var result)) return result;
 
         return default;
+    }
+    
+    public static float RandomGaussian(float minValue = 0.0f, float maxValue = 1.0f)
+    {
+        float u, v, S;
+ 
+        do
+        {
+            u = 2.0f * Random.value - 1.0f;
+            v = 2.0f * Random.value - 1.0f;
+            S = u * u + v * v;
+        }
+        while (S >= 1.0f);
+ 
+        // Standard Normal Distribution
+        float std = u * Mathf.Sqrt(-2.0f * Mathf.Log(S) / S);
+ 
+        // Normal Distribution centered between the min and max value
+        // and clamped following the "three-sigma rule"
+        float mean = (minValue + maxValue) / 2.0f;
+        float sigma = (maxValue - mean) / 3.0f;
+        return Mathf.Clamp(std * sigma + mean, minValue, maxValue);
+    }
+
+    public static float RandomGaussian(this Vector2 range)
+    {
+        return RandomGaussian(range.x, range.y);
     }
     #endregion
     

@@ -26,6 +26,15 @@ namespace OcUtility
             }
         }
 
+        public OcDictionary(OcDictionary<TKey, TValue> dict)
+        {
+            pairs = new List<OcKVPair<TKey, TValue>>();
+            foreach (var kv in dict)
+            {
+                pairs.Add(new OcKVPair<TKey, TValue>(kv.Key, kv.Value));
+            }
+        }
+
         public TValue this[TKey key]
         {
             get => FindPair(key).Value;

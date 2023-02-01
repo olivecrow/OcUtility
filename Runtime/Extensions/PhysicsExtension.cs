@@ -42,7 +42,7 @@ namespace OcUtility
             }
 
 #if UNITY_EDITOR
-            Application.quitting += Release;
+            if(Application.isPlaying)Application.quitting += Release;
 #endif
         }
 
@@ -51,12 +51,13 @@ namespace OcUtility
         {
             _initialized = false;
             _rayHitBuffer = null;
-            Application.quitting -= Release;
+            if(Application.isPlaying)Application.quitting -= Release;
         }
 #endif
 
         public static RaycastHit[] GetRaycastHitBuffer()
         {
+            if(_rayHitBuffer == null) Init();
             if (_rayHitBuffer.Count == 0) return new RaycastHit[raycastBudget];
 
             return _rayHitBuffer.Dequeue();
@@ -64,6 +65,7 @@ namespace OcUtility
 
         public static Collider[] GetOverlapBuffer()
         {
+            if(_rayHitBuffer == null) Init();
             if (_overlapBuffer.Count == 0) return new Collider[overlapBudget];
 
             return _overlapBuffer.Dequeue();

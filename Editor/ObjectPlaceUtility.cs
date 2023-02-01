@@ -7,6 +7,7 @@ using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace OcUtility.Editor
 {
@@ -14,12 +15,14 @@ namespace OcUtility.Editor
     {
         public enum Shape
         {
+            None,
             Line,
             Circle
         }
 
         public enum RotationType
         {
+            None,
             Same,
             LookAt
         }
@@ -59,16 +62,23 @@ namespace OcUtility.Editor
 
         public Vector3 rotationOffset;
 
+        [InlineButton(nameof(Reseed))]public int seed;
+        
         Vector3 CenterOfAll => Selection.count > 0 ? 
             Selection.transforms.Select(x => x.position).Sum() / Selection.count : Vector3.zero;
 
         Shape _lastShape;
-        
+
         [HideInInspector]public List<GameObject> targets;
         [MenuItem("Utility/오브젝트 배치 유틸리티")]
         static void Open()
         {
             GetWindow<ObjectPlaceUtility>(true);
+        }
+
+        void Reseed()
+        {
+            seed = Random.Range(int.MinValue, int.MaxValue);
         }
 
         void Awake()

@@ -9,6 +9,7 @@ namespace OcUtility
     {
         /// <summary>
         /// 위치, 회전, 스케일이 적용되지 않은 렌더러 바운드. 콜라이더 확장 등을 할때처럼 로컬 바운드의 크기가 필요할때 사용.
+        /// 이 값은 정확하지 않으며, 근사치를 구함.
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
@@ -16,23 +17,33 @@ namespace OcUtility
         {
             var bounds = new Bounds();
             var boundsAssigned = false;
-            
             foreach (var renderer in source.GetComponentsInChildren<Renderer>())
             {
+                var worldB = renderer.bounds;
+
+                var localB = renderer.localBounds;
+                localB.center += renderer.transform.localPosition;
+                
+                var scaleMultiplier = (renderer.transform.localRotation * renderer.transform.localScale).abs();
+                var transformedScale = localB.size.Multiply(scaleMultiplier);
+                var targetScale = transformedScale;
+                targetScale.x = Mathf.Max(targetScale.x, worldB.size.x);
+                targetScale.y = Mathf.Max(targetScale.y, worldB.size.y);
+                targetScale.z = Mathf.Max(targetScale.z, worldB.size.z);
+
+                localB.size = targetScale;
+            
                 if (boundsAssigned)
                 {
-                    var childBound = renderer.bounds;
-                    childBound.center = source.transform.InverseTransformPoint(childBound.center);
-                    childBound.size = source.transform.InverseTransformVector(childBound.size);
-                    bounds.Encapsulate(childBound);
+                    bounds.Encapsulate(localB);
                 }
                 else
                 {
-                    bounds = renderer.localBounds;
+                    bounds = localB;
                     boundsAssigned = true;
-                }
+                }   
             }
-
+            
             return bounds;
         }
         public static Bounds RendererBounds(this Renderer[] renderers)

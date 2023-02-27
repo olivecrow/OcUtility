@@ -33,6 +33,9 @@ namespace OcUtility.Editor
             Manual,
             Average
         }
+
+        public bool applyPosition = true;
+        public bool applyRotation = true;
         [EnumToggleButtons]public Method method;
         [EnumToggleButtons]public Options options;
         [EnumToggleButtons] public RotationOption rotation;
@@ -99,17 +102,20 @@ namespace OcUtility.Editor
             switch (method)
             {
                 case Method.ToOrigin:
-                    result = Vector3.zero;
+                    if (applyPosition) result = Vector3.zero;
+                    else result = selected.position;
                     break;
                 case Method.Position:
                 {
                     if (options.Has(Options.Y_To_Bottom))
                     {
-                        result = GetPositionCenterBottom(GetChildren());
+                        if(applyPosition)result = GetPositionCenterBottom(GetChildren());
+                        else result = selected.position;
                     }
                     else
                     {
-                        result = GetPositionCenter(GetChildren());    
+                        if(applyPosition)result = GetPositionCenter(GetChildren());
+                        else result = selected.position;
                     }
                     
                     break;
@@ -119,11 +125,13 @@ namespace OcUtility.Editor
                     var bounds = GetTotalBounds(GetRendererChildren());
                     if (options.Has(Options.Y_To_Bottom))
                     {
-                        result = new Vector3(bounds.center.x, bounds.min.y, bounds.center.z);
+                        if(applyPosition) result = new Vector3(bounds.center.x, bounds.min.y, bounds.center.z);
+                        else result = selected.position;
                     }
                     else
                     {
-                        result = bounds.center;
+                        if(applyPosition) result = bounds.center;
+                        else result = selected.position;
                     }
                     
                     break;
@@ -139,10 +147,12 @@ namespace OcUtility.Editor
             switch (rotation)
             {
                 case RotationOption.None:
-                    rotationResult = Quaternion.identity;
+                    if (applyRotation) rotationResult = Quaternion.identity;
+                    else rotationResult = selected.rotation;
                     break;
                 case RotationOption.Manual:
-                    rotationResult = Quaternion.Euler(manualRotation);
+                    if (applyRotation) rotationResult = Quaternion.Euler(manualRotation);
+                    else rotationResult = selected.rotation;
                     break;
                 case RotationOption.Average:
                     Quaternion rot = selected.childCount == 0 ? selected.rotation : selected.GetChild(0).rotation;
@@ -152,7 +162,8 @@ namespace OcUtility.Editor
                         rot = Quaternion.Lerp(rot, child.transform.rotation, 0.5f);
                     }
 
-                    rotationResult = rot;
+                    if (applyRotation) rotationResult = rot;
+                    else rotationResult = selected.rotation;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

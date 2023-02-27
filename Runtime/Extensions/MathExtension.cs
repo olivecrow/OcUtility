@@ -1575,6 +1575,8 @@ public static class MathExtension
     public static int sqr(this int source) => source * source;
     public static double sqr(this double source) => source * source;
 
+    public static bool IsOdd(this int source) => source % 2 == 1;
+
     #region EnumFlags
 
     public static bool Has<T>(this Enum type, T value) {

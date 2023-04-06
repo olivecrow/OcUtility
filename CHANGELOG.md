@@ -1,5 +1,11 @@
 ﻿# Changelog
 
+## [1.6.7] -2023-04-07
+- RuntimeMarker 전처리기 문제로 빌드가 안되던 문제 해결
+- HideFlagProcessor가 어드레서블 씬을 로드할때 호출되지 않도록 필터 추가
+- EditorComment의 CheckRow 개선
+- 루트 오브젝트 정렬에 로컬 위치를 0로 옮기는 기능 추가
+
 ## [1.6.6] -2023-02-27
 - SearchService를 쉽게 사용할 수 있는 Search클래스 추가.
 - int가 홀수인지 짝수인지 판단하는 IsOdd 확장 메서드 추가.

@@ -19,6 +19,11 @@ public class SimpleEventTrigger : MonoBehaviour, IHierarchyIconDrawable
     [HideIf("useMultipleEvent")] public UnityEvent e;
     [ShowIf("useMultipleEvent"), TableList]public EventKeyPair[] events;
 
+    public Action onEnable;
+    public Action onStart;
+    public Action onDisable;
+    public Action<Collider> onTriggerEnter;
+
     void OnValidate()
     {
         if (delayTime < 0) delayTime = 0;
@@ -37,21 +42,25 @@ public class SimpleEventTrigger : MonoBehaviour, IHierarchyIconDrawable
     void OnEnable()
     {
         InvokeByTiming(EventTiming.OnEnable);
+        onEnable?.Invoke();
     }
 
     void OnDisable()
     {
         InvokeByTiming(EventTiming.OnDisable);
+        onDisable?.Invoke();
     }
 
     void Start()
     {
         InvokeByTiming(EventTiming.Start);
+        onStart?.Invoke();
     }
 
     void OnTriggerEnter(Collider other)
     {
         InvokeByTiming(EventTiming.TriggerEnter);
+        onTriggerEnter?.Invoke(other);
     }
 
     void InvokeByTiming(EventTiming t)

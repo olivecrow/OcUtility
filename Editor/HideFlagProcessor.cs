@@ -18,6 +18,7 @@ namespace OcUtility.Editor
         public void OnProcessScene(Scene scene, BuildReport report)
         {
             if(report == null) return;
+            if(Application.isPlaying) return;
             
             var isDevelopmentBuild = report.summary.options.HasFlag(BuildOptions.Development);
            

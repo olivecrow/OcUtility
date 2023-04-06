@@ -89,10 +89,25 @@ namespace OcUtility
             [Serializable]
             public class CheckRow
             {
-                [GUIColor("color")] public string text;
-                [TableColumnWidth(25, false)]public bool V;
+                public enum State
+                {
+                    None,
+                    Warning,
+                    Error,
+                    Clear
+                }
+                [TableColumnWidth(100, false)] public State state;
+                [GUIColor("color")][TextArea(0,2)] public string text;
+                [TextArea(0,2)]public string comment;
 
-                Color color => V ? new Color(.5f, 1f, .5f) : Color.white;
+                Color color => state switch
+                {
+                    State.None => Color.white,
+                    State.Warning => Color.yellow,
+                    State.Error => Color.red,
+                    State.Clear => Color.green,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
             }
         }
     }

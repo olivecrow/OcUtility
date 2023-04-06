@@ -92,10 +92,12 @@ namespace OcUtility
                 }
             }
         }
-
+#endif
+        
         [Serializable]
         public class Marker
         {
+#if UNITY_EDITOR
             [HideLabel]public Color color = ColorExtension.SystemRandom();
             [LabelWidth(50)]public string title = "새 마커";
             [HideInInspector]public RuntimeMarker marker;
@@ -143,7 +145,10 @@ namespace OcUtility
                     HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
                 }
             }
-        }
 #endif
+            
+        }
     }
+    
+
 }

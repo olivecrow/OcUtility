@@ -14,6 +14,7 @@ namespace OcUtility.Editor
         public enum Method
         {
             ToOrigin,
+            ToLocalOrigin,
             Position,
             Bounds
         }
@@ -72,9 +73,21 @@ namespace OcUtility.Editor
             SceneView.duringSceneGui += DrawGizmo;
         }
 
-        void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
             SceneView.duringSceneGui -= DrawGizmo;
+        }
+
+        void OnSelectionChange()
+        {
+            if (Selection.activeGameObject == null)
+            {
+                selected = null;
+                return;
+            }
+            if(PrefabUtility.IsPartOfPrefabAsset(Selection.activeGameObject)) return;
+            selected = Selection.activeGameObject.transform;
         }
 
         void OnValidate()
@@ -84,6 +97,7 @@ namespace OcUtility.Editor
 
         void DrawGizmo(SceneView sceneView)
         {
+            if (selected == null) return;
             var dist = Vector3.Distance(sceneView.camera.transform.position, result);
             var size = dist * 0.01f * gizmoSize;
             Handles.color = ColorExtension.Rainbow(10);
@@ -99,10 +113,23 @@ namespace OcUtility.Editor
         [Button]
         void Calculate()
         {
+            if (PrefabUtility.IsPartOfPrefabAsset(Selection.activeGameObject))
+            {
+                Debug.LogWarning($"{this.DRT()} 프리팹에는 적용할 수 없음");
+                return;
+            }
             switch (method)
             {
                 case Method.ToOrigin:
                     if (applyPosition) result = Vector3.zero;
+                    else result = selected.position;
+                    break;
+                case Method.ToLocalOrigin:
+                    if (applyPosition)
+                    {
+                        if (selected.parent == null) result = Vector3.zero;
+                        else result = selected.parent.position;
+                    }
                     else result = selected.position;
                     break;
                 case Method.Position:
@@ -173,6 +200,15 @@ namespace OcUtility.Editor
         [Button(ButtonSizes.Medium), GUIColor(2,2,0)]
         void Move()
         {
+            if (PrefabUtility.IsPartOfPrefabAsset(Selection.activeGameObject))
+            {
+                Debug.LogWarning($"{this.DRT()} 프리팹에는 적용할 수 없음");
+                return;
+            }
+            
+            var undoID = Undo.GetCurrentGroup();
+            Undo.RecordObject(selected, "루트 오브젝트 정렬");
+
             Calculate();
             _positionCache = new Dictionary<Transform, Vector3>();
             _rotationCache = new Dictionary<Transform, Quaternion>();
@@ -182,12 +218,10 @@ namespace OcUtility.Editor
                 var child = selected.GetChild(i);
                 _positionCache[child] = child.transform.position;
                 _rotationCache[child] = child.transform.rotation;
+                
+                Undo.RecordObject(child, "루트 오브젝트 정렬");
             }
-
-            var allObj = new List<Object>();
-            allObj.Add(selected);
-            allObj.AddRange(_children);
-            Undo.RecordObjects(allObj.ToArray(), "루트 오브젝트 정렬");
+            
             selected.position = result;
             selected.rotation = rotationResult;
 
@@ -200,6 +234,7 @@ namespace OcUtility.Editor
             {
                 rot.Key.rotation = rot.Value;
             }
+            Undo.CollapseUndoOperations(undoID);
         }
 
         IEnumerable<Transform> GetChildren()

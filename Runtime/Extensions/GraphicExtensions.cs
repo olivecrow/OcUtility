@@ -19,33 +19,56 @@ namespace OcUtility
             var boundsAssigned = false;
             foreach (var renderer in source.GetComponentsInChildren<Renderer>())
             {
-                var worldB = renderer.bounds;
-
-                var localB = renderer.localBounds;
-                localB.center += renderer.transform.localPosition;
-                
-                var scaleMultiplier = (renderer.transform.localRotation * renderer.transform.localScale).abs();
-                var transformedScale = localB.size.Multiply(scaleMultiplier);
-                var targetScale = transformedScale;
-                targetScale.x = Mathf.Max(targetScale.x, worldB.size.x);
-                targetScale.y = Mathf.Max(targetScale.y, worldB.size.y);
-                targetScale.z = Mathf.Max(targetScale.z, worldB.size.z);
-
-                localB.size = targetScale;
-            
-                if (boundsAssigned)
+                if (renderer.gameObject == source)
                 {
+                    var localB = renderer.localBounds;
                     bounds.Encapsulate(localB);
                 }
                 else
                 {
-                    bounds = localB;
-                    boundsAssigned = true;
-                }   
+                    var localB = renderer.localBounds;
+                    var worldB = renderer.bounds;
+                    localB.center = source.transform.InverseTransformPoint(worldB.center);
+                    localB.size = localB.size.Multiply(renderer.transform.localScale);
+                    if (boundsAssigned)
+                    {
+                        bounds.Encapsulate(localB);
+                    }
+                    else
+                    {
+                        bounds = localB;
+                        boundsAssigned = true;
+                    }
+                }
+
+
+                // var worldB = renderer.bounds;
+                //
+                // var localB = renderer.localBounds;
+                // localB.center += renderer.transform.localPosition;
+                //
+                // var scaleMultiplier = (renderer.transform.localRotation * renderer.transform.localScale).abs();
+                // var transformedScale = localB.size.Multiply(scaleMultiplier);
+                // var targetScale = transformedScale;
+                // targetScale.x = Mathf.Max(targetScale.x, worldB.size.x);
+                // targetScale.y = Mathf.Max(targetScale.y, worldB.size.y);
+                // targetScale.z = Mathf.Max(targetScale.z, worldB.size.z);
+                // localB.size = targetScale;
+                //
+                // if (boundsAssigned)
+                // {
+                //     bounds.Encapsulate(localB);
+                // }
+                // else
+                // {
+                //     bounds = localB;
+                //     boundsAssigned = true;
+                // }
             }
-            
+
             return bounds;
         }
+
         public static Bounds RendererBounds(this Renderer[] renderers)
         {
             var bounds = new Bounds();
@@ -61,11 +84,12 @@ namespace OcUtility
                 {
                     bounds = renderer.bounds;
                     boundsAssigned = true;
-                }   
+                }
             }
 
             return bounds;
         }
+
         public static Bounds RendererBounds(this List<Renderer> renderers)
         {
             var bounds = new Bounds();
@@ -81,11 +105,12 @@ namespace OcUtility
                 {
                     bounds = renderer.bounds;
                     boundsAssigned = true;
-                }   
+                }
             }
 
             return bounds;
         }
+
         public static Bounds RendererBounds(this LODGroup source)
         {
             var bounds = new Bounds();
@@ -142,6 +167,7 @@ namespace OcUtility
                     add_to_lod(level, renderers[0]);
                     continue;
                 }
+
                 Debug.LogWarning($"LOD를 파악할 수 없는 오브젝트 : {name}");
                 add_to_lod(0, renderers[0]);
             }

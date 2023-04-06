@@ -5,6 +5,8 @@ namespace OcUtility
 {
     public class MarkerSO : ScriptableObject
     {
-        public List<RuntimeMarker.Marker> markers;
+#if UNITY_EDITOR
+        public List<RuntimeMarker.Marker> markers;  
+#endif
     }
 }

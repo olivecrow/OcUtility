@@ -1,5 +1,10 @@
 ﻿# Changelog
 
+## [1.6.8] -2023-12-01
+- Remap이 반대 범위로는 작동하지 않던 문제 해결 및 코드 간소화
+- VectorInt가 일반 Vector 타입과 곱해서 Vector타입을 반환하는 Multiply 메서드 추가
+- 문자열의 모든 공백을 없애주는 trimAll 메서드 추가
+
 ## [1.6.7] -2023-04-07
 - RuntimeMarker 전처리기 문제로 빌드가 안되던 문제 해결
 - HideFlagProcessor가 어드레서블 씬을 로드할때 호출되지 않도록 필터 추가

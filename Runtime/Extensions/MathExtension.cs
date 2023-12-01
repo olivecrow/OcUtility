@@ -303,6 +303,14 @@ public static class MathExtension
     {
         return new Vector3Int(a.x * b.x, a.y * b.y, a.z * b.z);
     }
+    public static Vector2 Multiply(this Vector2Int a, Vector2 b)
+    {
+        return new Vector2(a.x * b.x, a.y * b.y);
+    }
+    public static Vector3 Multiply(this Vector3Int a, Vector3 b)
+    {
+        return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
+    }
     public static Vector2 Divide(this Vector2Int a, Vector2Int b)
     {
         return new Vector2((float)a.x / b.x, (float)a.y / b.y);
@@ -397,55 +405,37 @@ public static class MathExtension
     
 
     /// <summary> value가 beforeRange에서 갖던 비율 만큼 targetRange 범위에서 정의되는 값을 반환함.</summary>
-    public static float Remap(this float value, in Vector2 beforeRange, in Vector2 targetRange, bool useClamp = true)
+    public static float Remap(this float value, in Vector2 from, in Vector2 to, bool useClamp = true)
     {
-        var denominator = beforeRange.y - beforeRange.x;
-        if (denominator == 0) return targetRange.x;
-        
-        var ratio = (value - beforeRange.x) / denominator;
-        var result = (targetRange.y - targetRange.x) * ratio + targetRange.x;
-        return useClamp ? Mathf.Clamp(result, targetRange.x, targetRange.y) : result;
+        return Remap(value, from.x, from.y, to.x, to.y, useClamp);
     }
-    public static float Remap(this float value, float beforeRangeMin, float beforeRangeMax, in Vector2 targetRange, bool useClamp = true)
+    public static float Remap(this float value, float fromMin, float fromMax, in Vector2 to, bool useClamp = true)
     {
-        var denominator = beforeRangeMax - beforeRangeMin;
-        if (denominator == 0) return targetRange.x;
-        
-        var ratio = (value - beforeRangeMin) / denominator;
-        var result = (targetRange.y - targetRange.x) * ratio + targetRange.x;
-        return useClamp ? Mathf.Clamp(result, targetRange.x, targetRange.y) : result;
+        return Remap(value, fromMin, fromMax, to.x, to.y, useClamp);
     }
-    public static float Remap(this float value, in Vector2 beforeRange, float targetRangeMin, float targetRangeMax, bool useClamp = true)
+    public static float Remap(this float value, in Vector2 from, float toMin, float toMax, bool useClamp = true)
     {
-        var denominator = beforeRange.y - beforeRange.x;
-        if (denominator == 0) return targetRangeMin;
-        
-        var ratio = (value - beforeRange.x) / denominator;
-        var result = (targetRangeMax - targetRangeMin) * ratio + targetRangeMin;
-        return useClamp ? Mathf.Clamp(result, targetRangeMin, targetRangeMax) : result;
+        return Remap(value, from.x, from.y, toMin, toMax, useClamp);
     }
     
     /// <summary> value가 beforeRange에서 갖던 비율 만큼 targetRange 범위에서 정의되는 값을 반환함.</summary>
-    public static float Remap(this float value, float beforeRangeMin, float beforeRangeMax, float targetRangeMin, float targetRangeMax, bool useClamp = true)
+    public static float Remap(this float value, float fromMin, float fromMax, float toMin, float toMax, bool useClamp = true)
     {
-        var denominator = beforeRangeMax - beforeRangeMin;
-        if (denominator == 0) return targetRangeMin;
-        
-        var ratio = (value - beforeRangeMin) / denominator;
-        var result = (targetRangeMax - targetRangeMin) * ratio + targetRangeMin;
-        return useClamp ? Mathf.Clamp(result, targetRangeMin, targetRangeMax) : result;
+        var result = (value - fromMin) / (fromMax - fromMin) * (toMax - toMin) + toMin;
+        if (useClamp) result = Mathf.Clamp(result, toMin, toMax);
+        return result;
     }
     /// <summary> value가 beforeRange에서 갖던 비율 만큼 0..1 범위에서 정의되는 값을 반환함.</summary>
-    public static float RemapTo01(this float value, in Vector2 beforeRange, bool useClamp = true)
-        => Remap(value, beforeRange, Vector2.up, useClamp);
+    public static float RemapTo01(this float value, in Vector2 from, bool useClamp = true)
+        => Remap(value, from, Vector2.up, useClamp);
     
-    public static float RemapTo01(this float value, float beforeRangeMin, float beforeRangeMax, bool useClamp = true)
-        => Remap(value, beforeRangeMin, beforeRangeMax, Vector2.up, useClamp);
+    public static float RemapTo01(this float value, float min, float max, bool useClamp = true)
+        => Remap(value, min, max, Vector2.up, useClamp);
     
         
     /// <summary> 0..1에서 정의된 value를 targetRange의 범위로 정의함</summary>
-    public static float RemapFrom01(this float value, in Vector2 targetRange, bool useClamp = true)
-        => Remap(value, Vector2.up, targetRange, useClamp);
+    public static float RemapFrom01(this float value, in Vector2 range, bool useClamp = true)
+        => Remap(value, Vector2.up, range, useClamp);
     
     /// <summary> 0..1에서 정의된 value를 targetRange의 범위로 정의함</summary>
     public static float RemapFrom01(this float value, float min, float max, bool useClamp = true)
@@ -467,29 +457,29 @@ public static class MathExtension
     
 
     /// <summary> value가 beforeRange에서 갖던 비율 만큼 targetRange 범위에서 정의되는 값을 반환함.</summary>
-    public static float Remap(this int value, in Vector2 beforeRange, in Vector2 targetRange, bool useClamp = true) 
-        => Remap((float)value, beforeRange, targetRange, useClamp);
+    public static float Remap(this int value, in Vector2 from, in Vector2 to, bool useClamp = true) 
+        => Remap((float)value, from, to, useClamp);
 
-    public static float Remap(this int value, float beforeRangeMin, float beforeRangeMax, in Vector2 targetRange, bool useClamp = true)
-        => Remap((float)value, beforeRangeMin, beforeRangeMax, targetRange, useClamp);
+    public static float Remap(this int value, float fromMin, float fromMax, in Vector2 to, bool useClamp = true)
+        => Remap((float)value, fromMin, fromMax, to, useClamp);
 
-    public static float Remap(this int value, in Vector2 beforeRange, float targetRangeMin, float targetRangeMax, bool useClamp = true)
-        => Remap((float)value, beforeRange, targetRangeMin, targetRangeMax, useClamp);
+    public static float Remap(this int value, in Vector2 from, float toMin, float toMax, bool useClamp = true)
+        => Remap((float)value, from, toMin, toMax, useClamp);
 
     /// <summary> value가 beforeRange에서 갖던 비율 만큼 targetRange 범위에서 정의되는 값을 반환함.</summary>
-    public static float Remap(this int value, float beforeRangeMin, float beforeRangeMax, float targetRangeMin, float targetRangeMax, bool useClamp = true)
-        => Remap((float)value, beforeRangeMin, beforeRangeMax, targetRangeMin, targetRangeMax, useClamp);
+    public static float Remap(this int value, float fromMin, float fromMax, float toMin, float toMax, bool useClamp = true)
+        => Remap((float)value, fromMin, fromMax, toMin, toMax, useClamp);
     /// <summary> value가 beforeRange에서 갖던 비율 만큼 0..1 범위에서 정의되는 값을 반환함.</summary>
-    public static float RemapTo01(this int value, in Vector2 beforeRange, bool useClamp = true)
-        => Remap(value, beforeRange, Vector2.up, useClamp);
+    public static float RemapTo01(this int value, in Vector2 from, bool useClamp = true)
+        => Remap(value, from, Vector2.up, useClamp);
     
-    public static float RemapTo01(this int value, float beforeRangeMin, float beforeRangeMax, bool useClamp = true)
-        => Remap(value, beforeRangeMin, beforeRangeMax, Vector2.up, useClamp);
+    public static float RemapTo01(this int value, float min, float max, bool useClamp = true)
+        => Remap(value, min, max, Vector2.up, useClamp);
     
         
     /// <summary> 0..1에서 정의된 value를 targetRange의 범위로 정의함</summary>
-    public static float RemapFrom01(this int value, in Vector2 targetRange, bool useClamp = true)
-        => Remap(value, Vector2.up, targetRange, useClamp);
+    public static float RemapFrom01(this int value, in Vector2 range, bool useClamp = true)
+        => Remap(value, Vector2.up, range, useClamp);
     
     /// <summary> 0..1에서 정의된 value를 targetRange의 범위로 정의함</summary>
     public static float RemapFrom01(this int value, float min, float max, bool useClamp = true)
@@ -511,29 +501,29 @@ public static class MathExtension
     
 
     /// <summary> value가 beforeRange에서 갖던 비율 만큼 targetRange 범위에서 정의되는 값을 반환함.</summary>
-    public static float Remap(this double value, in Vector2 beforeRange, in Vector2 targetRange, bool useClamp = true) 
-        => Remap((float)value, beforeRange, targetRange, useClamp);
+    public static float Remap(this double value, in Vector2 from, in Vector2 to, bool useClamp = true) 
+        => Remap((float)value, from, to, useClamp);
 
-    public static float Remap(this double value, float beforeRangeMin, float beforeRangeMax, in Vector2 targetRange, bool useClamp = true)
-        => Remap((float)value, beforeRangeMin, beforeRangeMax, targetRange, useClamp);
+    public static float Remap(this double value, float fromMin, float fromMax, in Vector2 to, bool useClamp = true)
+        => Remap((float)value, fromMin, fromMax, to, useClamp);
 
-    public static float Remap(this double value, in Vector2 beforeRange, float targetRangeMin, float targetRangeMax, bool useClamp = true)
-        => Remap((float)value, beforeRange, targetRangeMin, targetRangeMax, useClamp);
+    public static float Remap(this double value, in Vector2 from, float toMin, float toMax, bool useClamp = true)
+        => Remap((float)value, from, toMin, toMax, useClamp);
 
     /// <summary> value가 beforeRange에서 갖던 비율 만큼 targetRange 범위에서 정의되는 값을 반환함.</summary>
-    public static float Remap(this double value, float beforeRangeMin, float beforeRangeMax, float targetRangeMin, float targetRangeMax, bool useClamp = true)
-        => Remap((float)value, beforeRangeMin, beforeRangeMax, targetRangeMin, targetRangeMax, useClamp);
+    public static float Remap(this double value, float fromMin, float fromMax, float toMin, float toMax, bool useClamp = true)
+        => Remap((float)value, fromMin, fromMax, toMin, toMax, useClamp);
     /// <summary> value가 beforeRange에서 갖던 비율 만큼 0..1 범위에서 정의되는 값을 반환함.</summary>
-    public static float RemapTo01(this double value, in Vector2 beforeRange, bool useClamp = true)
-        => Remap(value, beforeRange, Vector2.up, useClamp);
+    public static float RemapTo01(this double value, in Vector2 from, bool useClamp = true)
+        => Remap(value, from, Vector2.up, useClamp);
     
-    public static float RemapTo01(this double value, float beforeRangeMin, float beforeRangeMax, bool useClamp = true)
-        => Remap(value, beforeRangeMin, beforeRangeMax, Vector2.up, useClamp);
+    public static float RemapTo01(this double value, float min, float max, bool useClamp = true)
+        => Remap(value, min, max, Vector2.up, useClamp);
     
         
     /// <summary> 0..1에서 정의된 value를 targetRange의 범위로 정의함</summary>
-    public static float RemapFrom01(this double value, in Vector2 targetRange, bool useClamp = true)
-        => Remap(value, Vector2.up, targetRange, useClamp);
+    public static float RemapFrom01(this double value, in Vector2 range, bool useClamp = true)
+        => Remap(value, Vector2.up, range, useClamp);
     
     /// <summary> 0..1에서 정의된 value를 targetRange의 범위로 정의함</summary>
     public static float RemapFrom01(this double value, float min, float max, bool useClamp = true)
